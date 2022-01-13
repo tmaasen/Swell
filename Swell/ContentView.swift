@@ -8,9 +8,13 @@
 import SwiftUI
 
 struct ContentView: View {
+    @EnvironmentObject var viewModel: AuthenticationViewModel
+
     var body: some View {
-        Text("Hello, world!")
-            .padding()
+        switch viewModel.state {
+          case .signedIn: Home()
+          case .signedOut: Login()
+        }
     }
 }
 
