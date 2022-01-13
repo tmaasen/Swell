@@ -11,8 +11,7 @@ struct Login: View {
     @EnvironmentObject var viewModel: AuthenticationViewModel
 
     var body: some View {
-        Image("header_image")
-          .resizable()
+        Image("LoginImage")
           .aspectRatio(contentMode: .fit)
 
         Text("Welcome to Swell!")

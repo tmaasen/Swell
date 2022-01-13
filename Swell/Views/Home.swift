@@ -9,17 +9,14 @@ import SwiftUI
 import GoogleSignIn
 
 struct Home: View {
-  // 1
   @EnvironmentObject var viewModel: AuthenticationViewModel
   
-  // 2
   private let user = GIDSignIn.sharedInstance.currentUser
   
   var body: some View {
     NavigationView {
       VStack {
         HStack {
-          // 3
           NetworkImage(url: user?.profile?.imageURL(withDimension: 200))
             .aspectRatio(contentMode: .fit)
             .frame(width: 100, height: 100, alignment: .center)
@@ -43,7 +40,6 @@ struct Home: View {
         
         Spacer()
         
-        // 4
         Button(action: viewModel.signOut) {
           Text("Sign out")
             .foregroundColor(.white)
@@ -54,7 +50,7 @@ struct Home: View {
             .padding()
         }
       }
-      .navigationTitle("Ellifit")
+      .navigationTitle("Swell")
     }
     .navigationViewStyle(StackNavigationViewStyle())
   }
