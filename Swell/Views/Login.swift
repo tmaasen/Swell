@@ -7,31 +7,32 @@
 
 import SwiftUI
 
+extension Color {
+    static let swellOrange = Color("swellOrange")
+}
+
 struct Login: View {
     @EnvironmentObject var viewModel: AuthenticationViewModel
 
     var body: some View {
-        Image("LoginImage")
-          .aspectRatio(contentMode: .fit)
-
-        Text("Welcome to Swell!")
-          .fontWeight(.black)
-          .foregroundColor(Color(.systemIndigo))
-          .font(.largeTitle)
-          .multilineTextAlignment(.center)
-
-        Text("Empower your elliptical workouts by tracking every move.")
-          .fontWeight(.light)
-          .multilineTextAlignment(.center)
-          .padding()
-
-        Spacer()
-        
-        GoogleSignInButton()
-          .padding()
-          .onTapGesture {
-            viewModel.signIn()
-          }
+        VStack(spacing: 40) {
+            Image("LoginImage")
+                .aspectRatio(contentMode: .fit)
+                .padding(.top, 140)
+            
+            Text("Welcome to Swell")
+                .foregroundColor(.swellOrange)
+                .font(.custom("Ubuntu-Bold", size: 40))
+                .multilineTextAlignment(.center)
+            
+            Spacer()
+            
+            GoogleSignInButton()
+                .padding()
+                .onTapGesture {
+                    viewModel.signIn()
+                }
+        }
     }
 }
 
