@@ -16,6 +16,10 @@ class AuthenticationViewModel: ObservableObject {
   }
 
   @Published var state: SignInState = .signedOut
+    
+    func signInWithEmail() {
+        return
+    }
 
     func signIn() {
         if GIDSignIn.sharedInstance.hasPreviousSignIn() {
@@ -58,6 +62,7 @@ class AuthenticationViewModel: ObservableObject {
         }
     }
     
+    // Function will work for all sign out methods
     func signOut() {
         GIDSignIn.sharedInstance.signOut()
         do {
