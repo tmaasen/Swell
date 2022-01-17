@@ -6,38 +6,80 @@
 //
 
 import SwiftUI
-
-extension Color {
-    static let swellOrange = Color("swellOrange")
-}
+import FirebaseAuth
+import JGProgressHUD_SwiftUI
 
 struct Login: View {
     
+    @State var emailAddress: String = ""
+    @State var password: String = ""
+    @State var isAuthenticated: Bool = false
+    @State private var showForgotPWAlert: Bool = false
     @EnvironmentObject var authModel: AuthenticationViewModel
-
+    @EnvironmentObject var hudCoordinator: JGProgressHUDCoordinator
+    
     var body: some View {
-        VStack {
-            Image("LoginImage")
-                .aspectRatio(contentMode: .fit)
-                .padding(.top, 140)
-            
-            Text("Welcome to Swell")
-                .foregroundColor(.swellOrange)
-                .font(.custom("Ubuntu-Bold", size: 40))
-                .multilineTextAlignment(.center)
-            
-            StandardSignIn()
-            
-            Divider()
-            
-            Text("OR")
-                .foregroundColor(.gray)
-                        
-            GoogleSignInButton()
-                .padding()
-                .onTapGesture {
-                    authModel.signIn()
-                }
+        
+        NavigationView {
+            VStack {
+                Image("LoginImage")
+                    .aspectRatio(contentMode: .fit)
+                
+                Text("Welcome to Swell")
+                    .foregroundColor(.swellOrange)
+                    .font(.custom("Ubuntu-Bold", size: 40))
+                    .multilineTextAlignment(.center)
+                
+                VStack {
+                    TextField("Email Address", text: $emailAddress)
+                        .withTextFieldStyles()
+                        .textContentType(.emailAddress)
+                    SecureField("Password", text: $password)
+                        .withSecureFieldStyles()
+                    NavigationLink(destination: Home(), isActive: $isAuthenticated, label:{
+                        Button("Sign In") {
+                            authModel.signInWithEmail(email: emailAddress, password: password)
+                            if Auth.auth().currentUser == nil {
+                                print(isAuthenticated)
+                            } else {
+                                isAuthenticated = true
+                            }
+                        }
+                        .withButtonStyles()
+                    })
+                    .disabled(emailAddress.isEmpty || password.isEmpty)
+// causing a lot of constraint errors
+//                    .alert(isPresented: $isAuthenticated) {
+//                        Alert(title: Text("Email or Password Incorrect"))
+//                    }
+                    .navigationBarBackButtonHidden(true)
+                }.padding()
+                
+                Divider()
+                
+                GoogleSignInButton()
+                    .padding()
+                    .onTapGesture {
+                        authModel.signIn()
+                    }
+                
+                Divider()
+                
+                NavigationLink("Register", destination: Register())
+
+                Button("Forgot Password") {
+                    showForgotPWAlert = true
+                }.alert(isPresented: $showForgotPWAlert,
+                        TextAlert(
+                            title: "Reset Password",
+                            message: "Enter your Swell account email address, then check your email for further instructions.",
+                            keyboardType: .emailAddress)
+                        { result in
+                            if let text = result {
+                                authModel.resetPassword(email: text)
+                            }
+                        })
+            }
         }
     }
 }
@@ -46,48 +88,5 @@ struct Login: View {
 struct Login_Previews: PreviewProvider {
     static var previews: some View {
         Login()
-    }
-}
-
-
-struct StandardSignIn: View {
-    
-    @State var username: String = ""
-    @State var password: String = ""
-    @State var authenticationDidFail: Bool = false
-    @State var authenticationDidPass: Bool = true
-    @EnvironmentObject var authModel: AuthenticationViewModel
-    
-    var body: some View {
-        return
-            VStack {
-                TextField("Username", text: $username)
-                    .padding()
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(Color.swellOrange, lineWidth: 2)
-                    )
-                    .autocapitalization(.none)
-                    .padding(.bottom, 20)
-                SecureField("Password", text: $password)
-                    .padding()
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(Color.swellOrange, lineWidth: 2)
-                    )
-                    .autocapitalization(.none)
-                    .padding(.bottom, 20)
-                Text("Sign In")
-                    .font(.custom("Ubuntu-Bold", size: 20))
-                    .foregroundColor(.white)
-                    .padding()
-                    .frame(width: 320, height: 60)
-                    .background(Color.swellOrange)
-                    .cornerRadius(15.0)
-                    .onTapGesture {
-                        authModel.signIn()
-                    }
-            }
-            .padding()
     }
 }

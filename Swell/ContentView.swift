@@ -8,14 +8,15 @@
 import SwiftUI
 
 struct ContentView: View {
-    @EnvironmentObject var viewModel: AuthenticationViewModel
+    @EnvironmentObject var authModel: AuthenticationViewModel
 
     var body: some View {
-        switch viewModel.state {
+        switch authModel.state {
           case .signedIn: Home()
           case .signedOut: Login()
         }
     }
+    
 }
 
 struct ContentView_Previews: PreviewProvider {

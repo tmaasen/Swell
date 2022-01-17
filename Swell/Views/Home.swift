@@ -7,53 +7,41 @@
 
 import SwiftUI
 import GoogleSignIn
+import FirebaseAuth
 
 struct Home: View {
-  @EnvironmentObject var viewModel: AuthenticationViewModel
-  
-  private let user = GIDSignIn.sharedInstance.currentUser
-  
+    
+    @State var isMorning: Bool = true
+    @EnvironmentObject var authModel: AuthenticationViewModel
+    private let googleUser = GIDSignIn.sharedInstance.currentUser
+    @State var isAuthenticated: Bool = true
+    
   var body: some View {
     NavigationView {
-      VStack {
-        HStack {
-          NetworkImage(url: user?.profile?.imageURL(withDimension: 100))
-            .aspectRatio(contentMode: .fit)
-            .frame(width: 100, height: 100, alignment: .center)
-            .cornerRadius(8)
-          
-          VStack(alignment: .leading) {
-            Text(user?.profile?.name ?? "")
-              .font(.headline)
+        //        NetworkImage(url: user?.profile?.imageURL(withDimension: 100))
+        //            .aspectRatio(contentMode: .fit)
+        //            .frame(width: 40, height: 40, alignment: .topLeading)
+        //            .cornerRadius(8.0)
+        //Spacer()
+        VStack {
+            NavigationLink(
+                destination: Login(),
+                isActive: $isAuthenticated,
+                label: {
+                    Button("Sign Out") {
+                        authModel.signOut()
+                        if Auth.auth().currentUser == nil {
+                            isAuthenticated = false
+                        }
+                    }.withButtonStyles()
+                })
             
-            Text(user?.profile?.email ?? "")
-              .font(.subheadline)
-          }
-          
-          Spacer()
         }
-        .padding()
-        .frame(maxWidth: .infinity)
-        .background(Color(.secondarySystemBackground))
-        .cornerRadius(12)
-        .padding()
-        
-        Spacer()
-        
-        Button(action: viewModel.signOut) {
-          Text("Sign out")
-            .foregroundColor(.white)
-            .padding()
-            .frame(maxWidth: .infinity)
-            .background(Color(.systemIndigo))
-            .cornerRadius(12)
-            .padding()
-        }
-      }
-      .navigationTitle("Swell")
     }
-    .navigationViewStyle(StackNavigationViewStyle())
+    .navigationTitle("Home")
+    .navigationBarBackButtonHidden(true)
   }
+    
 }
 
 /// A generic view that shows images from the network.

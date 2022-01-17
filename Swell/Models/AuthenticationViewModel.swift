@@ -10,17 +10,33 @@ import GoogleSignIn
 
 class AuthenticationViewModel: ObservableObject {
 
-  enum SignInState {
-    case signedIn
-    case signedOut
-  }
-
-  @Published var state: SignInState = .signedOut
-    
-    func signInWithEmail() {
-        return
+    enum SignInState {
+        case signedIn
+        case signedOut
     }
-
+    
+    @Published var state: SignInState = .signedOut
+    
+    // sign in with email and password
+    func signInWithEmail(email: String, password: String) {
+        Auth.auth().signIn(withEmail: email, password: password) {result, error in
+            guard result != nil, error == nil else {
+                self.state = .signedIn
+                return
+            }
+            print(result?.user.email as Any)
+            print("User: ", Auth.auth().currentUser as Any)
+        }
+    }
+    
+    func signUp(email: String, password: String) {
+        Auth.auth().createUser(withEmail: email, password: password) {result, error in
+            guard result != nil, error == nil else {
+                return
+            }
+        }
+    }
+    // sign in with Google
     func signIn() {
         if GIDSignIn.sharedInstance.hasPreviousSignIn() {
             GIDSignIn.sharedInstance.restorePreviousSignIn {
@@ -42,7 +58,7 @@ class AuthenticationViewModel: ObservableObject {
         }
     }
     
-    private func authenticateUser(for user: GIDGoogleUser?, with error: Error?) {
+    func authenticateUser(for user: GIDGoogleUser?, with error: Error?) {
         if let error = error {
             print(error.localizedDescription)
             return
@@ -58,6 +74,22 @@ class AuthenticationViewModel: ObservableObject {
                 print(error.localizedDescription)
             } else {
                 self.state = .signedIn
+            }
+        }
+    }
+    
+    func verifyEmail() {
+        Auth.auth().currentUser?.sendEmailVerification { (error) in
+            if error != nil {
+                return
+            }
+        }
+    }
+    
+    func resetPassword(email: String) {
+        Auth.auth().sendPasswordReset(withEmail: email) { error in
+            if error != nil {
+                return
             }
         }
     }
