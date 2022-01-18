@@ -15,8 +15,21 @@ struct Login: View {
     @State var password: String = ""
     @State var isAuthenticated: Bool = false
     @State private var showForgotPWAlert: Bool = false
+    @State private var showInvalidPWAlert: Bool = false
     @EnvironmentObject var authModel: AuthenticationViewModel
     @EnvironmentObject var hudCoordinator: JGProgressHUDCoordinator
+    
+    private func showLoadingIndicator(pAfterDelay:Double) {
+        hudCoordinator.showHUD {
+            let hud = JGProgressHUD()
+            hud.backgroundColor = UIColor(white: 0, alpha: 0.4)
+            hud.shadow = JGProgressHUDShadow(color: .black, offset: .zero, radius: 4, opacity: 0.9)
+            hud.vibrancyEnabled = true
+            hud.textLabel.text = "Loading"
+            hud.dismiss(afterDelay: pAfterDelay)
+            return hud
+        }
+    }
     
     var body: some View {
         
@@ -36,23 +49,21 @@ struct Login: View {
                         .textContentType(.emailAddress)
                     SecureField("Password", text: $password)
                         .withSecureFieldStyles()
-                    NavigationLink(destination: Home(), isActive: $isAuthenticated, label:{
-                        Button("Sign In") {
-                            authModel.signInWithEmail(email: emailAddress, password: password)
-                            if Auth.auth().currentUser == nil {
-                                print(isAuthenticated)
-                            } else {
-                                isAuthenticated = true
+                    NavigationLink(destination: Home(), isActive: $isAuthenticated) { }
+                    Button("Sign In") {
+                        authModel.signInWithEmail(email: emailAddress, password: password)
+                        showLoadingIndicator(pAfterDelay:2.0)
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                            if authModel.state != .signedIn {
+                                showInvalidPWAlert = true
                             }
                         }
-                        .withButtonStyles()
-                    })
+                    }
+                    .withButtonStyles()
                     .disabled(emailAddress.isEmpty || password.isEmpty)
-// causing a lot of constraint errors
-//                    .alert(isPresented: $isAuthenticated) {
-//                        Alert(title: Text("Email or Password Incorrect"))
-//                    }
-                    .navigationBarBackButtonHidden(true)
+                    .alert(isPresented: $showInvalidPWAlert) {
+                        Alert(title: Text("Email or Password Incorrect"))
+                    }
                 }.padding()
                 
                 Divider()

@@ -6,14 +6,19 @@
 //
 
 import SwiftUI
+import JGProgressHUD_SwiftUI
+
 
 struct ContentView: View {
     @EnvironmentObject var authModel: AuthenticationViewModel
+    @State private var blockTouches = false
 
     var body: some View {
-        switch authModel.state {
-          case .signedIn: Home()
-          case .signedOut: Login()
+        JGProgressHUDPresenter(userInteractionOnHUD: blockTouches) {
+            switch authModel.state {
+              case .signedIn: Home()
+              case .signedOut: Login()
+            }
         }
     }
     

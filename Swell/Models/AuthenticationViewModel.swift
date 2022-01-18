@@ -20,12 +20,13 @@ class AuthenticationViewModel: ObservableObject {
     // sign in with email and password
     func signInWithEmail(email: String, password: String) {
         Auth.auth().signIn(withEmail: email, password: password) {result, error in
-            guard result != nil, error == nil else {
+            if result != nil, error == nil {
                 self.state = .signedIn
+                print(self.state)
+                return
+            } else {
                 return
             }
-            print(result?.user.email as Any)
-            print("User: ", Auth.auth().currentUser as Any)
         }
     }
     
