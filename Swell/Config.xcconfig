@@ -1,0 +1,11 @@
+//
+//  Config.xcconfig
+//  Swell
+//
+//  Created by Tanner Maasen on 1/18/22.
+//
+
+// Configuration settings file format documentation can be found at:
+// https://help.apple.com/xcode/#/dev745c5c974
+
+PEXELS_API_KEY = 563492ad6f91700001000001b24d74f471da40a48530fb81e3b7c3f5

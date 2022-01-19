@@ -11,6 +11,7 @@ import Firebase
 @main
 struct SwellApp: App {
     @StateObject var authModel = AuthenticationViewModel()
+    @ObservedObject var api = API()
 
     init() {
       setupFirebase()
@@ -20,6 +21,7 @@ struct SwellApp: App {
         WindowGroup {
             ContentView()
                 .environmentObject(authModel)
+                .environmentObject(api)
         }
     }
 }

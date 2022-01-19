@@ -15,6 +15,7 @@ class AuthenticationViewModel: ObservableObject {
         case signedOut
     }
     
+    var utils = UtilFunctions()
     @Published var state: SignInState = .signedOut
     
     // sign in with email and password
@@ -75,6 +76,7 @@ class AuthenticationViewModel: ObservableObject {
                 print(error.localizedDescription)
             } else {
                 self.state = .signedIn
+                utils.getTimeOfDay(name: GIDSignIn.sharedInstance.currentUser?.profile?.givenName)
             }
         }
     }
