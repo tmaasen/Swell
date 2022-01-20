@@ -11,6 +11,11 @@ import UIKit
 
 public extension Color {
     static let swellOrange = Color("swellOrange")
+    static let morningLinear1 = Color("MorningLinear1")
+    static let morningLinear2 = Color("MorningLinear2")
+    static let morningLinear3 = Color("MorningLinear3")
+    static let eveningLinear1 = Color("EveningLinear1")
+    static let eveningLinear2 = Color("EveningLinear2")
 }
 
 public extension TextField {
