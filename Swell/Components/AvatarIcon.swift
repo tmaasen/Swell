@@ -16,7 +16,7 @@ struct AvatarIcon: View {
             NetworkImage(url: googleUser?.profile?.imageURL(withDimension: 100))
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 40, height: 40, alignment: .topLeading)
-                .cornerRadius(8.0)
+                .cornerRadius(25.0)
         }
         .padding(.top, 50)
     }
