@@ -37,7 +37,6 @@ struct NetworkImage: View {
       Image(systemName: "person.circle.fill")
         .resizable()
         .aspectRatio(contentMode: .fit)
-        .foregroundColor(.white)
     }
   }
 }

@@ -78,6 +78,7 @@ class AuthenticationViewModel: ObservableObject {
             } else {
                 self.state = .signedIn
                 utils.getTimeOfDay(name: GIDSignIn.sharedInstance.currentUser?.profile?.givenName)
+                print(self.state)
             }
         }
     }
@@ -104,6 +105,7 @@ class AuthenticationViewModel: ObservableObject {
         do {
             try Auth.auth().signOut()
             state = .signedOut
+            print(self.state)
         } catch {
             print(error.localizedDescription)
         }

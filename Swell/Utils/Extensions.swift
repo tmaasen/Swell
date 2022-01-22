@@ -18,6 +18,17 @@ public extension Color {
     static let eveningLinear2 = Color("EveningLinear2")
 }
 
+public extension ZStack {
+    func withSidebarStyles() -> some View {
+        self.padding(.top, 50)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(Color(.white))
+            .edgesIgnoringSafeArea(.all)
+            .zIndex(1.0)
+            .navigationBarHidden(true)
+    }
+}
+
 public extension TextField {
     func withTextFieldStyles() -> some View {
         self.padding()

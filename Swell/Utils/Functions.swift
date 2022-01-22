@@ -13,7 +13,7 @@ class UtilFunctions: ObservableObject {
     static var gradient: Gradient = Gradient(stops: [
                                                 .init(color: Color.morningLinear1, location: 0),
                                                 .init(color: Color.morningLinear2, location: 0.22),
-                                                .init(color: Color.morningLinear3, location: 0.3)])
+                                                .init(color: Color.morningLinear3, location: 0.35)])
     
     // Gets time of day to present in greeting message
     func getTimeOfDay(name: String?) {

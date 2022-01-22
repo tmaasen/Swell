@@ -12,38 +12,21 @@ struct VerticalSidebarHeader: View {
     private let googleUser = GIDSignIn.sharedInstance.currentUser
     @Binding var isShowingSidebar: Bool
     
-    var body: some View {
-        ZStack(alignment: .topTrailing) {
-            //Close Sidebar
-            Button(action: {
-                withAnimation(.spring()) {
-                    isShowingSidebar.toggle()
-                }
-            }, label: {
-                Image(systemName: "xmark")
-                    .frame(width: 32, height: 32)
-                    .foregroundColor(.black)
-                    .padding()
-            })
-            //AvatarIcon
-            VStack(alignment: .leading) {
-                NetworkImage(url: googleUser?.profile?.imageURL(withDimension: 100))
-                    .scaledToFit()
-                    .clipped()
-                    .frame(width: 100, height: 100)
-                    .clipShape(Circle())
-                    .padding(.bottom, 14)
-                
-                Text("Tanner Maasen")
-                    .font(.custom("Ubuntu-Bold", size: 34))
-                Text("tmaasen@gmail.com")
-                    .font(.custom("Ubuntu-Italic", size: 20))
-                    .foregroundColor(.gray)
-                
-                Spacer()
-                
-            }.padding()
-        }
+    var body: some View {        
+        VStack(alignment: .leading) {
+            NetworkImage(url: googleUser?.profile?.imageURL(withDimension: 100))
+                .scaledToFit()
+                .clipped()
+                .frame(width: 80, height: 80)
+                .clipShape(Circle())
+                .padding(.bottom, 14)
+            
+            Text(googleUser?.profile?.name ?? "Tanner Maasen")
+                .font(.custom("Ubuntu-Bold", size: 26))
+            Text(googleUser?.profile?.email ?? "tmaasen@gmail.com")
+                .font(.custom("Ubuntu-Italic", size: 14))
+                .foregroundColor(.gray)
+        }.padding()
     }
 }
 
