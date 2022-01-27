@@ -14,7 +14,8 @@ struct Home: View {
     @State private var isShowingSidebar: Bool = false
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var authModel: AuthenticationViewModel
-    @EnvironmentObject var api: API
+    @ObservedObject var api = Pexels()
+    @ObservedObject var user = UserViewModel()
     var pexels = PexelImage()
     
     var body: some View {
@@ -45,7 +46,7 @@ struct Home: View {
                             }
                         }, label: {AvatarIcon()}).buttonStyle(PlainButtonStyle())
                         //Greeting Message
-                        Text((UtilFunctions.greeting=="" ? "Hello" : UtilFunctions.greeting))
+                        Text((UtilFunctions.greeting))
                             .font(.custom("Ubuntu-Bold", size: 40))
                             .foregroundColor(.white)
                     }
@@ -76,10 +77,14 @@ struct Home: View {
             }
         }
     }
+//    init() {
+//        user.getUser()
+//    }
 }
 
 struct Home_Previews: PreviewProvider {
     static var previews: some View {
+//        let user = User(fname: "John", lname:"Doe")
         Home()
     }
 }

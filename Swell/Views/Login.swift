@@ -19,20 +19,7 @@ struct Login: View {
     @EnvironmentObject var authModel: AuthenticationViewModel
     @EnvironmentObject var hudCoordinator: JGProgressHUDCoordinator
     
-    private func showLoadingIndicator(pAfterDelay:Double) {
-        hudCoordinator.showHUD {
-            let hud = JGProgressHUD()
-            hud.backgroundColor = UIColor(white: 0, alpha: 0.4)
-            hud.shadow = JGProgressHUDShadow(color: .black, offset: .zero, radius: 4, opacity: 0.9)
-            hud.vibrancyEnabled = true
-            hud.textLabel.text = "Loading"
-            hud.dismiss(afterDelay: pAfterDelay)
-            return hud
-        }
-    }
-    
     var body: some View {
-        
         NavigationView {
             VStack {
                 Image("LoginImage")
@@ -91,6 +78,18 @@ struct Login: View {
                             }
                         })
             }
+        }
+    }
+    
+    private func showLoadingIndicator(pAfterDelay:Double) {
+        hudCoordinator.showHUD {
+            let hud = JGProgressHUD()
+            hud.backgroundColor = UIColor(white: 0, alpha: 0.4)
+            hud.shadow = JGProgressHUDShadow(color: .black, offset: .zero, radius: 4, opacity: 0.9)
+            hud.vibrancyEnabled = true
+            hud.textLabel.text = "Loading"
+            hud.dismiss(afterDelay: pAfterDelay)
+            return hud
         }
     }
 }

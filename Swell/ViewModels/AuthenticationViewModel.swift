@@ -23,7 +23,6 @@ class AuthenticationViewModel: ObservableObject {
         Auth.auth().signIn(withEmail: email, password: password) {result, error in
             if result != nil, error == nil {
                 self.state = .signedIn
-                self.utils.getTimeOfDay(name: "")
                 print(self.state)
                 return
             } else {

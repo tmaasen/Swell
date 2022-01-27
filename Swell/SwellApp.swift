@@ -10,24 +10,17 @@ import Firebase
 
 @main
 struct SwellApp: App {
-    @StateObject var authModel = AuthenticationViewModel()
-    @ObservedObject var api = API()
-
+    
     init() {
-      setupFirebase()
+      FirebaseApp.configure()
     }
+    
+    @StateObject var authModel = AuthenticationViewModel()
     
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .environmentObject(authModel)
-                .environmentObject(api)
         }
     }
-}
-
-extension SwellApp {
-  private func setupFirebase() {
-    FirebaseApp.configure()
-  }
 }

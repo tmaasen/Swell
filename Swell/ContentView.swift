@@ -10,9 +10,8 @@ import JGProgressHUD_SwiftUI
 
 
 struct ContentView: View {
-    @EnvironmentObject var authModel: AuthenticationViewModel
-    @EnvironmentObject var api: API
     @State private var blockTouches = false
+    @EnvironmentObject var authModel: AuthenticationViewModel
 
     var body: some View {
         JGProgressHUDPresenter(userInteractionOnHUD: blockTouches) {
@@ -28,6 +27,6 @@ struct ContentView: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
-            .environmentObject(API())
+            .environmentObject(AuthenticationViewModel())
     }
 }

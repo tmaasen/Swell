@@ -11,7 +11,7 @@ class PexelImage: Decodable, ObservableObject {
     var url: String = ""
 }
 
-class API: ObservableObject {
+class Pexels: ObservableObject {
     
     // Gets one nature picture from Pexels
     func getPexel() {
