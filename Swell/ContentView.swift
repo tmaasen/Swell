@@ -16,8 +16,8 @@ struct ContentView: View {
     var body: some View {
         JGProgressHUDPresenter(userInteractionOnHUD: blockTouches) {
             switch authModel.state {
-            case .signedIn: Home()
-            case .signedOut: Login()
+            case .signedIn: Home(userViewModel: UserViewModel())
+            case .signedOut: Login(userViewModel: UserViewModel())
             }
         }
     }

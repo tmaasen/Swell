@@ -16,6 +16,7 @@ class AuthenticationViewModel: ObservableObject {
     }
     
     var utils = UtilFunctions()
+    var userViewModel = UserViewModel()
     @Published var state: SignInState = .signedOut
     
     // sign in with email and password
@@ -24,6 +25,8 @@ class AuthenticationViewModel: ObservableObject {
             if result != nil, error == nil {
                 self.state = .signedIn
                 print(self.state)
+                // get all user info...it calls greeting message
+                self.userViewModel.getUser()
                 return
             } else {
                 return
@@ -76,8 +79,10 @@ class AuthenticationViewModel: ObservableObject {
                 print(error.localizedDescription)
             } else {
                 self.state = .signedIn
-                utils.getTimeOfDay(name: GIDSignIn.sharedInstance.currentUser?.profile?.givenName)
+                utils.getGreetingMessage(name: GIDSignIn.sharedInstance.currentUser?.profile?.givenName ?? "")
                 print(self.state)
+                // get all user info
+//                self.userViewModel.getUser()
             }
         }
     }

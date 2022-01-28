@@ -7,9 +7,11 @@
 
 import SwiftUI
 import GoogleSignIn
+import FirebaseAuth
 
 struct VerticalSidebarHeader: View {
     private let googleUser = GIDSignIn.sharedInstance.currentUser
+    @ObservedObject var userModel = UserViewModel()
     @Binding var isShowingSidebar: Bool
     
     var body: some View {        
@@ -21,9 +23,9 @@ struct VerticalSidebarHeader: View {
                 .clipShape(Circle())
                 .padding(.bottom, 14)
             
-            Text(googleUser?.profile?.name ?? "Tanner Maasen")
+            Text(googleUser?.profile?.name ?? userModel.user.fname)
                 .font(.custom("Ubuntu-Bold", size: 26))
-            Text(googleUser?.profile?.email ?? "tmaasen@gmail.com")
+            Text(Auth.auth().currentUser?.email ?? "johndoe@test.com")
                 .font(.custom("Ubuntu-Italic", size: 14))
                 .foregroundColor(.gray)
         }.padding()

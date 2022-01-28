@@ -6,18 +6,27 @@
 //
 
 import Foundation
-import Firebase
+import FirebaseFirestore
+import FirebaseFirestoreSwift
+import FirebaseAuth
+
+protocol UserViewModelProtocol {
+    func getUser()
+    func updateUser()
+}
 
 class UserViewModel: ObservableObject {
     private var db = Firestore.firestore()
+    private var utils = UtilFunctions()
     private var currentUser = Auth.auth().currentUser?.uid
-    @Published var user = User(id: "", fname: "", lname: "")
+    @Published var user = User()
+    @Published var title = "The Sandlot"
     
     // gets all user information
     func getUser() {
         if currentUser != nil {
             let docRef = db.collection("users").document(currentUser ?? "user")
-            docRef.getDocument { document, error in
+            docRef.getDocument { (document, error) in
                 if let error = error as NSError? {
                     print("Error getting document: \(error.localizedDescription)")
                 }
@@ -26,7 +35,8 @@ class UserViewModel: ObservableObject {
                         do {
                             self.user = try document.data(as: User.self) ?? self.user
                             print(self.user)
-                            print(self.user.fname)
+                            self.title = "The Sandlot 2"
+                            self.utils.getGreetingMessage(name: self.user.fname)
                         }
                         catch {
                             print(error)

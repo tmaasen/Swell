@@ -10,7 +10,8 @@ import SwiftUI
 struct VerticalSidebarMain: View {
     @Binding var isShowingSidebar: Bool
     @Environment(\.presentationMode) var presentationMode
-    @EnvironmentObject var authModel: AuthenticationViewModel
+    @EnvironmentObject var authViewModel: AuthenticationViewModel
+    @ObservedObject var userViewModel: UserViewModel
     @State var isShowingSignOut: Bool = false
     
     var body: some View {
@@ -32,7 +33,7 @@ struct VerticalSidebarMain: View {
                 //Logout Functionality
                 Divider()
                 HStack {
-                    NavigationLink(destination: Login()) { }
+                    NavigationLink(destination: Login(userViewModel: UserViewModel())) {}
                     Image(systemName: "arrow.left.square.fill")
                         .font(.system(size: 25))
                     Text("Sign Out")
@@ -42,7 +43,7 @@ struct VerticalSidebarMain: View {
                 .onTapGesture { isShowingSignOut = true }
                 .alert(isPresented: $isShowingSignOut) {
                     Alert(title: Text("Are You Sure?"), message: Text("If you sign out, you will return to the login screen."), primaryButton: .destructive(Text("Sign Out")) {
-                        authModel.signOut()
+                        authViewModel.signOut()
                         presentationMode.wrappedValue.dismiss()
                     }, secondaryButton: .cancel(Text("Return")))
                 }
@@ -57,6 +58,6 @@ struct VerticalSidebarMain: View {
 
 struct VerticalSidebarMain_Previews: PreviewProvider {
     static var previews: some View {
-        VerticalSidebarMain(isShowingSidebar: .constant(true))
+        VerticalSidebarMain(isShowingSidebar: .constant(true), userViewModel: UserViewModel())
     }
 }

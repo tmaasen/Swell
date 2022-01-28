@@ -16,8 +16,9 @@ struct Login: View {
     @State var isAuthenticated: Bool = false
     @State private var showForgotPWAlert: Bool = false
     @State private var showInvalidPWAlert: Bool = false
-    @EnvironmentObject var authModel: AuthenticationViewModel
+    @EnvironmentObject var authViewModel: AuthenticationViewModel
     @EnvironmentObject var hudCoordinator: JGProgressHUDCoordinator
+    @ObservedObject var userViewModel: UserViewModel
     
     var body: some View {
         NavigationView {
@@ -36,12 +37,12 @@ struct Login: View {
                         .textContentType(.emailAddress)
                     SecureField("Password", text: $password)
                         .withSecureFieldStyles()
-                    NavigationLink(destination: Home(), isActive: $isAuthenticated) { }
+                    NavigationLink(destination: Home(userViewModel: UserViewModel()), isActive: $isAuthenticated) { }
                     Button("Sign In") {
-                        authModel.signInWithEmail(email: emailAddress, password: password)
+                        authViewModel.signInWithEmail(email: emailAddress, password: password)
                         showLoadingIndicator(pAfterDelay:2.0)
                         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                            if authModel.state != .signedIn {
+                            if authViewModel.state != .signedIn {
                                 showInvalidPWAlert = true
                             }
                         }
@@ -58,7 +59,7 @@ struct Login: View {
                 GoogleSignInButton()
                     .padding()
                     .onTapGesture {
-                        authModel.signIn()
+                        authViewModel.signIn()
                     }
                 
                 Divider()
@@ -74,7 +75,7 @@ struct Login: View {
                             keyboardType: .emailAddress)
                         { result in
                             if let text = result {
-                                authModel.resetPassword(email: text)
+                                authViewModel.resetPassword(email: text)
                             }
                         })
             }
@@ -97,6 +98,6 @@ struct Login: View {
 // FOR DEBUG
 struct Login_Previews: PreviewProvider {
     static var previews: some View {
-        Login()
+        Login(userViewModel: UserViewModel())
     }
 }
