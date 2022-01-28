@@ -21,6 +21,13 @@ struct Register: View {
     private var genderOptions = ["Male", "Female"]
     @EnvironmentObject var authViewModel: AuthenticationViewModel
     
+    var disableForm: Bool {
+        if emailAddress.isEmpty || password.isEmpty || confirmPassword.isEmpty || firstName.isEmpty || lastName.isEmpty || age.isEmpty || height.isEmpty || weight.isEmpty {
+            return true
+        }
+        return false
+    }
+    
     var body: some View {
         VStack {
             Image("LoginImage")
@@ -34,10 +41,16 @@ struct Register: View {
                     TextField("Email Address", text: $emailAddress)
                         .padding()
                         .textContentType(.emailAddress)
+                        .disableAutocorrection(true)
+                        .autocapitalization(.none)
                     SecureField("Password", text: $password)
                         .padding()
+                        .disableAutocorrection(true)
+                        .autocapitalization(.none)
                     SecureField("Confirm Password", text: $confirmPassword)
                         .padding()
+                        .disableAutocorrection(true)
+                        .autocapitalization(.none)
                 }
                 Section(header: Text("Personal Information")) {
                     TextField("First Name", text: $firstName)
@@ -61,18 +74,18 @@ struct Register: View {
                         .padding()
                         .keyboardType(.numberPad)
                 }
-                Divider()
-                Button("Sign Up") {
-                    authViewModel.signUp(email: emailAddress, password: password)
-                    if password.elementsEqual(confirmPassword) {
-                        showInvalidAlert = true
-                    }
+            }
+            Button("Sign Up") {
+                authViewModel.signUp(email: emailAddress, password: password)
+                if !password.elementsEqual(confirmPassword) {
+                    showInvalidAlert = true
                 }
-                .withButtonStyles()
-                .disabled(emailAddress.isEmpty || password.isEmpty || confirmPassword.isEmpty || firstName.isEmpty || lastName.isEmpty || age.isEmpty || height.isEmpty || weight.isEmpty)
-                .alert(isPresented: $showInvalidAlert) {
-                    Alert(title: Text("Password fields do not match."))
-                }
+            }
+            .withButtonStyles()
+            .disabled(disableForm)
+            .opacity(disableForm ? 0.5 : 1.0)
+            .alert(isPresented: $showInvalidAlert) {
+                Alert(title: Text("Password fields do not match. Please try again."))
             }
         }
     }
