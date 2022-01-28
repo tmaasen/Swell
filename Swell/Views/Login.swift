@@ -18,7 +18,7 @@ struct Login: View {
     @State private var showInvalidPWAlert: Bool = false
     @EnvironmentObject var authViewModel: AuthenticationViewModel
     @EnvironmentObject var hudCoordinator: JGProgressHUDCoordinator
-    @ObservedObject var userViewModel: UserViewModel
+    @ObservedObject var userViewModel = UserViewModel()
     
     var body: some View {
         NavigationView {
@@ -37,7 +37,7 @@ struct Login: View {
                         .textContentType(.emailAddress)
                     SecureField("Password", text: $password)
                         .withSecureFieldStyles()
-                    NavigationLink(destination: Home(userViewModel: UserViewModel()), isActive: $isAuthenticated) { }
+                    NavigationLink(destination: Home(), isActive: $isAuthenticated) { }
                     Button("Sign In") {
                         authViewModel.signInWithEmail(email: emailAddress, password: password)
                         showLoadingIndicator(pAfterDelay:2.0)
@@ -98,6 +98,6 @@ struct Login: View {
 // FOR DEBUG
 struct Login_Previews: PreviewProvider {
     static var previews: some View {
-        Login(userViewModel: UserViewModel())
+        Login()
     }
 }

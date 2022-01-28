@@ -10,6 +10,7 @@ import FirebaseFirestore
 import FirebaseFirestoreSwift
 import FirebaseAuth
 
+// Basically an interface
 protocol UserViewModelProtocol {
     func getUser()
     func updateUser()
@@ -20,27 +21,34 @@ class UserViewModel: ObservableObject {
     private var utils = UtilFunctions()
     private var currentUser = Auth.auth().currentUser?.uid
     @Published var user = User()
-    @Published var title = "The Sandlot"
+    
+    init() {
+        getUser()
+    }
     
     // gets all user information
     func getUser() {
         if currentUser != nil {
             let docRef = db.collection("users").document(currentUser ?? "user")
             docRef.getDocument { (document, error) in
-                if let error = error as NSError? {
-                    print("Error getting document: \(error.localizedDescription)")
+                guard error == nil else {
+                    print("Error retrieving user document. ", error?.localizedDescription ?? "")
+                    return
                 }
-                else {
-                    if let document = document {
-                        do {
-                            self.user = try document.data(as: User.self) ?? self.user
-                            print(self.user)
-                            self.title = "The Sandlot 2"
-                            self.utils.getGreetingMessage(name: self.user.fname)
-                        }
-                        catch {
-                            print(error)
-                        }
+                if let document = document, document.exists {
+//                    let data = document.data()
+//                    if let data = data {
+//                        self.user.fname = data["fname"] as? String ?? ""
+//                        self.user.lname = data["lname"] as? String ?? ""
+//                        self.utils.getGreetingMessage(name: self.user.fname)
+//                        print("User: \(self.user)")
+//                    }
+                    do {
+                        self.user = try document.data(as: User.self) ?? self.user
+                        self.utils.getGreetingMessage(name: self.user.fname)
+                    }
+                    catch {
+                        print(error)
                     }
                 }
             }

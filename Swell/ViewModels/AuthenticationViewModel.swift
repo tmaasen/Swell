@@ -110,6 +110,7 @@ class AuthenticationViewModel: ObservableObject {
             try Auth.auth().signOut()
             state = .signedOut
             print(self.state)
+            userViewModel.user = User()
         } catch {
             print(error.localizedDescription)
         }

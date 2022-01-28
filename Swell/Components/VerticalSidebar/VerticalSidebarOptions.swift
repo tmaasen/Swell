@@ -18,7 +18,7 @@ struct VerticalSidebarOptions: View {
                 .font(.system(size: 20, weight: .semibold))
             Spacer()
         }
-        .padding(.leading, 15)
+        .padding(.leading, 10)
     }
 }
 

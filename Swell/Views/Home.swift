@@ -14,7 +14,7 @@ struct Home: View {
     @State private var isShowingSidebar: Bool = false
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var authViewModel: AuthenticationViewModel
-    @ObservedObject var userViewModel: UserViewModel
+    @ObservedObject var userViewModel = UserViewModel()
     
     var body: some View {
         let drag = DragGesture()
@@ -29,7 +29,7 @@ struct Home: View {
             NavigationView {
                 ZStack(alignment: .leading) {
                     if isShowingSidebar {
-                        VerticalSidebarMain(isShowingSidebar: $isShowingSidebar, userViewModel: UserViewModel())
+                        VerticalSidebarMain(isShowingSidebar: $isShowingSidebar)
                             .frame(width: geometry.size.width/1.5, height: geometry.size.height)
                             .background(RoundedRectangle(cornerRadius: 8)
                                             .fill(Color(.darkGray))
@@ -73,16 +73,12 @@ struct Home: View {
                 )
                 .ignoresSafeArea()
             }
-        }.onAppear(perform: {
-//            userViewModel.getUser()
-            print("Name: \(userViewModel.user.fname)")
-            print("Movie: \(userViewModel.title)")
-        })
+        }
     }
 }
 
 struct Home_Previews: PreviewProvider {
     static var previews: some View {
-        Home(userViewModel: UserViewModel())
+        Home()
     }
 }

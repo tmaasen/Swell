@@ -11,7 +11,7 @@ struct VerticalSidebarMain: View {
     @Binding var isShowingSidebar: Bool
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var authViewModel: AuthenticationViewModel
-    @ObservedObject var userViewModel: UserViewModel
+    @ObservedObject var userViewModel = UserViewModel()
     @State var isShowingSignOut: Bool = false
     
     var body: some View {
@@ -33,7 +33,7 @@ struct VerticalSidebarMain: View {
                 //Logout Functionality
                 Divider()
                 HStack {
-                    NavigationLink(destination: Login(userViewModel: UserViewModel())) {}
+                    NavigationLink(destination: Login()) {}
                     Image(systemName: "arrow.left.square.fill")
                         .font(.system(size: 25))
                     Text("Sign Out")
@@ -58,6 +58,6 @@ struct VerticalSidebarMain: View {
 
 struct VerticalSidebarMain_Previews: PreviewProvider {
     static var previews: some View {
-        VerticalSidebarMain(isShowingSidebar: .constant(true), userViewModel: UserViewModel())
+        VerticalSidebarMain(isShowingSidebar: .constant(true))
     }
 }
