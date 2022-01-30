@@ -31,7 +31,8 @@ struct Register: View {
     var body: some View {
         VStack {
             Image("LoginImage")
-                .aspectRatio(contentMode: .fit)
+                .resizable()
+                .frame(width: 80, height: 80)
             Text("Welcome to Swell")
                 .foregroundColor(.swellOrange)
                 .font(.custom("Ubuntu-Bold", size: 40))
@@ -87,6 +88,8 @@ struct Register: View {
             .alert(isPresented: $showInvalidAlert) {
                 Alert(title: Text("Password fields do not match. Please try again."))
             }
+        }.onTapGesture {
+            hideKeyboard()
         }
     }
 }

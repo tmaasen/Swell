@@ -27,6 +27,26 @@ public extension ZStack {
             .zIndex(1.0)
             .navigationBarHidden(true)
     }
+    func withDashboardStyles(geometry: GeometryProxy) -> some View {
+        self.frame(width: geometry.size.width, height: geometry.size.height)
+            .background(
+                LinearGradient(
+                    gradient: UtilFunctions.gradient,
+                    startPoint: .top,
+                    endPoint: .bottom)
+            )
+            .ignoresSafeArea()
+    }
+}
+
+extension VerticalSidebarMain {
+    func withShowSidebarStyles(geometry: GeometryProxy) -> some View {
+        self.frame(width: geometry.size.width/1.5, height: geometry.size.height)
+            .background(RoundedRectangle(cornerRadius: 8)
+                            .fill(Color(.darkGray))
+                            .shadow(radius: 15))
+            .transition(.move(edge: .leading))
+    }
 }
 
 public extension TextField {
@@ -136,5 +156,9 @@ public struct AlertWrapper<Content: View>: UIViewControllerRepresentable {
 public extension View {
     func alert(isPresented: Binding<Bool>, _ alert: TextAlert) -> some View {
         AlertWrapper(isPresented: isPresented, alert: alert, content: self)
+    }
+    func hideKeyboard() {
+        let resign = #selector(UIResponder.resignFirstResponder)
+        UIApplication.shared.sendAction(resign, to: nil, from: nil, for: nil)
     }
 }

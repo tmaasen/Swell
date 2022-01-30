@@ -19,8 +19,13 @@ class UtilFunctions: ObservableObject {
     func getGreetingMessage(name: String) {
         let hour = Calendar.current.component(.hour, from: Date())
         switch hour {
+        case 0..<5 :
+            UtilFunctions.gradient = Gradient(stops: [
+                                                .init(color: Color.eveningLinear1, location: 0.23),
+                                                .init(color: Color.eveningLinear2, location: 0.84)])
+            UtilFunctions.greeting = "Good evening, \n\(name)"
         case 5..<12 : UtilFunctions.greeting = "Good morning, \n\(name)"
-        case 13..<17 : UtilFunctions.greeting = "Good afternoon, \n\(name)"
+        case 12..<17 : UtilFunctions.greeting = "Good afternoon, \n\(name)"
         case 17..<24 :
             UtilFunctions.gradient = Gradient(stops: [
                                                 .init(color: Color.eveningLinear1, location: 0.23),

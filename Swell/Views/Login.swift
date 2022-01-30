@@ -24,17 +24,20 @@ struct Login: View {
         NavigationView {
             VStack {
                 Image("LoginImage")
-                    .aspectRatio(contentMode: .fit)
+                    .resizable()
+                    .frame(width: 80, height: 80)
                 
-                Text("Welcome to Swell")
+                Text("Swell: Live Life Well")
                     .foregroundColor(.swellOrange)
-                    .font(.custom("Ubuntu-Bold", size: 40))
+                    .font(.custom("Ubuntu-Bold", size: 35))
+                    .padding(.top, 15)
                     .multilineTextAlignment(.center)
                 
                 VStack {
                     TextField("Email Address", text: $emailAddress)
                         .withTextFieldStyles()
                         .textContentType(.emailAddress)
+                        .keyboardType(.emailAddress)
                     SecureField("Password", text: $password)
                         .withSecureFieldStyles()
                     NavigationLink(destination: Home(), isActive: $isAuthenticated) { }
@@ -78,6 +81,8 @@ struct Login: View {
                                 authViewModel.resetPassword(email: text)
                             }
                         })
+            }.onTapGesture {
+                hideKeyboard()
             }
         }
     }
