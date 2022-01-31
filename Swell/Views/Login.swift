@@ -43,7 +43,7 @@ struct Login: View {
                     NavigationLink(destination: Home(), isActive: $isAuthenticated) { }
                     Button("Sign In") {
                         authViewModel.signInWithEmail(email: emailAddress, password: password)
-                        showLoadingIndicator(pAfterDelay:2.0)
+                        showLoadingIndicator(pAfterDelay: 2.0)
                         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                             if authViewModel.state != .signedIn {
                                 showInvalidPWAlert = true
@@ -86,8 +86,7 @@ struct Login: View {
             }
         }
     }
-    
-    private func showLoadingIndicator(pAfterDelay:Double) {
+    func showLoadingIndicator(pAfterDelay:Double) {
         hudCoordinator.showHUD {
             let hud = JGProgressHUD()
             hud.backgroundColor = UIColor(white: 0, alpha: 0.4)

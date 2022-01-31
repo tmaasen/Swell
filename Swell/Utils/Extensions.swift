@@ -27,9 +27,8 @@ public extension ZStack {
             .zIndex(1.0)
             .navigationBarHidden(true)
     }
-    func withDashboardStyles(geometry: GeometryProxy) -> some View {
-        self.frame(width: geometry.size.width, height: geometry.size.height)
-            .background(
+    func withDashboardStyles() -> some View {
+        self.background(
                 LinearGradient(
                     gradient: UtilFunctions.gradient,
                     startPoint: .top,

@@ -12,7 +12,9 @@ struct PexelImage: View {
     @ObservedObject var pexelsViewModel = PexelsViewModel()
     
     init() {
-        pexelsViewModel.getPexel()
+        if pexelsViewModel.pexel.photos?[0].src?.original == nil {
+            pexelsViewModel.getPexel()
+        }
     }
     
     var body: some View {
@@ -31,10 +33,13 @@ struct ImageOverlay: View {
     var body: some View {
         ZStack {
             Text("\"Make everyday count\"")
-                .font(.custom("Ubuntu-BoldItalic", size: 35))
+                .font(.system(size: 33, weight: .semibold))
+                .italic()
+//                .font(.custom("Ubuntu-BoldItalic", size: 33))
                 .foregroundColor(.white)
                 .lineSpacing(5.0)
-                .padding(.bottom, 5.0)
+                .padding(.bottom, 30.0)
+                .padding(.leading, 15.0)
         }
     }
 }
