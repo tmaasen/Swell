@@ -9,23 +9,43 @@ import SwiftUI
 
 struct Onboarding: View {
     
-    let pages: [OnboardingInfo]
-    @State private var currentPage = 0
-    
     var body: some View {
         TabView {
-            ForEach (0 ..< self.pages.count) { index in
-                OnboardingPage(page: self.pages[index])
-                    .tag(index)
-                    .padding()
-            }
+            OnboardView(image: "OnboardingPieChart", title: "Title", description: "Description")
+            OnboardView(image: "OnboardingDataSecurity", title: "Title", description: "Description")
+            OnboardView(image: "OnboardingDirection", title: "Title", description: "Description")
+            OnboardView(image: "OnboardingCommunication", title: "Title", description: "Description")
+            OnboardView(image: "OnboardingWinners", title: "Title", description: "Description")
         }
         .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
+        .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .always))
     }
 }
 
-//struct Onboarding_Previews: PreviewProvider {
-//    static var previews: some View {
-//        Onboarding()
-//    }
-//}
+struct OnboardView: View {
+    let image: String
+    let title: String
+    let description: String
+    
+    var body: some View {
+        VStack(spacing: 20) {
+            Image(image)
+                .resizable()
+                .scaledToFit()
+            
+            Text(title)
+                .font(.title).bold()
+            
+            Text(description)
+                .multilineTextAlignment(.center)
+                .foregroundColor(.secondary)
+        }
+        .padding(.horizontal, 40)
+    }
+}
+
+struct OnboardView_Previews: PreviewProvider {
+    static var previews: some View {
+        Onboarding()
+    }
+}

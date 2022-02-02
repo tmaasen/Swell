@@ -16,7 +16,7 @@ struct VerticalSidebarHeader: View {
     
     var body: some View {        
         VStack(alignment: .leading) {
-            NetworkImage(url: googleUser?.profile?.imageURL(withDimension: 100))
+            NetworkImage(url: googleUser?.profile?.imageURL(withDimension: 100), isShowingSidebar: $isShowingSidebar)
                 .scaledToFit()
                 .clipped()
                 .frame(width: 80, height: 80)

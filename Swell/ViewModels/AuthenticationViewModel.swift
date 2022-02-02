@@ -111,6 +111,7 @@ class AuthenticationViewModel: ObservableObject {
             state = .signedOut
             print(self.state)
             userViewModel.user = User()
+            UtilFunctions.greeting = ""
         } catch {
             print(error.localizedDescription)
         }

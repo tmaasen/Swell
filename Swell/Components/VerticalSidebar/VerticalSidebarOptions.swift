@@ -12,6 +12,7 @@ struct VerticalSidebarOptions: View {
     
     var body: some View {
         HStack {
+            NavigationLink(destination: Profile()) {}
             Image(systemName: viewModel.imageName)
                 .font(.system(size: 25))
             Text(viewModel.title)

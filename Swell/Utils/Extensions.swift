@@ -19,14 +19,6 @@ public extension Color {
 }
 
 public extension ZStack {
-    func withSidebarStyles() -> some View {
-        self.padding(.top, 50)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(Color(.white))
-            .edgesIgnoringSafeArea(.all)
-            .zIndex(1.0)
-            .navigationBarHidden(true)
-    }
     func withDashboardStyles() -> some View {
         self.background(
                 LinearGradient(
@@ -35,6 +27,17 @@ public extension ZStack {
                     endPoint: .bottom)
             )
             .ignoresSafeArea()
+    }
+}
+
+public extension VStack {
+    func withSidebarStyles() -> some View {
+        self.padding(.top, 50)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(Color(.white))
+            .edgesIgnoringSafeArea(.all)
+            .zIndex(5.0)
+            .navigationBarHidden(true)
     }
 }
 
@@ -159,5 +162,17 @@ public extension View {
     func hideKeyboard() {
         let resign = #selector(UIResponder.resignFirstResponder)
         UIApplication.shared.sendAction(resign, to: nil, from: nil, for: nil)
+    }
+    @ViewBuilder
+    func redacted(when condition: Bool, redactionType: RedactionType) -> some View {
+        if !condition {
+            unredacted()
+        } else {
+            redacted(reason: redactionType)
+        }
+    }
+
+    func redacted(reason: RedactionType?) -> some View {
+        self.modifier(Redactable(type: reason))
     }
 }

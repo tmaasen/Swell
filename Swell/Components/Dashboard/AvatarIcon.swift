@@ -10,10 +10,11 @@ import GoogleSignIn
 
 struct AvatarIcon: View {
     private let googleUser = GIDSignIn.sharedInstance.currentUser
+    @Binding var isShowingSidebar: Bool
     
     var body: some View {
         HStack {
-            NetworkImage(url: googleUser?.profile?.imageURL(withDimension: 100))
+            NetworkImage(url: googleUser?.profile?.imageURL(withDimension: 100), isShowingSidebar: $isShowingSidebar)
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 40, height: 40, alignment: .topLeading)
                 .cornerRadius(25.0)
@@ -25,6 +26,7 @@ struct AvatarIcon: View {
 /// A generic view that shows images from the network.
 struct NetworkImage: View {
   let url: URL?
+    @Binding var isShowingSidebar: Bool
 
   var body: some View {
     if let url = url,
@@ -37,12 +39,13 @@ struct NetworkImage: View {
       Image(systemName: "person.circle.fill")
         .resizable()
         .aspectRatio(contentMode: .fit)
+        .foregroundColor(isShowingSidebar ? .black : .white)
     }
   }
 }
 
 struct AvatarIcon_Previews: PreviewProvider {
     static var previews: some View {
-        AvatarIcon()
+        AvatarIcon(isShowingSidebar: .constant(true))
     }
 }

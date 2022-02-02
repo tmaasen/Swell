@@ -15,6 +15,17 @@ enum VerticalSidebar: Int, CaseIterable {
     case history
     case learning
     
+    var destination: String {
+        switch self {
+        case .profile: return "Profile"
+        case .myMeals: return "MyMeals"
+        case .preLog: return "Daily Pre-Log"
+        case .goals: return "Goals"
+        case .history: return "History"
+        case .learning: return "Learning"
+        }
+    }
+    
     var title: String {
         switch self {
         case .profile: return "Profile"

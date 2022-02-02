@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import FirebaseAuth
 
 struct Header: View {
     @Binding var isShowingSidebar: Bool
@@ -18,11 +19,12 @@ struct Header: View {
                     withAnimation(.spring()) {
                         isShowingSidebar.toggle()
                     }
-                }, label: {AvatarIcon()}).buttonStyle(PlainButtonStyle())
+                }, label: {AvatarIcon(isShowingSidebar: $isShowingSidebar)}).buttonStyle(PlainButtonStyle())
                 //Greeting Message
                 Text((UtilFunctions.greeting))
                     .font(.custom("Ubuntu-Bold", size: 40))
                     .foregroundColor(.white)
+                    .fixedSize(horizontal: false, vertical: true)
             }
             .padding()
             .frame(width: geometry.size.width, height: geometry.size.height, alignment: .topLeading)

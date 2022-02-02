@@ -39,6 +39,8 @@ class UserViewModel: ObservableObject {
                     do {
                         self.user = try document.data(as: User.self) ?? self.user
                         self.utils.getGreetingMessage(name: self.user.fname)
+//                        print(self.user.fname)
+//                        print(UtilFunctions.greeting)
                     }
                     catch {
                         print(error)
