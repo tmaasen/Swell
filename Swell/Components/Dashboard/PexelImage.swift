@@ -25,7 +25,7 @@ struct PexelImage: View {
             .frame(width: 350, height: 250, alignment: .center)
             .brightness(-0.25)
             .overlay(ImageOverlay(), alignment: .bottomLeading)
-//            .redacted(when: isLoading, redactionType: .customPlaceholder)
+            .redacted(when: isLoading, redactionType: .customPlaceholder)
             .onAppear {
                 if ((pexelsViewModel.pexel.photos?[0].src?.original) != nil) {
                     isLoading = false
@@ -40,7 +40,6 @@ struct ImageOverlay: View {
             Text("\"Make everyday count\"")
                 .font(.system(size: 33, weight: .bold))
                 .italic()
-//                .font(.custom("Ubuntu-BoldItalic", size: 33))
                 .foregroundColor(.white)
                 .lineSpacing(5.0)
                 .padding(.bottom, 30.0)

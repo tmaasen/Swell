@@ -12,4 +12,8 @@ struct User: Codable, Identifiable {
     @DocumentID var id: String?
     var fname: String = ""
     var lname: String = ""
+    var age: Int = 0
+    var gender: String = ""
+    var height: Int = 0
+    var weight: Int = 0
 }

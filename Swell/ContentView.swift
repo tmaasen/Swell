@@ -14,10 +14,12 @@ struct ContentView: View {
     @EnvironmentObject var authModel: AuthenticationViewModel
 
     var body: some View {
-        JGProgressHUDPresenter(userInteractionOnHUD: blockTouches) {
-            switch authModel.state {
-            case .signedIn: Home(userViewModel: UserViewModel())
-            case .signedOut: Login(userViewModel: UserViewModel())
+        NavigationView {
+            JGProgressHUDPresenter(userInteractionOnHUD: blockTouches) {
+                switch authModel.state {
+                case .signedIn: Home()
+                case .signedOut: Login()
+                }
             }
         }
     }

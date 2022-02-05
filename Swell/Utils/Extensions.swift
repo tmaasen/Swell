@@ -30,13 +30,13 @@ public extension ZStack {
     }
 }
 
-public extension VStack {
+public extension ZStack {
     func withSidebarStyles() -> some View {
         self.padding(.top, 50)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(Color(.white))
+            .zIndex(1.0)
             .edgesIgnoringSafeArea(.all)
-            .zIndex(5.0)
             .navigationBarHidden(true)
     }
 }
@@ -52,7 +52,7 @@ extension VerticalSidebarMain {
 }
 
 public extension TextField {
-    func withTextFieldStyles() -> some View {
+    func withLoginStyles() -> some View {
         self.padding()
             .overlay(
                 RoundedRectangle(cornerRadius: 8)
@@ -61,6 +61,16 @@ public extension TextField {
             .disableAutocorrection(true)
             .autocapitalization(.none)
             .padding(.bottom, 20)
+    }
+    
+    func withProfileStyles() -> some View {
+        self.padding(10)
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(Color.swellOrange, lineWidth: 2)
+            )
+            .disableAutocorrection(true)
+            .padding(.horizontal)
     }
 }
 

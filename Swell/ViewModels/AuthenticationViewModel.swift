@@ -79,10 +79,9 @@ class AuthenticationViewModel: ObservableObject {
                 print(error.localizedDescription)
             } else {
                 self.state = .signedIn
+                self.userViewModel.getUser()
                 utils.getGreetingMessage(name: GIDSignIn.sharedInstance.currentUser?.profile?.givenName ?? "")
                 print(self.state)
-                // get all user info
-//                self.userViewModel.getUser()
             }
         }
     }

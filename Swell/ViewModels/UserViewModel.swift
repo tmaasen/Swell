@@ -38,9 +38,9 @@ class UserViewModel: ObservableObject {
                 if let document = document, document.exists {
                     do {
                         self.user = try document.data(as: User.self) ?? self.user
+                        print("User: \(self.user)")
                         self.utils.getGreetingMessage(name: self.user.fname)
-//                        print(self.user.fname)
-//                        print(UtilFunctions.greeting)
+                        print(UtilFunctions.greeting)
                     }
                     catch {
                         print(error)
@@ -50,7 +50,7 @@ class UserViewModel: ObservableObject {
         }
     }
     
-    func updateUser(user: User) {
+    func setUser() {
         let docRef = db.collection("users").document(self.currentUser ?? "user")
         do {
             try docRef.setData(from: user)
@@ -60,7 +60,7 @@ class UserViewModel: ObservableObject {
         }
     }
     
-    func addUserInfo() {
+    func register(user: User) {
         let docRef = db.collection("users").document(self.currentUser ?? "user")
         do {
             try docRef.setData(from: user)
