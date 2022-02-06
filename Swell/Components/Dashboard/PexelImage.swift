@@ -9,12 +9,8 @@ import SwiftUI
 import SDWebImageSwiftUI
 
 struct PexelImage: View {
-    @ObservedObject var pexelsViewModel = PexelsViewModel()
-    @State var isLoading: Bool = true
-    
-    init() {
-        pexelsViewModel.getPexel()
-    }
+    @StateObject var pexelsViewModel = PexelsViewModel()
+    @State private var isLoading: Bool = true
     
     var body: some View {
         WebImage(url: URL(string: pexelsViewModel.pexel.photos?[0].src?.original ?? ""))

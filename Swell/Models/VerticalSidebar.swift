@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 enum VerticalSidebar: Int, CaseIterable {
     case profile
@@ -45,6 +46,17 @@ enum VerticalSidebar: Int, CaseIterable {
         case .goals: return "checkmark"
         case .history: return "hourglass"
         case .learning: return "bookmark"
+        }
+    }
+    
+    var navDestination: some View {
+        switch self {
+        case .profile: return AnyView(Profile())
+        case .myMeals: return AnyView(Home())
+        case .preLog: return AnyView(Profile())
+        case .goals: return AnyView(Profile())
+        case .history: return AnyView(Profile())
+        case .learning: return AnyView(Profile())
         }
     }
 }

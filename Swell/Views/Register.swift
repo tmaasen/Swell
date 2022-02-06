@@ -6,20 +6,25 @@
 //
 
 import SwiftUI
+import JGProgressHUD_SwiftUI
 
 struct Register: View {
     @State private var showInvalidAlert: Bool = false
-    @State var emailAddress: String = ""
-    @State var password: String = ""
-    @State var confirmPassword: String = ""
-    @State var firstName: String = ""
-    @State var lastName: String = ""
+    @State private var showLoader: Bool = false
+    @State private var isSignedUp: Bool = false
+    @State private var emailAddress: String = ""
+    @State private var password: String = ""
+    @State private var confirmPassword: String = ""
+    @State private var firstName: String = ""
+    @State private var lastName: String = ""
     @State private var selectedGenderIndex: Int = 0
-    @State var age: String = ""
-    @State var height: String = ""
-    @State var weight: String = ""
+    @State private var age: String = ""
+    @State private var height: String = ""
+    @State private var weight: String = ""
     private var genderOptions = ["Male", "Female"]
     @EnvironmentObject var authViewModel: AuthenticationViewModel
+    @EnvironmentObject var userViewModel: UserViewModel
+    @EnvironmentObject var hudCoordinator: JGProgressHUDCoordinator
     
     var disableForm: Bool {
         if emailAddress.isEmpty || password.isEmpty || confirmPassword.isEmpty || firstName.isEmpty || lastName.isEmpty || age.isEmpty || height.isEmpty || weight.isEmpty {
@@ -64,7 +69,9 @@ struct Register: View {
                         ForEach(0..<genderOptions.count) {
                             Text(self.genderOptions[$0])
                         }
-                    }.padding()
+                    }
+                    .padding()
+                    .pickerStyle(SegmentedPickerStyle())
                     TextField("Age", text: $age)
                         .padding()
                         .keyboardType(.numberPad)
@@ -76,13 +83,29 @@ struct Register: View {
                         .keyboardType(.numberPad)
                 }
             }
+            NavigationLink(destination: Login(), isActive: $isSignedUp) {}
             Button("Sign Up") {
-                authViewModel.signUp(email: emailAddress, password: password)
                 if !password.elementsEqual(confirmPassword) {
                     showInvalidAlert = true
+                } else {
+                    toggleLoadingIndicator()
+                    authViewModel.signUp(email: emailAddress, password: password)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                    userViewModel.setNewUser(
+                        fname: firstName,
+                        lname: lastName,
+                        age: Int(age) ?? 0,
+                        gender: (selectedGenderIndex == 0 ? "Male" : "Female"),
+                        height: Int(height) ?? 0,
+                        weight: Int(weight) ?? 0
+                    )
+                    showLoader = false
+                    isSignedUp = true
+                    }
                 }
             }
             .withButtonStyles()
+            .padding()
             .disabled(disableForm)
             .opacity(disableForm ? 0.5 : 1.0)
             .alert(isPresented: $showInvalidAlert) {
@@ -90,6 +113,19 @@ struct Register: View {
             }
         }.onTapGesture {
             hideKeyboard()
+        }
+    }
+    func toggleLoadingIndicator() {
+        hudCoordinator.showHUD {
+            let hud = JGProgressHUD()
+            hud.backgroundColor = UIColor(white: 0, alpha: 0.4)
+            hud.shadow = JGProgressHUDShadow(color: .black, offset: .zero, radius: 4, opacity: 0.9)
+            hud.vibrancyEnabled = true
+            hud.textLabel.text = "Loading"
+            if showLoader == false {
+                hud.dismiss(afterDelay: 0.0)
+            }
+            return hud
         }
     }
 }

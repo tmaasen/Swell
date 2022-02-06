@@ -11,6 +11,10 @@ class PexelsViewModel: ObservableObject {
     let API_URL:URL! = URL(string: "https://api.pexels.com/v1/search?query=nature?page=1&per_page=1&size=small&orientation=landscape")
     @Published var pexel = Pexel()
     
+    init() {
+        getPexel()
+    }
+    
     // Gets one nature picture from Pexels
     func getPexel() {
         guard let apiKey = Bundle.main.infoDictionary?["PEXELS_API_KEY"] as? String else {return}

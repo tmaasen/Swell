@@ -15,8 +15,6 @@ class AuthenticationViewModel: ObservableObject {
         case signedOut
     }
     
-    var utils = UtilFunctions()
-    var userViewModel = UserViewModel()
     @Published var state: SignInState = .signedOut
     
     // sign in with email and password
@@ -25,8 +23,9 @@ class AuthenticationViewModel: ObservableObject {
             if result != nil, error == nil {
                 self.state = .signedIn
                 print(self.state)
-                // get all user info...it calls greeting message
-                self.userViewModel.getUser()
+                UserDefaults.standard.set(true, forKey: "isLoggedIn")
+                // set last loggedIn time and get user info
+//                self.userViewModel.setLoginTimestamp()
                 return
             } else {
                 return
@@ -36,13 +35,17 @@ class AuthenticationViewModel: ObservableObject {
     
     func signUp(email: String, password: String) {
         Auth.auth().createUser(withEmail: email, password: password) {result, error in
-            guard result != nil, error == nil else {
+            if result != nil, error == nil {
+                print("New user email created")
+                return
+            } else {
+                print(error?.localizedDescription ?? "Error Signing Up User")
                 return
             }
         }
     }
     // sign in with Google
-    func signIn() {
+    func signInWithGoogle() {
         if GIDSignIn.sharedInstance.hasPreviousSignIn() {
             GIDSignIn.sharedInstance.restorePreviousSignIn {
                 [unowned self] user, error in
@@ -79,8 +82,10 @@ class AuthenticationViewModel: ObservableObject {
                 print(error.localizedDescription)
             } else {
                 self.state = .signedIn
-                self.userViewModel.getUser()
-                utils.getGreetingMessage(name: GIDSignIn.sharedInstance.currentUser?.profile?.givenName ?? "")
+                UserDefaults.standard.set(true, forKey: "isLoggedIn")
+                // will set login and get user info
+//                self.userViewModel.setLoginTimestamp()
+//                utils.getGreetingMessage(name: GIDSignIn.sharedInstance.currentUser?.profile?.givenName ?? "")
                 print(self.state)
             }
         }
@@ -107,10 +112,11 @@ class AuthenticationViewModel: ObservableObject {
         GIDSignIn.sharedInstance.signOut()
         do {
             try Auth.auth().signOut()
-            state = .signedOut
+            self.state = .signedOut
             print(self.state)
-            userViewModel.user = User()
-            UtilFunctions.greeting = ""
+            UserDefaults.standard.set(false, forKey: "isLoggedIn")
+//            userViewModel.user = User()
+//            utils.greeting = ""
         } catch {
             print(error.localizedDescription)
         }

@@ -13,13 +13,14 @@ struct Login: View {
     
     @State private var emailAddress: String = ""
     @State private var password: String = ""
-    @State private var showAuthLoader: Bool = false
     @State private var isAuthenticated: Bool = false
+    @State private var showAuthLoader: Bool = false
     @State private var showForgotPWAlert: Bool = false
     @State private var showInvalidPWAlert: Bool = false
     @EnvironmentObject var authViewModel: AuthenticationViewModel
+    @EnvironmentObject var userViewModel: UserViewModel
+    @EnvironmentObject var utils: UtilFunctions
     @EnvironmentObject var hudCoordinator: JGProgressHUDCoordinator
-    @StateObject var userViewModel = UserViewModel()
     
     var body: some View {
         VStack(alignment: .center) {
@@ -40,37 +41,34 @@ struct Login: View {
                     .keyboardType(.emailAddress)
                 SecureField("Password", text: $password)
                     .withSecureFieldStyles()
-                NavigationLink(destination: Home(), isActive: $isAuthenticated) { }
-                Button("Sign In") {
-                    toggleLoadingIndicator()
-                    authViewModel.signInWithEmail(email: emailAddress, password: password)
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                        if authViewModel.state != .signedIn {
-                            showInvalidPWAlert = true
-                            showAuthLoader = false
-                        } else {
-                            isAuthenticated = true
+                NavigationLink(destination: Home(), isActive: $isAuthenticated) {
+                    Button("Sign In") {
+                        toggleLoadingIndicator()
+                        authViewModel.signInWithEmail(email: emailAddress, password: password)
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                            if authViewModel.state != .signedIn {
+                                showInvalidPWAlert = true
+                            } else {
+                                userViewModel.setLoginTimestamp()
+                                isAuthenticated = true
+                            }
                             showAuthLoader = false
                         }
                     }
-                }
-                .withButtonStyles()
-                .disabled(emailAddress.isEmpty || password.isEmpty)
-                .alert(isPresented: $showInvalidPWAlert) {
-                    Alert(title: Text("Email or Password Incorrect"))
+                    .withButtonStyles()
+                    .disabled(emailAddress.isEmpty || password.isEmpty)
+                    .alert(isPresented: $showInvalidPWAlert) {
+                        Alert(title: Text("Email or Password Incorrect"))
+                    }
                 }
             }.padding()
-            
-            Divider()
-            
+                        
             GoogleSignInButton()
                 .padding()
                 .onTapGesture {
-                    authViewModel.signIn()
+                    authViewModel.signInWithGoogle()
                 }.frame(width: 220, height: 80)
             
-            Divider()
-
             NavigationLink("Register", destination: Register())
             
             Button("Forgot Password") {
@@ -86,7 +84,9 @@ struct Login: View {
                         }
                     })
             .frame(width: 200, height: 30)
-        }.onTapGesture {
+        }
+        .navigationBarBackButtonHidden(true)
+        .onTapGesture {
                 hideKeyboard()
             }
     }
@@ -98,7 +98,7 @@ struct Login: View {
             hud.vibrancyEnabled = true
             hud.textLabel.text = "Loading"
             if showAuthLoader == false {
-                hud.dismiss(afterDelay: 0.0)
+                hud.dismiss(afterDelay: 3.0)
             }
             return hud
         }

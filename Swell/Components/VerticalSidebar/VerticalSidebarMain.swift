@@ -9,8 +9,8 @@ import SwiftUI
 struct VerticalSidebarMain: View {
     @Binding var isShowingSidebar: Bool
     @Environment(\.presentationMode) var presentationMode
-    @EnvironmentObject var authModel: AuthenticationViewModel
-    @State var isShowingSignOut: Bool = false
+    @EnvironmentObject var authViewModel: AuthenticationViewModel
+    @State private var isShowingSignOut: Bool = false
     
     var body: some View {
         ZStack(alignment: .topLeading) {
@@ -21,11 +21,7 @@ struct VerticalSidebarMain: View {
                 }
                 // Options
                 ForEach(VerticalSidebar.allCases, id: \.self) {option in
-                    NavigationLink(
-                        destination: Text(option.title),
-                        label: {
-                            VerticalSidebarOptions(viewModel: option)
-                        }).buttonStyle(PlainButtonStyle())
+                    VerticalSidebarOption(viewModel: option)
                 }.padding()
                 
                 //Logout Functionality
@@ -41,7 +37,7 @@ struct VerticalSidebarMain: View {
                 .onTapGesture { isShowingSignOut = true }
                 .alert(isPresented: $isShowingSignOut) {
                     Alert(title: Text("Are You Sure?"), message: Text("If you sign out, you will return to the login screen."), primaryButton: .destructive(Text("Sign Out")) {
-                        authModel.signOut()
+                        authViewModel.signOut()
                         presentationMode.wrappedValue.dismiss()
                     }, secondaryButton: .cancel(Text("Return")))
                 }

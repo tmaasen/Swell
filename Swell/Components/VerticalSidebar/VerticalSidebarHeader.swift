@@ -11,7 +11,7 @@ import FirebaseAuth
 
 struct VerticalSidebarHeader: View {
     private let googleUser = GIDSignIn.sharedInstance.currentUser
-    @ObservedObject var userViewModel = UserViewModel()
+    @EnvironmentObject var userViewModel: UserViewModel
     @Binding var isShowingSidebar: Bool
     
     var body: some View {        
