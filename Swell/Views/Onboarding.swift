@@ -9,13 +9,17 @@ import SwiftUI
 
 struct Onboarding: View {
     
+    init() {
+        UserDefaults.standard.set(true, forKey: "hasLaunchedBefore")
+    }
+    
     var body: some View {
         TabView {
-            OnboardView(image: "OnboardingPieChart", title: "Title", description: "Description")
-            OnboardView(image: "OnboardingDataSecurity", title: "Title", description: "Description")
-            OnboardView(image: "OnboardingDirection", title: "Title", description: "Description")
-            OnboardView(image: "OnboardingCommunication", title: "Title", description: "Description")
-            OnboardView(image: "OnboardingWinners", title: "Title", description: "Description", buttonText: "Let's go!")
+            OnboardView(image: "OnboardingDirection", title: "Food and mood. A connection?", description: "Swell seeks to promote a healthy, sustainable lifestyle, and bring a positive, mindful perspective to nutrition")
+            OnboardView(image: "OnboardingPieChart", title: "Food and mood logging", description: "Swell helps you realize your eating patterns and how they correlate with your mood")
+            OnboardView(image: "OnboardingDiet", title: "No diet? No problem", description: "Swell doesn't believe in temporary diets for a quick (loss or gain) result. We promote eating habits that are healthy and sustainable")
+            OnboardView(image: "OnboardingDataSecurity", title: "We protect your data", description: "At Swell, security is a top priority. Swell stores your data securely and does not share it with anyone")
+            OnboardView(image: "OnboardingWinners", title: "Celebrate achieving your goals!", description: "Set personalized, achievable healthy eating goals that will motivate you to Live Life Well ", buttonText: "Start")
         }
         .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
         .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .always))
@@ -29,7 +33,7 @@ struct OnboardView: View {
     var buttonText: String?
     
     var body: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: 40) {
             Image(image)
                 .resizable()
                 .scaledToFit()
@@ -39,15 +43,15 @@ struct OnboardView: View {
             
             Text(description)
                 .multilineTextAlignment(.center)
-                .foregroundColor(.secondary)
+                .foregroundColor(Color("onboardingDescription"))
             
-            if !buttonText!.isEmpty {
-                Button(buttonText ?? "Let's go!") {
-//                    Login()
-                }.withButtonStyles()
+            if buttonText != nil {
+                NavigationLink(buttonText!, destination: Register())
+                    .withButtonStyles()
             }
         }
-        .padding(.horizontal, 40)
+        .navigationBarHidden(true)
+        .padding(.horizontal, 30)
     }
 }
 

@@ -19,7 +19,6 @@ struct Login: View {
     @State private var showInvalidPWAlert: Bool = false
     @EnvironmentObject var authViewModel: AuthenticationViewModel
     @EnvironmentObject var userViewModel: UserViewModel
-    @EnvironmentObject var utils: UtilFunctions
     @EnvironmentObject var hudCoordinator: JGProgressHUDCoordinator
     
     var body: some View {
@@ -45,11 +44,10 @@ struct Login: View {
                     Button("Sign In") {
                         toggleLoadingIndicator()
                         authViewModel.signInWithEmail(email: emailAddress, password: password)
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                             if authViewModel.state != .signedIn {
                                 showInvalidPWAlert = true
                             } else {
-                                userViewModel.setLoginTimestamp()
                                 isAuthenticated = true
                             }
                             showAuthLoader = false

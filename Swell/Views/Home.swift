@@ -7,6 +7,7 @@
 import SwiftUI
 import FirebaseAuth
 import JGProgressHUD_SwiftUI
+import GoogleSignIn
 
 struct Home: View {
     
@@ -36,7 +37,13 @@ struct Home: View {
                 }
             }
         }
-        .withDashboardStyles()
+        .background(
+                LinearGradient(
+                    gradient: userViewModel.gradient,
+                    startPoint: .top,
+                    endPoint: .bottom)
+            )
+        .ignoresSafeArea()
         .onTapGesture {
             if isShowingSidebar {
                 withAnimation(.spring()) {
@@ -46,6 +53,7 @@ struct Home: View {
         }
         .onAppear { isShowingSidebar = false
             userViewModel.getUser()
+            userViewModel.getGreeting(name: GIDSignIn.sharedInstance.currentUser?.profile?.givenName ?? userViewModel.user.fname)
         }
         .gesture(DragGesture()
                     .onEnded {

@@ -8,7 +8,7 @@
 import Firebase
 import GoogleSignIn
 
-class AuthenticationViewModel: ObservableObject {
+class AuthenticationViewModel: UserViewModel {
 
     enum SignInState {
         case signedIn
@@ -24,8 +24,9 @@ class AuthenticationViewModel: ObservableObject {
                 self.state = .signedIn
                 print(self.state)
                 UserDefaults.standard.set(true, forKey: "isLoggedIn")
-                // set last loggedIn time and get user info
-//                self.userViewModel.setLoginTimestamp()
+                self.getUser()
+                self.setLoginTimestamp()
+                self.getGreeting(name: self.user.fname)
                 return
             } else {
                 return
@@ -83,9 +84,9 @@ class AuthenticationViewModel: ObservableObject {
             } else {
                 self.state = .signedIn
                 UserDefaults.standard.set(true, forKey: "isLoggedIn")
-                // will set login and get user info
-//                self.userViewModel.setLoginTimestamp()
-//                utils.getGreetingMessage(name: GIDSignIn.sharedInstance.currentUser?.profile?.givenName ?? "")
+                self.getUser()
+                self.setLoginTimestamp()
+                self.getGreeting(name: GIDSignIn.sharedInstance.currentUser?.profile?.givenName ?? "")
                 print(self.state)
             }
         }
@@ -115,8 +116,8 @@ class AuthenticationViewModel: ObservableObject {
             self.state = .signedOut
             print(self.state)
             UserDefaults.standard.set(false, forKey: "isLoggedIn")
-//            userViewModel.user = User()
-//            utils.greeting = ""
+            self.user = User()
+            self.greeting = ""
         } catch {
             print(error.localizedDescription)
         }

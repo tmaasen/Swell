@@ -83,6 +83,13 @@ struct Register: View {
                         .keyboardType(.numberPad)
                 }
             }
+            
+            GoogleSignInButton()
+                .padding()
+                .onTapGesture {
+                    authViewModel.signInWithGoogle()
+                }.frame(width: 220, height: 80)
+            
             NavigationLink(destination: Login(), isActive: $isSignedUp) {}
             Button("Sign Up") {
                 if !password.elementsEqual(confirmPassword) {
@@ -91,16 +98,16 @@ struct Register: View {
                     toggleLoadingIndicator()
                     authViewModel.signUp(email: emailAddress, password: password)
                     DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                    userViewModel.setNewUser(
-                        fname: firstName,
-                        lname: lastName,
-                        age: Int(age) ?? 0,
-                        gender: (selectedGenderIndex == 0 ? "Male" : "Female"),
-                        height: Int(height) ?? 0,
-                        weight: Int(weight) ?? 0
-                    )
-                    showLoader = false
-                    isSignedUp = true
+                        userViewModel.setNewUser(
+                            fname: firstName,
+                            lname: lastName,
+                            age: Int(age) ?? 0,
+                            gender: (selectedGenderIndex == 0 ? "Male" : "Female"),
+                            height: Int(height) ?? 0,
+                            weight: Int(weight) ?? 0
+                        )
+                        showLoader = false
+                        isSignedUp = true
                     }
                 }
             }
@@ -111,7 +118,9 @@ struct Register: View {
             .alert(isPresented: $showInvalidAlert) {
                 Alert(title: Text("Password fields do not match. Please try again."))
             }
-        }.onTapGesture {
+        }
+        .navigationBarBackButtonHidden(true)
+        .onTapGesture {
             hideKeyboard()
         }
     }

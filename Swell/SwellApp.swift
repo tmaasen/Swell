@@ -12,19 +12,17 @@ import Firebase
 struct SwellApp: App {
     
     init() {
-      FirebaseApp.configure()
+        FirebaseApp.configure()
     }
     
     @StateObject var authViewModel = AuthenticationViewModel()
     @StateObject var userViewModel = UserViewModel()
-    @StateObject var utils = UtilFunctions()
     
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .environmentObject(authViewModel)
                 .environmentObject(userViewModel)
-                .environmentObject(utils)
         }
     }
 }

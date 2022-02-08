@@ -8,21 +8,24 @@
 import SwiftUI
 import JGProgressHUD_SwiftUI
 
-
 struct ContentView: View {
     @State private var blockTouches = false
     @EnvironmentObject var authViewModel: AuthenticationViewModel
     @EnvironmentObject var userViewModel: UserViewModel
-    @EnvironmentObject var utils: UtilFunctions
     var isSignedIn = UserDefaults.standard.bool(forKey: "isLoggedIn")
+    var hasLaunchedBefore = UserDefaults.standard.bool(forKey: "hasLaunchedBefore")
 
     var body: some View {
         JGProgressHUDPresenter(userInteractionOnHUD: blockTouches) {
             NavigationView {
-                if isSignedIn {
-                    Home()
+                if hasLaunchedBefore == false {
+                    Onboarding()
                 } else {
-                    Login()
+                    if isSignedIn || authViewModel.state == .signedIn {
+                        Home()
+                    } else {
+                        Login()
+                    }
                 }
 //                switch authViewModel.state {
 //                case .signedIn: Home()
@@ -39,6 +42,5 @@ struct ContentView_Previews: PreviewProvider {
         ContentView()
             .environmentObject(AuthenticationViewModel())
             .environmentObject(UserViewModel())
-            .environmentObject(UtilFunctions())
     }
 }

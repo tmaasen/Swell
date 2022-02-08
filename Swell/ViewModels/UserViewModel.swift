@@ -7,6 +7,7 @@
 
 import Foundation
 import Firebase
+import SwiftUI
 
 // Basically an interface
 protocol iUserViewModelProtocol {
@@ -16,12 +17,12 @@ protocol iUserViewModelProtocol {
 
 class UserViewModel: ObservableObject {
     private var db = Firestore.firestore()
-//    private var utils = UtilFunctions()
     @Published var user = User()
-    
-    init() {
-        getUser()
-    }
+    @Published var greeting: String = ""
+    @Published var gradient: Gradient = Gradient(stops: [
+                                                    .init(color: Color.morningLinear1, location: 0),
+                                                    .init(color: Color.morningLinear2, location: 0.22),
+                                                    .init(color: Color.morningLinear3, location: 0.35)])
     
     // gets all user information
     func getUser() {
@@ -35,8 +36,6 @@ class UserViewModel: ObservableObject {
                 do {
                     self.user = try document.data(as: User.self) ?? self.user
                     print("User: \(self.user)")
-//                    self.utils.getGreetingMessage(name: self.user.fname)
-//                    print(self.utils.greeting)
                 }
                 catch {
                     print(error)
@@ -54,8 +53,6 @@ class UserViewModel: ObservableObject {
                 print("Login timestamp successfully written!")
             }
         }
-        // now that they're logged in, get user info
-        getUser()
     }
     
     func deleteUser() {
@@ -117,6 +114,27 @@ class UserViewModel: ObservableObject {
                 print("New user successfully written!")
                 self.getUser()
             }
+        }
+    }
+    
+    // Gets greeting message and sets background gradient
+    func getGreeting(name: String) {
+        let hour = Calendar.current.component(.hour, from: Date())
+        switch hour {
+        case 0..<5 :
+            self.gradient = Gradient(stops: [
+                                        .init(color: Color.eveningLinear1, location: 0.23),
+                                        .init(color: Color.eveningLinear2, location: 0.84)])
+            self.greeting = "Good evening, \n\(name)"
+        case 5..<12 : self.greeting = "Good morning, \n\(name)"
+        case 12..<17 : self.greeting = "Good afternoon, \n\(name)"
+        case 17..<24 :
+            self.gradient = Gradient(stops: [
+                                        .init(color: Color.eveningLinear1, location: 0.23),
+                                        .init(color: Color.eveningLinear2, location: 0.84)])
+            self.greeting = "Good evening, \n\(name)"
+        default:
+            self.greeting = "Hello"
         }
     }
 }
