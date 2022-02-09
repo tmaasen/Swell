@@ -13,12 +13,10 @@ struct Login: View {
     
     @State private var emailAddress: String = ""
     @State private var password: String = ""
-    @State private var isAuthenticated: Bool = false
     @State private var showAuthLoader: Bool = false
     @State private var showForgotPWAlert: Bool = false
     @State private var showInvalidPWAlert: Bool = false
     @EnvironmentObject var authViewModel: AuthenticationViewModel
-    @EnvironmentObject var userViewModel: UserViewModel
     @EnvironmentObject var hudCoordinator: JGProgressHUDCoordinator
     
     var body: some View {
@@ -40,24 +38,20 @@ struct Login: View {
                     .keyboardType(.emailAddress)
                 SecureField("Password", text: $password)
                     .withSecureFieldStyles()
-                NavigationLink(destination: Home(), isActive: $isAuthenticated) {
-                    Button("Sign In") {
-                        toggleLoadingIndicator()
-                        authViewModel.signInWithEmail(email: emailAddress, password: password)
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                            if authViewModel.state != .signedIn {
-                                showInvalidPWAlert = true
-                            } else {
-                                isAuthenticated = true
-                            }
-                            showAuthLoader = false
+                Button("Sign In") {
+                    toggleLoadingIndicator()
+                    authViewModel.signInWithEmail(email: emailAddress, password: password)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                        if authViewModel.state != .signedIn {
+                            showInvalidPWAlert = true
                         }
+                        showAuthLoader = false
                     }
-                    .withButtonStyles()
-                    .disabled(emailAddress.isEmpty || password.isEmpty)
-                    .alert(isPresented: $showInvalidPWAlert) {
-                        Alert(title: Text("Email or Password Incorrect"))
-                    }
+                }
+                .withButtonStyles()
+                .disabled(emailAddress.isEmpty || password.isEmpty)
+                .alert(isPresented: $showInvalidPWAlert) {
+                    Alert(title: Text("Email or Password Incorrect"))
                 }
             }.padding()
                         

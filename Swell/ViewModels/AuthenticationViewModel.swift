@@ -15,18 +15,31 @@ class AuthenticationViewModel: UserViewModel {
         case signedOut
     }
     
+    var hasPersistedSignedIn = UserDefaults.standard.bool(forKey: "isLoggedIn")
+    
+    override init() {
+        super.init()
+        if hasPersistedSignedIn {
+            if GIDSignIn.sharedInstance.hasPreviousSignIn() {
+                GIDSignIn.sharedInstance.restorePreviousSignIn {
+                    [unowned self] user, error in
+                    authenticateUser(for: user, with: error)
+                }
+            }
+        }
+    }
+    
     @Published var state: SignInState = .signedOut
     
     // sign in with email and password
     func signInWithEmail(email: String, password: String) {
         Auth.auth().signIn(withEmail: email, password: password) {result, error in
             if result != nil, error == nil {
+                UserDefaults.standard.set(true, forKey: "isLoggedIn")
+                self.getUser()
+                self.setLoginTimestamp()
                 self.state = .signedIn
                 print(self.state)
-                UserDefaults.standard.set(true, forKey: "isLoggedIn")
-//                self.getUser()
-                self.setLoginTimestamp()
-//                self.getGreeting(name: self.user.fname)
                 return
             } else {
                 return
@@ -50,6 +63,7 @@ class AuthenticationViewModel: UserViewModel {
         if GIDSignIn.sharedInstance.hasPreviousSignIn() {
             GIDSignIn.sharedInstance.restorePreviousSignIn {
                 [unowned self] user, error in
+                print("Restoring previous session")
                 authenticateUser(for: user, with: error)
             }
         } else {

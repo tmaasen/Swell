@@ -11,7 +11,7 @@ import GoogleSignIn
 
 struct Home: View {
     
-    @State private var isShowingSidebar: Bool = true
+    @State private var isShowingSidebar: Bool = false
     @State private var isShowingSignOut: Bool = false
     @State private var showLoader: Bool = false
     @Environment(\.presentationMode) var presentationMode
@@ -53,6 +53,7 @@ struct Home: View {
         }
         .onAppear {
             isShowingSidebar = false
+            // avatar icon is broken on register -> login
             userViewModel.getUser()
             userViewModel.getGreeting(name: GIDSignIn.sharedInstance.currentUser?.profile?.givenName ?? userViewModel.user.fname)
         }
@@ -62,19 +63,6 @@ struct Home: View {
                             withAnimation {isShowingSidebar = false}
                         }
                     })
-    }
-    func toggleLoadingIndicator() {
-        hudCoordinator.showHUD {
-            let hud = JGProgressHUD()
-            hud.backgroundColor = UIColor(white: 0, alpha: 0.4)
-            hud.shadow = JGProgressHUDShadow(color: .black, offset: .zero, radius: 4, opacity: 0.9)
-            hud.vibrancyEnabled = true
-            hud.textLabel.text = "Loading"
-            if showLoader == false {
-                hud.dismiss(afterDelay: 0.0)
-            }
-            return hud
-        }
     }
 }
 

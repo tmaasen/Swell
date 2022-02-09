@@ -35,7 +35,7 @@ class UserViewModel: ObservableObject {
             if let document = document, document.exists {
                 do {
                     self.user = try document.data(as: User.self) ?? self.user
-                    print("User: \(self.user)")
+                    self.getGreeting(name: self.user.fname)
                 }
                 catch {
                     print(error)

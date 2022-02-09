@@ -106,8 +106,6 @@ struct Profile: View {
                     )
                 }
                 .withButtonStyles()
-                .disabled(isFormDisabled)
-                .opacity(isFormDisabled ? 0.7 : 1.0)
             }
             Spacer()
             HStack {
@@ -125,6 +123,8 @@ struct Profile: View {
                 }, secondaryButton: .cancel(Text("Return")))
             }
         }
+        .disabled(isFormDisabled)
+        .opacity(isFormDisabled ? 0.6 : 1.0)
         .onTapGesture {
                 hideKeyboard()
             }
@@ -142,6 +142,14 @@ struct Profile: View {
             height = String(userViewModel.user.height)
             weight = String(userViewModel.user.weight)
         }
+        .onDisappear() {
+            firstName = ""
+            lastName = ""
+            selectedGenderIndex = 0
+            age = ""
+            height = ""
+            weight = ""
+        }
     }
     func toggleLoadingIndicator() {
         hudCoordinator.showHUD {
@@ -150,9 +158,7 @@ struct Profile: View {
             hud.shadow = JGProgressHUDShadow(color: .black, offset: .zero, radius: 4, opacity: 0.9)
             hud.vibrancyEnabled = true
             hud.textLabel.text = "Loading"
-//            if showLoader == false {
-                hud.dismiss(afterDelay: 3.0)
-//            }
+            hud.dismiss(afterDelay: 3.0)
             return hud
         }
     }

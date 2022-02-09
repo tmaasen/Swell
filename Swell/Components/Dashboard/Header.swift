@@ -11,7 +11,7 @@ import FirebaseAuth
 
 struct Header: View {
     @Binding var isShowingSidebar: Bool
-    @EnvironmentObject var userViewModel: UserViewModel
+    @EnvironmentObject var user: UserViewModel
     
     var body: some View {
         GeometryReader { geometry in
@@ -23,7 +23,7 @@ struct Header: View {
                     }
                 }, label: {AvatarIcon(isShowingSidebar: $isShowingSidebar)}).buttonStyle(PlainButtonStyle())
                 //Greeting Message
-                Text(userViewModel.greeting)
+                Text(user.greeting)
                     .font(.custom("Ubuntu-Bold", size: 40))
                     .foregroundColor(.white)
                     .fixedSize(horizontal: false, vertical: true)
