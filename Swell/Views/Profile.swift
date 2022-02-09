@@ -10,10 +10,14 @@ import FirebaseAuth
 import JGProgressHUD_SwiftUI
 
 struct Profile: View {
+    @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var authViewModel: AuthenticationViewModel
     @EnvironmentObject var hudCoordinator: JGProgressHUDCoordinator
     @EnvironmentObject var userViewModel: UserViewModel
+    @State private var showDeleteAccountAlert: Bool = false
+    @State private var accountDeleted: Bool = false
     @State private var isFormDisabled: Bool = true
+    @State private var showLoader: Bool = false
     @State private var firstName: String = ""
     @State private var lastName: String = ""
     @State private var selectedGenderIndex: Int = 1
@@ -103,13 +107,28 @@ struct Profile: View {
                 }
                 .withButtonStyles()
                 .disabled(isFormDisabled)
+                .opacity(isFormDisabled ? 0.7 : 1.0)
+            }
+            Spacer()
+            HStack {
+                NavigationLink(destination: Login()) { }
+                Image(systemName: "trash")
+                Text("Delete Account")
+            }
+            .foregroundColor(.red)
+            .onTapGesture { showDeleteAccountAlert = true }
+            .alert(isPresented: $showDeleteAccountAlert) {
+                Alert(title: Text("Delete Account"), message: Text("Are you sure? This action cannot be undone and your data will be deleted."), primaryButton: .destructive(Text("Delete")) {
+                    toggleLoadingIndicator()
+                    authViewModel.removeAccount()
+                    presentationMode.wrappedValue.dismiss()
+                }, secondaryButton: .cancel(Text("Return")))
             }
         }
         .onTapGesture {
                 hideKeyboard()
             }
         .padding()
-        .opacity(isFormDisabled ? 0.5 : 1.0)
         .navigationTitle("Profile")
         .navigationBarItems(trailing:
                                 Image(systemName: "square.and.pencil").foregroundColor(.accentColor).font(.title2).onTapGesture {
@@ -122,6 +141,19 @@ struct Profile: View {
             age = String(userViewModel.user.age)
             height = String(userViewModel.user.height)
             weight = String(userViewModel.user.weight)
+        }
+    }
+    func toggleLoadingIndicator() {
+        hudCoordinator.showHUD {
+            let hud = JGProgressHUD()
+            hud.backgroundColor = UIColor(white: 0, alpha: 0.4)
+            hud.shadow = JGProgressHUDShadow(color: .black, offset: .zero, radius: 4, opacity: 0.9)
+            hud.vibrancyEnabled = true
+            hud.textLabel.text = "Loading"
+//            if showLoader == false {
+                hud.dismiss(afterDelay: 3.0)
+//            }
+            return hud
         }
     }
 }

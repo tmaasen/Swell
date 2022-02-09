@@ -51,7 +51,8 @@ struct Home: View {
                 }
             }
         }
-        .onAppear { isShowingSidebar = false
+        .onAppear {
+            isShowingSidebar = false
             userViewModel.getUser()
             userViewModel.getGreeting(name: GIDSignIn.sharedInstance.currentUser?.profile?.givenName ?? userViewModel.user.fname)
         }

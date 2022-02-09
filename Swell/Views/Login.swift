@@ -44,7 +44,7 @@ struct Login: View {
                     Button("Sign In") {
                         toggleLoadingIndicator()
                         authViewModel.signInWithEmail(email: emailAddress, password: password)
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                             if authViewModel.state != .signedIn {
                                 showInvalidPWAlert = true
                             } else {

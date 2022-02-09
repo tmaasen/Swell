@@ -42,29 +42,53 @@ struct Register: View {
                 .foregroundColor(.swellOrange)
                 .font(.custom("Ubuntu-Bold", size: 40))
                 .multilineTextAlignment(.center)
-            Form {
-                Section(header: Text("Email/Password")) {
+            ScrollView {
+                Section() {
                     TextField("Email Address", text: $emailAddress)
                         .padding()
                         .textContentType(.emailAddress)
                         .disableAutocorrection(true)
                         .autocapitalization(.none)
+                    Divider()
+                     .frame(height: 1)
+                     .padding(.horizontal, 30)
+                     .background(Color.gray)
                     SecureField("Password", text: $password)
                         .padding()
                         .disableAutocorrection(true)
                         .autocapitalization(.none)
+                    Divider()
+                     .frame(height: 1)
+                     .padding(.horizontal, 30)
+                     .background(Color.gray)
                     SecureField("Confirm Password", text: $confirmPassword)
                         .padding()
                         .disableAutocorrection(true)
                         .autocapitalization(.none)
+                    Divider()
+                     .frame(height: 1)
+                     .padding(.horizontal, 30)
+                     .background(Color.gray)
                 }
-                Section(header: Text("Personal Information")) {
+                .padding(.horizontal, 30)
+                Section() {
                     TextField("First Name", text: $firstName)
                         .padding()
                         .textContentType(.givenName)
+                    Divider()
+                     .frame(height: 1)
+                     .padding(.horizontal, 30)
+                     .background(Color.gray)
                     TextField("Last Name", text: $lastName)
                         .padding()
                         .textContentType(.name)
+                    Divider()
+                     .frame(height: 1)
+                     .padding(.horizontal, 30)
+                     .background(Color.gray)
+                }
+                .padding(.horizontal, 30)
+                Section() {
                     Picker("Gender", selection: $selectedGenderIndex) {
                         ForEach(0..<genderOptions.count) {
                             Text(self.genderOptions[$0])
@@ -75,20 +99,38 @@ struct Register: View {
                     TextField("Age", text: $age)
                         .padding()
                         .keyboardType(.numberPad)
+                    Divider()
+                     .frame(height: 1)
+                     .padding(.horizontal, 30)
+                     .background(Color.gray)
                     TextField("Height", text: $height)
                         .padding()
                         .keyboardType(.numberPad)
+                    Divider()
+                     .frame(height: 1)
+                     .padding(.horizontal, 30)
+                     .background(Color.gray)
                     TextField("Weight", text: $weight)
                         .padding()
                         .keyboardType(.numberPad)
+                    Divider()
+                     .frame(height: 1)
+                     .padding(.horizontal, 30)
+                     .background(Color.gray)
+                }
+                .padding(.horizontal, 30)
+                                
+                GoogleSignInButton()
+                    .padding()
+                    .onTapGesture {
+                        authViewModel.signInWithGoogle()
+                    }.frame(width: 220, height: 80)
+                
+                HStack() {
+                    Text("Already have an Account?")
+                    NavigationLink("Login", destination: Login())
                 }
             }
-            
-            GoogleSignInButton()
-                .padding()
-                .onTapGesture {
-                    authViewModel.signInWithGoogle()
-                }.frame(width: 220, height: 80)
             
             NavigationLink(destination: Login(), isActive: $isSignedUp) {}
             Button("Sign Up") {

@@ -24,9 +24,9 @@ class AuthenticationViewModel: UserViewModel {
                 self.state = .signedIn
                 print(self.state)
                 UserDefaults.standard.set(true, forKey: "isLoggedIn")
-                self.getUser()
+//                self.getUser()
                 self.setLoginTimestamp()
-                self.getGreeting(name: self.user.fname)
+//                self.getGreeting(name: self.user.fname)
                 return
             } else {
                 return
@@ -120,6 +120,17 @@ class AuthenticationViewModel: UserViewModel {
             self.greeting = ""
         } catch {
             print(error.localizedDescription)
+        }
+    }
+    
+    func removeAccount() {
+        self.softDeleteUser()
+        Auth.auth().currentUser?.delete { error in
+          if let error = error {
+            print("Error removing account: ", error.localizedDescription)
+          } else {
+            self.signOut()
+          }
         }
     }
 }

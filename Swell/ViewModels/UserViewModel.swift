@@ -55,20 +55,21 @@ class UserViewModel: ObservableObject {
         }
     }
     
-    func deleteUser() {
+    func softDeleteUser() {
         db.collection("users").document(Auth.auth().currentUser?.uid ?? "user").updateData([
             "isDeleted": true
         ]) { err in
             if let err = err {
                 print("Error writing document: \(err)")
             } else {
-                print("User successfully deleted!")
+                print("User successfully deleted")
             }
         }
     }
         
     func updateUser(fname: String, lname: String, age: Int, gender: String, height: Int, weight: Int) {
         let docData: [String: Any] = [
+            "userId": Auth.auth().currentUser?.uid ?? "",
             "fname": fname,
             "lname": lname,
             "age": age,
@@ -97,6 +98,7 @@ class UserViewModel: ObservableObject {
     
     func setNewUser(fname: String, lname: String, age: Int, gender: String, height: Int, weight: Int) {
         let docData: [String: Any] = [
+            "userId": Auth.auth().currentUser?.uid ?? "",
             "fname": fname,
             "lname": lname,
             "age": age,
