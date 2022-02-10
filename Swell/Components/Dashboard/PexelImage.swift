@@ -20,7 +20,7 @@ struct PexelImage: View {
             .scaledToFit()
             .frame(width: 350, height: 250, alignment: .center)
             .brightness(-0.25)
-            .overlay(ImageOverlay(), alignment: .bottomLeading)
+            .overlay(TextOverlay(), alignment: .bottomLeading)
             .redacted(when: isLoading, redactionType: .customPlaceholder)
             .onAppear {
                 if ((pexelsViewModel.pexel.photos?[0].src?.original) != nil) {
@@ -30,11 +30,13 @@ struct PexelImage: View {
     }
 }
 
-struct ImageOverlay: View {
+struct TextOverlay: View {
+    let quotes: Array = ["Make everyday count", "You are enough", "You are beautiful", "Perfect practice makes perfect", "I am at peace with myself", "You're a valuable human being", "Appreciate who you are", "Bet on yourself", "Your future is bright", "You deserve to relax", "You deserve to be happy", "Enjoy the present moment", "Your future is positive", "Be yourself", "Have a purpose", "Confidence, self-acceptance, and openness", "Surround yourself with positivity"]
+    
     var body: some View {
         ZStack {
-            Text("\"Make everyday count\"")
-                .font(.system(size: 33, weight: .bold))
+            Text(quotes.randomElement()!)
+                .font(.system(size: 30, weight: .bold))
                 .italic()
                 .foregroundColor(.white)
                 .lineSpacing(5.0)

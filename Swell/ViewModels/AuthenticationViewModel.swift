@@ -15,6 +15,9 @@ class AuthenticationViewModel: UserViewModel {
         case signedOut
     }
     
+    @Published var state: SignInState = .signedOut
+    @Published var needsToReauthenticate: Bool = false
+    @Published var errorMessage: String = ""
     var hasPersistedSignedIn = UserDefaults.standard.bool(forKey: "isLoggedIn")
     
     override init() {
@@ -28,8 +31,6 @@ class AuthenticationViewModel: UserViewModel {
             }
         }
     }
-    
-    @Published var state: SignInState = .signedOut
     
     // sign in with email and password
     func signInWithEmail(email: String, password: String) {
@@ -50,7 +51,9 @@ class AuthenticationViewModel: UserViewModel {
     func signUp(email: String, password: String) {
         Auth.auth().createUser(withEmail: email, password: password) {result, error in
             if result != nil, error == nil {
-                print("New user email created")
+                // user is also logged in when registered
+                UserDefaults.standard.set(true, forKey: "isLoggedIn")
+                self.state = .signedIn
                 return
             } else {
                 print(error?.localizedDescription ?? "Error Signing Up User")
@@ -58,6 +61,7 @@ class AuthenticationViewModel: UserViewModel {
             }
         }
     }
+    
     // sign in with Google
     func signInWithGoogle() {
         if GIDSignIn.sharedInstance.hasPreviousSignIn() {
@@ -139,10 +143,14 @@ class AuthenticationViewModel: UserViewModel {
     
     func removeAccount() {
         self.softDeleteUser()
+        
         Auth.auth().currentUser?.delete { error in
           if let error = error {
+            self.needsToReauthenticate = true
             print("Error removing account: ", error.localizedDescription)
+            self.errorMessage = error.localizedDescription
           } else {
+            self.needsToReauthenticate = false
             self.signOut()
           }
         }

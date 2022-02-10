@@ -15,9 +15,7 @@ struct Profile: View {
     @EnvironmentObject var hudCoordinator: JGProgressHUDCoordinator
     @EnvironmentObject var userViewModel: UserViewModel
     @State private var showDeleteAccountAlert: Bool = false
-    @State private var accountDeleted: Bool = false
     @State private var isFormDisabled: Bool = true
-    @State private var showLoader: Bool = false
     @State private var firstName: String = ""
     @State private var lastName: String = ""
     @State private var selectedGenderIndex: Int = 1
@@ -25,6 +23,7 @@ struct Profile: View {
     @State private var height: String = ""
     @State private var weight: String = ""
     private var genderOptions = ["Male", "Female"]
+    @State private var activeAlert: ActiveAlert = .deleteUser
     
     var body: some View {
         VStack {
@@ -114,13 +113,34 @@ struct Profile: View {
                 Text("Delete Account")
             }
             .foregroundColor(.red)
-            .onTapGesture { showDeleteAccountAlert = true }
+            .onTapGesture {
+                showDeleteAccountAlert = true
+            }
             .alert(isPresented: $showDeleteAccountAlert) {
-                Alert(title: Text("Delete Account"), message: Text("Are you sure? This action cannot be undone and your data will be deleted."), primaryButton: .destructive(Text("Delete")) {
-                    toggleLoadingIndicator()
-                    authViewModel.removeAccount()
-                    presentationMode.wrappedValue.dismiss()
-                }, secondaryButton: .cancel(Text("Return")))
+                switch activeAlert {
+                case .deleteUser:
+                    return Alert(title: Text("Delete Account"), message: Text("Are you sure? This action cannot be undone and your data will be deleted."), primaryButton: .destructive(Text("Delete")) {
+                        toggleLoadingIndicator()
+                        authViewModel.removeAccount()
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                            if authViewModel.needsToReauthenticate {
+                                self.activeAlert = .reauthenticate
+                                self.showDeleteAccountAlert = true
+                            } else {
+                                presentationMode.wrappedValue.dismiss()
+                            }
+                        }
+                    }, secondaryButton: .cancel() {self.showDeleteAccountAlert = false})
+                case .reauthenticate:
+                    return Alert(title: Text("Reauthentication Required"), message: Text(authViewModel.errorMessage), primaryButton: .destructive(Text("Log Out")) {
+                        toggleLoadingIndicator()
+                        authViewModel.signOut()
+                        presentationMode.wrappedValue.dismiss()
+                    }, secondaryButton: .cancel() {
+                        self.activeAlert = .deleteUser
+                        self.showDeleteAccountAlert = false
+                    })
+                }
             }
         }
         .disabled(isFormDisabled)
@@ -168,4 +188,8 @@ struct Profile_Previews: PreviewProvider {
     static var previews: some View {
         Profile()
     }
+}
+
+enum ActiveAlert {
+    case deleteUser, reauthenticate
 }

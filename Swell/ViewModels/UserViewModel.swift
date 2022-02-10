@@ -29,7 +29,7 @@ class UserViewModel: ObservableObject {
         let docRef = db.collection("users").document(Auth.auth().currentUser?.uid ?? "user")
         docRef.getDocument { (document, error) in
             guard error == nil else {
-                print("Error retrieving user document. ", error?.localizedDescription ?? "")
+                print("Error in getUser method:", error?.localizedDescription ?? "")
                 return
             }
             if let document = document, document.exists {
@@ -48,7 +48,7 @@ class UserViewModel: ObservableObject {
         db.collection("users").document(Auth.auth().currentUser?.uid ?? "user").updateData([
             "lastLoggedIn": Timestamp(date: Date())]) { err in
             if let err = err {
-                print("Error writing document: \(err)")
+                print("Error in setLoginTimestamp method: \(err.localizedDescription)")
             } else {
                 print("Login timestamp successfully written!")
             }
@@ -56,13 +56,15 @@ class UserViewModel: ObservableObject {
     }
     
     func softDeleteUser() {
+        //        db.collection("users").document(Auth.auth().currentUser?.uid ?? "user").delete()
         db.collection("users").document(Auth.auth().currentUser?.uid ?? "user").updateData([
             "isDeleted": true
-        ]) { err in
+        ])
+        { err in
             if let err = err {
-                print("Error writing document: \(err)")
+                print("Error in deleteUser method: \(err.localizedDescription)")
             } else {
-                print("User successfully deleted")
+                print("User \(Auth.auth().currentUser?.uid ?? "nil") successfully deleted")
             }
         }
     }
@@ -88,12 +90,11 @@ class UserViewModel: ObservableObject {
         
         db.collection("users").document(Auth.auth().currentUser?.uid ?? "user").setData(docData, merge: true) { err in
             if let err = err {
-                print("Error writing document: \(err)")
+                print("Error in updateUser method: \(err.localizedDescription)")
             } else {
-                print("setUser document successfully written!")
+                self.getUser()
             }
         }
-        getUser()
     }
     
     func setNewUser(fname: String, lname: String, age: Int, gender: String, height: Int, weight: Int) {
@@ -106,15 +107,13 @@ class UserViewModel: ObservableObject {
             "height": height,
             "weight": weight,
             "isDeleted": false,
-            "lastLoggedIn": Timestamp(date: Date())
         ]
         
         db.collection("users").document(Auth.auth().currentUser?.uid ?? "user").setData(docData) { err in
             if let err = err {
-                print("Error writing document: \(err)")
+                print("Error in setNewUser method: \(err.localizedDescription)")
             } else {
                 print("New user successfully written!")
-                self.getUser()
             }
         }
     }

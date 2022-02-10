@@ -10,8 +10,7 @@ import JGProgressHUD_SwiftUI
 
 struct Register: View {
     @State private var showInvalidAlert: Bool = false
-    @State private var showLoader: Bool = false
-    @State private var isSignedUp: Bool = false
+//    @State private var showLoader: Bool = false
     @State private var emailAddress: String = ""
     @State private var password: String = ""
     @State private var confirmPassword: String = ""
@@ -132,14 +131,13 @@ struct Register: View {
                 }
             }
             
-            NavigationLink(destination: Login(), isActive: $isSignedUp) {}
             Button("Sign Up") {
                 if !password.elementsEqual(confirmPassword) {
                     showInvalidAlert = true
                 } else {
                     toggleLoadingIndicator()
                     authViewModel.signUp(email: emailAddress, password: password)
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                         userViewModel.setNewUser(
                             fname: firstName,
                             lname: lastName,
@@ -148,8 +146,9 @@ struct Register: View {
                             height: Int(height) ?? 0,
                             weight: Int(weight) ?? 0
                         )
-                        showLoader = false
-                        isSignedUp = true
+                        userViewModel.getUser()
+                        userViewModel.setLoginTimestamp()
+//                        showLoader = false
                     }
                 }
             }
@@ -173,9 +172,9 @@ struct Register: View {
             hud.shadow = JGProgressHUDShadow(color: .black, offset: .zero, radius: 4, opacity: 0.9)
             hud.vibrancyEnabled = true
             hud.textLabel.text = "Loading"
-            if showLoader == false {
-                hud.dismiss(afterDelay: 0.0)
-            }
+//            if showLoader == false {
+                hud.dismiss(afterDelay: 3.0)
+//            }
             return hud
         }
     }
