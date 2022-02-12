@@ -18,7 +18,6 @@ struct Header: View {
                 Button(action: {
                     withAnimation(.spring()) {
                         isShowingSidebar.toggle()
-                        print(isShowingSidebar)
                     }
                 }, label: {AvatarIcon(isShowingSidebar: $isShowingSidebar)}).buttonStyle(PlainButtonStyle())
                 //Greeting Message

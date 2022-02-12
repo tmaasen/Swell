@@ -12,6 +12,7 @@ struct Onboarding: View {
     init() {
         UserDefaults.standard.set(true, forKey: "hasLaunchedBefore")
     }
+    @State private var isNavBarHidden: Bool = false
     
     var body: some View {
         TabView {
@@ -23,6 +24,13 @@ struct Onboarding: View {
         }
         .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
         .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .always))
+        .onAppear {
+            self.isNavBarHidden = true
+        }.onDisappear {
+            self.isNavBarHidden = false
+        }
+        .navigationBarBackButtonHidden(self.isNavBarHidden)
+        .navigationBarHidden(self.isNavBarHidden)
     }
 }
 
@@ -33,7 +41,7 @@ struct OnboardView: View {
     var buttonText: String?
     
     var body: some View {
-        VStack(spacing: 40) {
+        VStack(spacing: 20) {
             Image(image)
                 .resizable()
                 .scaledToFit()
@@ -47,10 +55,14 @@ struct OnboardView: View {
             
             if buttonText != nil {
                 NavigationLink(buttonText!, destination: Register())
-                    .withButtonStyles()
+                    .font(.custom("Ubuntu-Bold", size: 20))
+                    .foregroundColor(.white)
+                    .padding()
+                    .padding(.horizontal, 25)
+                    .background(Color.swellOrange)
+                    .cornerRadius(10)
             }
         }
-        .navigationBarHidden(true)
         .padding(.horizontal, 30)
     }
 }

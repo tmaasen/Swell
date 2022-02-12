@@ -6,30 +6,24 @@
 //
 
 import SwiftUI
-import JGProgressHUD_SwiftUI
 import GoogleSignIn
 
 struct ContentView: View {
-    @State private var blockTouches = false
     @EnvironmentObject var authViewModel: AuthenticationViewModel
     @EnvironmentObject var userViewModel: UserViewModel
     var hasPersistedSignedIn = UserDefaults.standard.bool(forKey: "isLoggedIn")
     var hasLaunchedBefore = UserDefaults.standard.bool(forKey: "hasLaunchedBefore")
 
     var body: some View {
-        JGProgressHUDPresenter(userInteractionOnHUD: blockTouches) {
-            NavigationView {
-                if hasLaunchedBefore == false {
-                    Onboarding()
-                } else {
-                    if hasPersistedSignedIn || authViewModel.state == .signedIn {
-                        Home()
-                    } else {
-                        Login()
-                    }
-                }
+        if hasLaunchedBefore == false {
+            Onboarding()
+        } else {
+            if hasPersistedSignedIn || authViewModel.state == .signedIn {
+                Home()
+            } else {
+                Login()
             }
-        }
+        } 
     }
     
 }

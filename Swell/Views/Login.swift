@@ -16,6 +16,7 @@ struct Login: View {
     @State private var showAuthLoader: Bool = false
     @State private var showForgotPWAlert: Bool = false
     @State private var showInvalidPWAlert: Bool = false
+    @State private var isNavBarHidden: Bool = false
     @EnvironmentObject var authViewModel: AuthenticationViewModel
     @EnvironmentObject var hudCoordinator: JGProgressHUDCoordinator
     
@@ -53,7 +54,11 @@ struct Login: View {
                 .alert(isPresented: $showInvalidPWAlert) {
                     Alert(title: Text("Email or Password Incorrect"))
                 }
-            }.padding()
+            }
+            .padding()
+            .onTapGesture {
+                    hideKeyboard()
+                }
                         
             GoogleSignInButton()
                 .padding()
@@ -77,7 +82,13 @@ struct Login: View {
                     })
             .frame(width: 200, height: 30)
         }
-        .navigationBarBackButtonHidden(true)
+        .onAppear {
+            self.isNavBarHidden = true
+        }.onDisappear {
+            self.isNavBarHidden = false
+        }
+        .navigationBarBackButtonHidden(self.isNavBarHidden)
+        .navigationBarHidden(self.isNavBarHidden)
         .onTapGesture {
                 hideKeyboard()
             }

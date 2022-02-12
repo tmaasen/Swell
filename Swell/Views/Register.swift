@@ -10,7 +10,7 @@ import JGProgressHUD_SwiftUI
 
 struct Register: View {
     @State private var showInvalidAlert: Bool = false
-//    @State private var showLoader: Bool = false
+    @State private var isNavBarHidden: Bool = false
     @State private var emailAddress: String = ""
     @State private var password: String = ""
     @State private var confirmPassword: String = ""
@@ -33,15 +33,18 @@ struct Register: View {
     }
     
     var body: some View {
-        VStack {
-            Image("LoginImage")
-                .resizable()
-                .frame(width: 80, height: 80)
-            Text("Welcome to Swell")
-                .foregroundColor(.swellOrange)
-                .font(.custom("Ubuntu-Bold", size: 40))
-                .multilineTextAlignment(.center)
-            ScrollView {
+        ScrollView {
+            VStack {
+                Section() {
+                    Image("LoginImage")
+                        .resizable()
+                        .frame(width: 80, height: 80)
+                    Text("Welcome to Swell")
+                        .foregroundColor(.swellOrange)
+                        .font(.custom("Ubuntu-Bold", size: 40))
+                        .multilineTextAlignment(.center)
+                }
+                .padding()
                 Section() {
                     TextField("Email Address", text: $emailAddress)
                         .padding()
@@ -49,25 +52,25 @@ struct Register: View {
                         .disableAutocorrection(true)
                         .autocapitalization(.none)
                     Divider()
-                     .frame(height: 1)
-                     .padding(.horizontal, 30)
-                     .background(Color.gray)
+                        .frame(height: 1)
+                        .padding(.horizontal, 30)
+                        .background(Color.gray)
                     SecureField("Password", text: $password)
                         .padding()
                         .disableAutocorrection(true)
                         .autocapitalization(.none)
                     Divider()
-                     .frame(height: 1)
-                     .padding(.horizontal, 30)
-                     .background(Color.gray)
+                        .frame(height: 1)
+                        .padding(.horizontal, 30)
+                        .background(Color.gray)
                     SecureField("Confirm Password", text: $confirmPassword)
                         .padding()
                         .disableAutocorrection(true)
                         .autocapitalization(.none)
                     Divider()
-                     .frame(height: 1)
-                     .padding(.horizontal, 30)
-                     .background(Color.gray)
+                        .frame(height: 1)
+                        .padding(.horizontal, 30)
+                        .background(Color.gray)
                 }
                 .padding(.horizontal, 30)
                 Section() {
@@ -75,16 +78,16 @@ struct Register: View {
                         .padding()
                         .textContentType(.givenName)
                     Divider()
-                     .frame(height: 1)
-                     .padding(.horizontal, 30)
-                     .background(Color.gray)
+                        .frame(height: 1)
+                        .padding(.horizontal, 30)
+                        .background(Color.gray)
                     TextField("Last Name", text: $lastName)
                         .padding()
                         .textContentType(.name)
                     Divider()
-                     .frame(height: 1)
-                     .padding(.horizontal, 30)
-                     .background(Color.gray)
+                        .frame(height: 1)
+                        .padding(.horizontal, 30)
+                        .background(Color.gray)
                 }
                 .padding(.horizontal, 30)
                 Section() {
@@ -99,26 +102,26 @@ struct Register: View {
                         .padding()
                         .keyboardType(.numberPad)
                     Divider()
-                     .frame(height: 1)
-                     .padding(.horizontal, 30)
-                     .background(Color.gray)
+                        .frame(height: 1)
+                        .padding(.horizontal, 30)
+                        .background(Color.gray)
                     TextField("Height (inches)", text: $height)
                         .padding()
                         .keyboardType(.numberPad)
                     Divider()
-                     .frame(height: 1)
-                     .padding(.horizontal, 30)
-                     .background(Color.gray)
+                        .frame(height: 1)
+                        .padding(.horizontal, 30)
+                        .background(Color.gray)
                     TextField("Weight (lbs)", text: $weight)
                         .padding()
                         .keyboardType(.numberPad)
                     Divider()
-                     .frame(height: 1)
-                     .padding(.horizontal, 30)
-                     .background(Color.gray)
+                        .frame(height: 1)
+                        .padding(.horizontal, 30)
+                        .background(Color.gray)
                 }
                 .padding(.horizontal, 30)
-                                
+                
                 GoogleSignInButton()
                     .padding()
                     .onTapGesture {
@@ -129,38 +132,43 @@ struct Register: View {
                     Text("Already have an Account?")
                     NavigationLink("Login", destination: Login())
                 }
-            }
-            
-            Button("Sign Up") {
-                if !password.elementsEqual(confirmPassword) {
-                    showInvalidAlert = true
-                } else {
-                    toggleLoadingIndicator()
-                    authViewModel.signUp(email: emailAddress, password: password)
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                        userViewModel.setNewUser(
-                            fname: firstName,
-                            lname: lastName,
-                            age: Int(age) ?? 0,
-                            gender: (selectedGenderIndex == 0 ? "Male" : "Female"),
-                            height: Int(height) ?? 0,
-                            weight: Int(weight) ?? 0
-                        )
-                        userViewModel.getUser()
-                        userViewModel.setLoginTimestamp()
-//                        showLoader = false
+                
+                Button("Sign Up") {
+                    if !password.elementsEqual(confirmPassword) {
+                        showInvalidAlert = true
+                    } else {
+                        toggleLoadingIndicator()
+                        authViewModel.signUp(email: emailAddress, password: password)
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                            userViewModel.setNewUser(
+                                fname: firstName,
+                                lname: lastName,
+                                age: Int(age) ?? 0,
+                                gender: (selectedGenderIndex == 0 ? "Male" : "Female"),
+                                height: Int(height) ?? 0,
+                                weight: Int(weight) ?? 0
+                            )
+                            userViewModel.getUser()
+                            userViewModel.setLoginTimestamp()
+                        }
                     }
                 }
-            }
-            .withButtonStyles()
-            .padding()
-            .disabled(disableForm)
-            .opacity(disableForm ? 0.5 : 1.0)
-            .alert(isPresented: $showInvalidAlert) {
-                Alert(title: Text("Password fields do not match. Please try again."))
+                .withButtonStyles()
+                .padding()
+                .disabled(disableForm)
+                .opacity(disableForm ? 0.5 : 1.0)
+                .alert(isPresented: $showInvalidAlert) {
+                    Alert(title: Text("Password fields do not match. Please try again."))
+                }
             }
         }
-        .navigationBarBackButtonHidden(true)
+        .onAppear {
+            self.isNavBarHidden = true
+        }.onDisappear {
+            self.isNavBarHidden = false
+        }
+        .navigationBarBackButtonHidden(self.isNavBarHidden)
+        .navigationBarHidden(self.isNavBarHidden)
         .onTapGesture {
             hideKeyboard()
         }
@@ -172,9 +180,7 @@ struct Register: View {
             hud.shadow = JGProgressHUDShadow(color: .black, offset: .zero, radius: 4, opacity: 0.9)
             hud.vibrancyEnabled = true
             hud.textLabel.text = "Loading"
-//            if showLoader == false {
-                hud.dismiss(afterDelay: 3.0)
-//            }
+            hud.dismiss(afterDelay: 3.0)
             return hud
         }
     }

@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Firebase
+import JGProgressHUD_SwiftUI
 
 @main
 struct SwellApp: App {
@@ -15,14 +16,27 @@ struct SwellApp: App {
         FirebaseApp.configure()
     }
     
+    @State private var isNavBarHidden: Bool = false
+    @State private var blockTouches = false
     @StateObject var authViewModel = AuthenticationViewModel()
     @StateObject var userViewModel = UserViewModel()
     
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .environmentObject(authViewModel)
+            JGProgressHUDPresenter(userInteractionOnHUD: blockTouches) {
+                NavigationView {
+                    ContentView()
+                        .onAppear {
+                            self.isNavBarHidden = true
+                        }.onDisappear {
+                            self.isNavBarHidden = false
+                        }
+                        .navigationBarBackButtonHidden(self.isNavBarHidden)
+                        .navigationBarHidden(self.isNavBarHidden)
+                }
                 .environmentObject(userViewModel)
+                .environmentObject(authViewModel)
+            }
         }
     }
 }

@@ -17,8 +17,9 @@ struct VerticalSidebarMain: View {
             VStack(alignment: .leading) {
                 HStack {
                     VerticalSidebarHeader(isShowingSidebar: $isShowingSidebar)
-                        .frame(height: 240)
+                        .frame(height: 140)
                 }
+                Spacer()
                 // Options
                 ForEach(VerticalSidebar.allCases, id: \.self) {option in
                     VerticalSidebarOption(viewModel: option)
