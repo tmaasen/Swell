@@ -11,12 +11,14 @@ import JGProgressHUD_SwiftUI
 struct Register: View {
     @State private var showInvalidAlert: Bool = false
     @State private var isNavBarHidden: Bool = false
+    @State private var isAuthenticated: Bool = false
     @State private var emailAddress: String = ""
     @State private var password: String = ""
     @State private var confirmPassword: String = ""
     @State private var firstName: String = ""
     @State private var lastName: String = ""
     @State private var selectedGenderIndex: Int = 0
+//    @State private var dob = Date()
     @State private var age: String = ""
     @State private var height: String = ""
     @State private var weight: String = ""
@@ -26,7 +28,7 @@ struct Register: View {
     @EnvironmentObject var hudCoordinator: JGProgressHUDCoordinator
     
     var disableForm: Bool {
-        if emailAddress.isEmpty || password.isEmpty || confirmPassword.isEmpty || firstName.isEmpty || lastName.isEmpty || age.isEmpty || height.isEmpty || weight.isEmpty {
+        if emailAddress.isEmpty || password.isEmpty || confirmPassword.isEmpty || firstName.isEmpty || lastName.isEmpty || height.isEmpty || weight.isEmpty {
             return true
         }
         return false
@@ -98,7 +100,7 @@ struct Register: View {
                     }
                     .padding()
                     .pickerStyle(SegmentedPickerStyle())
-                    TextField("Age", text: $age)
+                    TextField("Date of Birth", text: $age)
                         .padding()
                         .keyboardType(.numberPad)
                     Divider()
@@ -122,6 +124,7 @@ struct Register: View {
                 }
                 .padding(.horizontal, 30)
                 
+
                 GoogleSignInButton()
                     .padding()
                     .onTapGesture {
@@ -133,33 +136,41 @@ struct Register: View {
                     NavigationLink("Login", destination: Login())
                 }
                 
-                Button("Sign Up") {
-                    if !password.elementsEqual(confirmPassword) {
-                        showInvalidAlert = true
-                    } else {
-                        toggleLoadingIndicator()
-                        authViewModel.signUp(email: emailAddress, password: password)
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                            userViewModel.setNewUser(
-                                fname: firstName,
-                                lname: lastName,
-                                age: Int(age) ?? 0,
-                                gender: (selectedGenderIndex == 0 ? "Male" : "Female"),
-                                height: Int(height) ?? 0,
-                                weight: Int(weight) ?? 0
-                            )
-                            userViewModel.getUser()
-                            userViewModel.setLoginTimestamp()
+                NavigationLink(
+                    destination: Home(),
+                    isActive: $isAuthenticated,
+                    label: {
+                    Button("Sign Up") {
+                        if !password.elementsEqual(confirmPassword) {
+                            showInvalidAlert = true
+                        } else {
+                            toggleLoadingIndicator()
+                            authViewModel.signUp(email: emailAddress, password: password)
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                                userViewModel.setNewUser(
+                                    fname: firstName,
+                                    lname: lastName,
+                                    age: Int(age) ?? 0,
+                                    gender: (selectedGenderIndex == 0 ? "Male" : "Female"),
+                                    height: Int(height) ?? 0,
+                                    weight: Int(weight) ?? 0
+                                )
+                                userViewModel.getUser()
+                                userViewModel.setLoginTimestamp()
+                                if authViewModel.state == .signedIn {
+                                    self.isAuthenticated = true
+                                }
+                            }
                         }
                     }
-                }
-                .withButtonStyles()
-                .padding()
-                .disabled(disableForm)
-                .opacity(disableForm ? 0.5 : 1.0)
-                .alert(isPresented: $showInvalidAlert) {
-                    Alert(title: Text("Password fields do not match. Please try again."))
-                }
+                    .withButtonStyles()
+                    .padding()
+                    .disabled(disableForm)
+                    .opacity(disableForm ? 0.5 : 1.0)
+                    .alert(isPresented: $showInvalidAlert) {
+                        Alert(title: Text("Password fields do not match. Please try again."))
+                    }
+                    })
             }
         }
         .onAppear {

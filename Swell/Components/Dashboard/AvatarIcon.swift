@@ -19,7 +19,6 @@ struct AvatarIcon: View {
                 .frame(width: 40, height: 40, alignment: .topLeading)
                 .cornerRadius(25.0)
                 .contentShape(Rectangle())
-                .padding(.trailing, 20)
         }
         .padding(.top, 50)
     }

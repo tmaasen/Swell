@@ -8,6 +8,7 @@ import SwiftUI
 import FirebaseAuth
 import JGProgressHUD_SwiftUI
 import GoogleSignIn
+import CareKitUI
 
 struct Home: View {
     

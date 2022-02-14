@@ -24,7 +24,7 @@ struct VerticalSidebarMain: View {
                 ForEach(VerticalSidebar.allCases, id: \.self) {option in
                     VerticalSidebarOption(viewModel: option)
                 }.padding()
-                
+                Spacer()
                 //Logout Functionality
                 Divider()
                 HStack {

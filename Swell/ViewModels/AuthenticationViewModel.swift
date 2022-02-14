@@ -43,6 +43,7 @@ class AuthenticationViewModel: UserViewModel {
                 print(self.state)
                 return
             } else {
+                print(error?.localizedDescription ?? "Error signing in with email and pw")
                 return
             }
         }
@@ -54,6 +55,7 @@ class AuthenticationViewModel: UserViewModel {
                 // user is also logged in when registered
                 UserDefaults.standard.set(true, forKey: "isLoggedIn")
                 self.state = .signedIn
+                print(self.state)
                 return
             } else {
                 print(error?.localizedDescription ?? "Error Signing Up User")
@@ -100,11 +102,11 @@ class AuthenticationViewModel: UserViewModel {
             if let error = error {
                 print(error.localizedDescription)
             } else {
-                self.state = .signedIn
-                UserDefaults.standard.set(true, forKey: "isLoggedIn")
                 self.getUser()
                 self.setLoginTimestamp()
                 self.getGreeting(name: GIDSignIn.sharedInstance.currentUser?.profile?.givenName ?? "")
+                UserDefaults.standard.set(true, forKey: "isLoggedIn")
+                self.state = .signedIn
                 print(self.state)
             }
         }

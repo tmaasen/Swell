@@ -87,7 +87,7 @@ struct Login: View {
         }.onDisappear {
             self.isNavBarHidden = false
         }
-        .navigationBarBackButtonHidden(self.isNavBarHidden)
+        .navigationBarBackButtonHidden(true)
         .navigationBarHidden(self.isNavBarHidden)
         .onTapGesture {
                 hideKeyboard()

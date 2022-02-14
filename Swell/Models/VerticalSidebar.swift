@@ -14,7 +14,7 @@ enum VerticalSidebar: Int, CaseIterable {
     case preLog
     case goals
     case history
-    case learning
+    case learn
     
     var destination: String {
         switch self {
@@ -23,7 +23,7 @@ enum VerticalSidebar: Int, CaseIterable {
         case .preLog: return "Daily Pre-Log"
         case .goals: return "Goals"
         case .history: return "History"
-        case .learning: return "Learning"
+        case .learn: return "Learn"
         }
     }
     
@@ -34,7 +34,7 @@ enum VerticalSidebar: Int, CaseIterable {
         case .preLog: return "Daily Pre-Log"
         case .goals: return "Goals"
         case .history: return "History"
-        case .learning: return "Learning"
+        case .learn: return "Learn"
         }
     }
     
@@ -45,7 +45,7 @@ enum VerticalSidebar: Int, CaseIterable {
         case .preLog: return "calendar"
         case .goals: return "checkmark"
         case .history: return "hourglass"
-        case .learning: return "bookmark"
+        case .learn: return "bookmark"
         }
     }
     
@@ -56,7 +56,7 @@ enum VerticalSidebar: Int, CaseIterable {
         case .preLog: return AnyView(Profile())
         case .goals: return AnyView(Profile())
         case .history: return AnyView(Profile())
-        case .learning: return AnyView(Profile())
+        case .learn: return AnyView(Profile())
         }
     }
 }

@@ -8,7 +8,7 @@
 import Foundation
 
 class PexelsViewModel: ObservableObject {
-    let API_URL:URL! = URL(string: "https://api.pexels.com/v1/search?query=landscape?page=1&per_page=1&size=small&orientation=landscape")
+    let API_URL:URL! = URL(string: "https://api.pexels.com/v1/search?query=landscape&page=1&per_page=1&size=small&orientation=landscape")
     @Published var pexel = Pexel()
     
     init() {
