@@ -16,7 +16,6 @@ struct Login: View {
     @State private var showAuthLoader: Bool = false
     @State private var showForgotPWAlert: Bool = false
     @State private var showInvalidPWAlert: Bool = false
-    @State private var isNavBarHidden: Bool = false
     @EnvironmentObject var authViewModel: AuthenticationViewModel
     @EnvironmentObject var hudCoordinator: JGProgressHUDCoordinator
     
@@ -56,9 +55,6 @@ struct Login: View {
                 }
             }
             .padding()
-            .onTapGesture {
-                    hideKeyboard()
-                }
                         
             GoogleSignInButton()
                 .padding()
@@ -82,13 +78,8 @@ struct Login: View {
                     })
             .frame(width: 200, height: 30)
         }
-        .onAppear {
-            self.isNavBarHidden = true
-        }.onDisappear {
-            self.isNavBarHidden = false
-        }
         .navigationBarBackButtonHidden(true)
-        .navigationBarHidden(self.isNavBarHidden)
+        .navigationBarHidden(true)
         .onTapGesture {
                 hideKeyboard()
             }

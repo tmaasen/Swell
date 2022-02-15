@@ -10,7 +10,6 @@ import JGProgressHUD_SwiftUI
 
 struct Register: View {
     @State private var showInvalidAlert: Bool = false
-    @State private var isNavBarHidden: Bool = false
     @State private var isAuthenticated: Bool = false
     @State private var emailAddress: String = ""
     @State private var password: String = ""
@@ -173,13 +172,8 @@ struct Register: View {
                     })
             }
         }
-        .onAppear {
-            self.isNavBarHidden = true
-        }.onDisappear {
-            self.isNavBarHidden = false
-        }
-        .navigationBarBackButtonHidden(self.isNavBarHidden)
-        .navigationBarHidden(self.isNavBarHidden)
+        .navigationBarBackButtonHidden(true)
+        .navigationBarHidden(true)
         .onTapGesture {
             hideKeyboard()
         }

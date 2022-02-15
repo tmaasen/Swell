@@ -52,11 +52,11 @@ enum VerticalSidebar: Int, CaseIterable {
     var navDestination: some View {
         switch self {
         case .profile: return AnyView(Profile())
-        case .myMeals: return AnyView(Home())
-        case .preLog: return AnyView(Profile())
-        case .goals: return AnyView(Profile())
-        case .history: return AnyView(Profile())
-        case .learn: return AnyView(Profile())
+        case .myMeals: return AnyView(MyMeals())
+        case .preLog: return AnyView(DailyPreLog())
+        case .goals: return AnyView(Goals())
+        case .history: return AnyView(History())
+        case .learn: return AnyView(Learn())
         }
     }
 }

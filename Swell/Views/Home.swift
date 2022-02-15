@@ -32,6 +32,7 @@ struct Home: View {
                         Header(isShowingSidebar: $isShowingSidebar)
                             .padding(.bottom, 300)
                         // MAIN CONTENT
+                        MealCards()
                         PexelImage()
                     }
                     .blur(radius: isShowingSidebar ? 2 : 0)
@@ -54,11 +55,15 @@ struct Home: View {
         }
         .onAppear {
             isShowingSidebar = false
-            // avatar icon is broken on register -> login
             userViewModel.getUser()
             userViewModel.getGreeting(name: GIDSignIn.sharedInstance.currentUser?.profile?.givenName ?? userViewModel.user.fname)
         }
         .gesture(DragGesture()
+                    .onEnded {
+                        if $0.translation.width > 50 {
+                            withAnimation {isShowingSidebar = true}
+                        }
+                    }
                     .onEnded {
                         if $0.translation.width < -100 {
                             withAnimation {isShowingSidebar = false}
