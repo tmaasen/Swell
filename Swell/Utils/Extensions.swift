@@ -18,17 +18,6 @@ public extension Color {
     static let eveningLinear2 = Color("EveningLinear2")
 }
 
-public extension NavigationLink {
-    func withButtonStyles() -> some View {
-        self.font(.custom("Ubuntu-Bold", size: 20))
-            .foregroundColor(.white)
-            .padding()
-            .frame(width: 320, height: 60)
-            .background(Color.swellOrange)
-            .cornerRadius(15.0)
-    }
-}
-
 public extension ZStack {
     func withSidebarStyles() -> some View {
         self.padding(.top, 50)
@@ -86,7 +75,7 @@ public extension SecureField {
     }
 }
 
-public extension Button {
+public extension Text {
     func withButtonStyles() -> some View {
         self.font(.custom("Ubuntu-Bold", size: 20))
             .foregroundColor(.white)

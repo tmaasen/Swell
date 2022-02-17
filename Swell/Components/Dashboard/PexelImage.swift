@@ -13,7 +13,7 @@ struct PexelImage: View {
     @State private var isLoading: Bool = true
     
     var body: some View {
-        WebImage(url: URL(string: pexelsViewModel.pexel.photos?[0].src?.original ?? ""))
+        WebImage(url: URL(string: pexelsViewModel.pexel.src?.original ?? ""))
             .resizable()
             .cornerRadius(10)
             .transition(.fade(duration: 0.5))
@@ -21,9 +21,10 @@ struct PexelImage: View {
             .frame(width: 350, height: 250, alignment: .center)
             .brightness(-0.25)
             .overlay(TextOverlay(), alignment: .bottomLeading)
-            .redacted(when: isLoading, redactionType: .customPlaceholder)
+            .redacted(when: isLoading, redactionType: .scaled)
+            .padding(.top, 20)
             .onAppear {
-                if ((pexelsViewModel.pexel.photos?[0].src?.original) != nil) {
+                if ((pexelsViewModel.pexel.src?.original) != nil) {
                     isLoading = false
                 }
             }

@@ -95,7 +95,7 @@ struct Profile: View {
                 }
                 Spacer()
                 HStack(alignment: .bottom) {
-                    Button("Save") {
+                    Button(action: {
                         self.userViewModel.updateUser(
                             fname: firstName,
                             lname: lastName,
@@ -104,9 +104,11 @@ struct Profile: View {
                             height: Int(height) ?? 0,
                             weight: Int(weight) ?? 0
                         )
+                    }) {
+                        Text("Save")
+                            .withButtonStyles()
+                            .padding(.top, 30)
                     }
-                    .withButtonStyles()
-                    .padding(.top, 30)
                 }
                 Spacer()
                 HStack {

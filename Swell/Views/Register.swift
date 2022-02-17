@@ -139,36 +139,38 @@ struct Register: View {
                     destination: Home(),
                     isActive: $isAuthenticated,
                     label: {
-                    Button("Sign Up") {
-                        if !password.elementsEqual(confirmPassword) {
-                            showInvalidAlert = true
-                        } else {
-                            toggleLoadingIndicator()
-                            authViewModel.signUp(email: emailAddress, password: password)
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                                userViewModel.setNewUser(
-                                    fname: firstName,
-                                    lname: lastName,
-                                    age: Int(age) ?? 0,
-                                    gender: (selectedGenderIndex == 0 ? "Male" : "Female"),
-                                    height: Int(height) ?? 0,
-                                    weight: Int(weight) ?? 0
-                                )
-                                userViewModel.getUser()
-                                userViewModel.setLoginTimestamp()
-                                if authViewModel.state == .signedIn {
-                                    self.isAuthenticated = true
+                        Button(action: {
+                            if !password.elementsEqual(confirmPassword) {
+                                showInvalidAlert = true
+                            } else {
+                                toggleLoadingIndicator()
+                                authViewModel.signUp(email: emailAddress, password: password)
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                                    userViewModel.setNewUser(
+                                        fname: firstName,
+                                        lname: lastName,
+                                        age: Int(age) ?? 0,
+                                        gender: (selectedGenderIndex == 0 ? "Male" : "Female"),
+                                        height: Int(height) ?? 0,
+                                        weight: Int(weight) ?? 0
+                                    )
+                                    userViewModel.getUser()
+                                    userViewModel.setLoginTimestamp()
+                                    if authViewModel.state == .signedIn {
+                                        self.isAuthenticated = true
+                                    }
                                 }
                             }
+                        }) {
+                            Text("Sign Up")
+                                .withButtonStyles()
+                                .padding()
+                                .disabled(disableForm)
+                                .opacity(disableForm ? 0.5 : 1.0)
+                                .alert(isPresented: $showInvalidAlert) {
+                                    Alert(title: Text("Password fields do not match. Please try again."))
+                                }
                         }
-                    }
-                    .withButtonStyles()
-                    .padding()
-                    .disabled(disableForm)
-                    .opacity(disableForm ? 0.5 : 1.0)
-                    .alert(isPresented: $showInvalidAlert) {
-                        Alert(title: Text("Password fields do not match. Please try again."))
-                    }
                     })
             }
         }

@@ -15,7 +15,8 @@ struct MealCards: View {
                 ForEach(MealButtonModel.allCases, id: \.self) { card in
                     MealCard(mealModel: card)
                 }
-            }.padding(.leading, 20)
+            }
+            .padding(.horizontal, 20)
         }
     }
 }
@@ -24,21 +25,26 @@ struct MealCard: View {
     let mealModel: MealButtonModel
     
     var body: some View {
-        VStack {
-            Spacer()
-            Image(mealModel.imageName)
-                .resizable()
-                .scaledToFit()
-            Spacer()
-            Text(mealModel.title)
-                .font(.custom("Ubuntu-Bold", size: 33))
-                .foregroundColor(.white)
-                .frame(maxWidth: .infinity, alignment: .leading)
-        }
-        .padding()
-        .frame(width: 200, height: 165)
-        .background(Color("MealCardBlue"))
-        .cornerRadius(5)
+        NavigationLink(
+            destination: MealLog(mealType: mealModel.title),
+            label: {
+                VStack {
+                    Spacer()
+                    Image(mealModel.imageName)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 150)
+                    Spacer()
+                    Text(mealModel.title)
+                        .font(.custom("Ubuntu-Bold", size: 33))
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity, alignment: .topLeading)
+                }
+                .padding(10)
+                .frame(width: 200, height: 165)
+                .background(Color("MealCardBlue"))
+                .cornerRadius(5)
+            })
     }
 }
 

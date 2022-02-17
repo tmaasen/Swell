@@ -38,7 +38,7 @@ struct Login: View {
                     .keyboardType(.emailAddress)
                 SecureField("Password", text: $password)
                     .withSecureFieldStyles()
-                Button("Sign In") {
+                Button(action: {
                     toggleLoadingIndicator()
                     authViewModel.signInWithEmail(email: emailAddress, password: password)
                     DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
@@ -47,11 +47,13 @@ struct Login: View {
                         }
                         showAuthLoader = false
                     }
-                }
-                .withButtonStyles()
-                .disabled(emailAddress.isEmpty || password.isEmpty)
-                .alert(isPresented: $showInvalidPWAlert) {
-                    Alert(title: Text("Email or Password Incorrect"))
+                }) {
+                    Text("Sign In")
+                        .withButtonStyles()
+                        .disabled(emailAddress.isEmpty || password.isEmpty)
+                        .alert(isPresented: $showInvalidPWAlert) {
+                            Alert(title: Text("Email or Password Incorrect"))
+                        }
                 }
             }
             .padding()

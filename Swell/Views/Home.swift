@@ -20,6 +20,7 @@ struct Home: View {
     @EnvironmentObject var hudCoordinator: JGProgressHUDCoordinator
     
     var body: some View {
+//        if userViewModel.greeting == "" ? ProgressView("Loading") :
         ZStack(alignment: .leading) {
             GeometryReader { geometry in
                 if isShowingSidebar {
@@ -30,7 +31,7 @@ struct Home: View {
                     VStack(alignment: .center) {
                         // HEADER CONTENT
                         Header(isShowingSidebar: $isShowingSidebar)
-                            .padding(.bottom, 300)
+                            .padding(.bottom, 275)
                         // MAIN CONTENT
                         MealCards()
                         PexelImage()
