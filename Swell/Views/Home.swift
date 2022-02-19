@@ -28,7 +28,7 @@ struct Home: View {
                         .withShowSidebarStyles(geometry: geometry)
                 }
                 ScrollView() {
-                    VStack(alignment: .center) {
+                    VStack(alignment: .center, spacing: 20) {
                         // HEADER CONTENT
                         Header(isShowingSidebar: $isShowingSidebar)
                             .padding(.bottom, 275)

@@ -10,7 +10,9 @@ import Foundation
 public class FoodDataCentralViewModel: ObservableObject {
     
     @Published var foodResults = [Food]()
+    @Published var error: String = ""
     var foodDict = FoodDataCentral()
+    @Published var searchResultsNumber: Int?
     let apiKey = Bundle.main.infoDictionary?["USDA_API_KEY"] as? String ?? "food key not found"
     
     public enum SearchFields: String {
@@ -59,7 +61,10 @@ public class FoodDataCentralViewModel: ObservableObject {
             DispatchQueue.main.async {
                 self.foodDict = try! JSONDecoder().decode(FoodDataCentral.self, from: data!)
                 self.foodResults = self.foodDict.foods ?? []
-                print("Result: ", self.foodResults.randomElement()?.foodDescription ?? "")
+                self.searchResultsNumber = self.foodDict.totalHits
+                if self.foodResults.isEmpty {
+                    self.error = "No results. Please try again."
+                }
             }
         }.resume()
     }
@@ -101,7 +106,6 @@ public class FoodDataCentralViewModel: ObservableObject {
         for queryItem in queryItems {
             url.queryItems?.append(queryItem)
         }
-        print(url.url as Any)
         return url.url
     }
 }

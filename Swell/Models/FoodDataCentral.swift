@@ -65,8 +65,8 @@ extension FoodDataCentral {
 
 // MARK: - Aggregations
 struct Aggregations: Codable {
-    var dataType: DataType
-    var nutrients: Nutrients
+    var dataType: DataType?
+    var nutrients: Nutrients?
 }
 
 // MARK: Aggregations convenience initializers and mutators
@@ -108,7 +108,7 @@ extension Aggregations {
 
 // MARK: - DataType
 struct DataType: Codable {
-    var branded, srLegacy, surveyFNDDS, foundation: Int
+    var branded, srLegacy, surveyFNDDS, foundation: Int?
 
     enum CodingKeys: String, CodingKey {
         case branded = "Branded"
@@ -252,20 +252,20 @@ extension FoodSearchCriteria {
 struct Food: Identifiable, Codable {
     var id = UUID()
     var fdcID: Int
-    var foodDescription, lowercaseDescription, dataType, gtinUpc: String
-    var publishedDate, brandOwner, ingredients, marketCountry: String
+    var foodDescription, lowercaseDescription: String
+    var dataType, gtinUpc, publishedDate, brandOwner, brandName, ingredients, marketCountry: String?
     var foodCategory, modifiedDate, dataSource, servingSizeUnit: String?
-    var servingSize: Int
-    var householdServingFullText, allHighlightFields: String?
+    var servingSize: Double?
+    var householdServingFullText, allHighlightFields, packageWeight: String?
     var score: Double
-    var foodNutrients: [FoodNutrient]?
+    var foodNutrients: [FoodNutrient]
     var finalFoodInputFoods, foodMeasures, foodAttributes, foodAttributeTypes: [JSONAny]?
     var foodVersionIDS: [JSONAny]?
 
     enum CodingKeys: String, CodingKey {
         case fdcID = "fdcId"
         case foodDescription = "description"
-        case lowercaseDescription, dataType, gtinUpc, publishedDate, brandOwner, ingredients, marketCountry, foodCategory, modifiedDate, dataSource, servingSizeUnit, servingSize, householdServingFullText, allHighlightFields, score, foodNutrients, finalFoodInputFoods, foodMeasures, foodAttributes, foodAttributeTypes
+        case lowercaseDescription, dataType, gtinUpc, publishedDate, brandOwner, brandName, ingredients, marketCountry, foodCategory, modifiedDate, dataSource, servingSizeUnit, servingSize, householdServingFullText, allHighlightFields, packageWeight, score, foodNutrients, finalFoodInputFoods, foodMeasures, foodAttributes, foodAttributeTypes
         case foodVersionIDS = "foodVersionIds"
     }
 }
@@ -288,57 +288,61 @@ extension Food {
         try self.init(data: try Data(contentsOf: url))
     }
 
-    func with(
-        fdcID: Int? = nil,
-        foodDescription: String? = nil,
-        lowercaseDescription: String? = nil,
-        dataType: String? = nil,
-        gtinUpc: String? = nil,
-        publishedDate: String? = nil,
-        brandOwner: String? = nil,
-        ingredients: String? = nil,
-        marketCountry: String? = nil,
-        foodCategory: String? = nil,
-        modifiedDate: String? = nil,
-        dataSource: String? = nil,
-        servingSizeUnit: String? = nil,
-        servingSize: Int? = nil,
-        householdServingFullText: String? = nil,
-        allHighlightFields: String? = nil,
-        score: Double? = nil,
-        foodNutrients: [FoodNutrient]? = nil,
-        finalFoodInputFoods: [JSONAny]? = nil,
-        foodMeasures: [JSONAny]? = nil,
-        foodAttributes: [JSONAny]? = nil,
-        foodAttributeTypes: [JSONAny]? = nil,
-        foodVersionIDS: [JSONAny]? = nil
-    ) -> Food {
-        return Food(
-            fdcID: fdcID ?? self.fdcID,
-            foodDescription: foodDescription ?? self.foodDescription,
-            lowercaseDescription: lowercaseDescription ?? self.lowercaseDescription,
-            dataType: dataType ?? self.dataType,
-            gtinUpc: gtinUpc ?? self.gtinUpc,
-            publishedDate: publishedDate ?? self.publishedDate,
-            brandOwner: brandOwner ?? self.brandOwner,
-            ingredients: ingredients ?? self.ingredients,
-            marketCountry: marketCountry ?? self.marketCountry,
-            foodCategory: foodCategory ?? self.foodCategory,
-            modifiedDate: modifiedDate ?? self.modifiedDate,
-            dataSource: dataSource ?? self.dataSource,
-            servingSizeUnit: servingSizeUnit ?? self.servingSizeUnit,
-            servingSize: servingSize ?? self.servingSize,
-            householdServingFullText: householdServingFullText ?? self.householdServingFullText,
-            allHighlightFields: allHighlightFields ?? self.allHighlightFields,
-            score: score ?? self.score,
-            foodNutrients: foodNutrients ?? self.foodNutrients,
-            finalFoodInputFoods: finalFoodInputFoods ?? self.finalFoodInputFoods,
-            foodMeasures: foodMeasures ?? self.foodMeasures,
-            foodAttributes: foodAttributes ?? self.foodAttributes,
-            foodAttributeTypes: foodAttributeTypes ?? self.foodAttributeTypes,
-            foodVersionIDS: foodVersionIDS ?? self.foodVersionIDS
-        )
-    }
+//    func with(
+//        fdcID: Int? = nil,
+//        foodDescription: String? = nil,
+//        lowercaseDescription: String? = nil,
+//        dataType: String? = nil,
+//        gtinUpc: String? = nil,
+//        publishedDate: String? = nil,
+//        brandOwner: String? = nil,
+//        brandName: String? = nil,
+//        ingredients: String? = nil,
+//        marketCountry: String? = nil,
+//        foodCategory: String? = nil,
+//        modifiedDate: String? = nil,
+//        dataSource: String? = nil,
+//        servingSizeUnit: String? = nil,
+//        servingSize: Int? = nil,
+//        householdServingFullText: String? = nil,
+//        allHighlightFields: String? = nil,
+//        packageWeight: String? = nil,
+//        score: Double? = nil,
+//        foodNutri ents: [FoodNutrient]? = nil,
+//        finalFoodInputFoods: [JSONAny]? = nil,
+//        foodMeasures: [JSONAny]? = nil,
+//        foodAttributes: [JSONAny]? = nil,
+//        foodAttributeTypes: [JSONAny]? = nil,
+//        foodVersionIDS: [JSONAny]? = nil
+//    ) -> Food {
+//        return Food(
+//            fdcID: fdcID ?? self.fdcID,
+//            foodDescription: foodDescription ?? self.foodDescription,
+//            lowercaseDescription: lowercaseDescription ?? self.lowercaseDescription,
+//            dataType: dataType ?? self.dataType,
+//            gtinUpc: gtinUpc ?? self.gtinUpc,
+//            publishedDate: publishedDate ?? self.publishedDate,
+//            brandName: brandName ?? self.brandName,
+//            brandOwner: brandOwner ?? self.brandOwner,
+//            ingredients: ingredients ?? self.ingredients,
+//            marketCountry: marketCountry ?? self.marketCountry,
+//            foodCategory: foodCategory ?? self.foodCategory,
+//            modifiedDate: modifiedDate ?? self.modifiedDate,
+//            dataSource: dataSource ?? self.dataSource,
+//            servingSizeUnit: servingSizeUnit ?? self.servingSizeUnit,
+//            servingSize: servingSize ?? self.servingSize,
+//            householdServingFullText: householdServingFullText ?? self.householdServingFullText,
+//            allHighlightFields: allHighlightFields ?? self.allHighlightFields,
+//            packageWeight: packageWeight ?? self.packageWeight,
+//            score: score ?? self.score,
+//            foodNutrients: foodNutrients ?? self.foodNutrients,
+//            finalFoodInputFoods: finalFoodInputFoods ?? self.finalFoodInputFoods,
+//            foodMeasures: foodMeasures ?? self.foodMeasures,
+//            foodAttributes: foodAttributes ?? self.foodAttributes,
+//            foodAttributeTypes: foodAttributeTypes ?? self.foodAttributeTypes,
+//            foodVersionIDS: foodVersionIDS ?? self.foodVersionIDS
+//        )
+//    }
 
     func jsonData() throws -> Data {
         return try newJSONEncoder().encode(self)
@@ -351,16 +355,17 @@ extension Food {
 
 // MARK: - FoodNutrient
 struct FoodNutrient: Codable {
-    var nutrientID: Int
-    var nutrientName, nutrientNumber, unitName: String
-    var derivationCode: DerivationCode
-    var derivationDescription: String
-    var derivationID: Int
-    var value: Double
-    var foodNutrientSourceID: Int
-    var foodNutrientSourceCode: String
-    var foodNutrientSourceDescription: FoodNutrientSourceDescription
-    var rank, indentLevel, foodNutrientID, percentDailyValue: Int
+    var nutrientID: Int?
+    var nutrientName, nutrientNumber, unitName: String?
+    var derivationCode: String?
+    var derivationDescription: String?
+    var derivationID: Int?
+    var value: Double?
+    var foodNutrientSourceID: Int?
+    var foodNutrientSourceCode: String?
+    var foodNutrientSourceDescription: String?
+    var rank, indentLevel, foodNutrientID: Int?
+    var percentDailyValue: Double?
 
     enum CodingKeys: String, CodingKey {
         case nutrientID = "nutrientId"
@@ -397,17 +402,17 @@ extension FoodNutrient {
         nutrientName: String? = nil,
         nutrientNumber: String? = nil,
         unitName: String? = nil,
-        derivationCode: DerivationCode? = nil,
+        derivationCode: String? = nil,
         derivationDescription: String? = nil,
         derivationID: Int? = nil,
         value: Double? = nil,
         foodNutrientSourceID: Int? = nil,
         foodNutrientSourceCode: String? = nil,
-        foodNutrientSourceDescription: FoodNutrientSourceDescription? = nil,
+        foodNutrientSourceDescription: String? = nil,
         rank: Int? = nil,
         indentLevel: Int? = nil,
         foodNutrientID: Int? = nil,
-        percentDailyValue: Int? = nil
+        percentDailyValue: Double? = nil
     ) -> FoodNutrient {
         return FoodNutrient(
             nutrientID: nutrientID ?? self.nutrientID,
@@ -437,15 +442,15 @@ extension FoodNutrient {
     }
 }
 
-enum DerivationCode: String, Codable {
-    case lccd = "LCCD"
-    case lccs = "LCCS"
-    case lcsl = "LCSL"
-}
-
-enum FoodNutrientSourceDescription: String, Codable {
-    case manufacturerSAnalyticalPartialDocumentation = "Manufacturer's analytical; partial documentation"
-}
+//enum DerivationCode: String, Codable {
+//    case lccd = "LCCD"
+//    case lccs = "LCCS"
+//    case lcsl = "LCSL"
+//}
+//
+//enum FoodNutrientSourceDescription: String, Codable {
+//    case manufacturerSAnalyticalPartialDocumentation = "Manufacturer's analytical; partial documentation"
+//}
 
 // MARK: - Helper functions for creating encoders and decoders
 

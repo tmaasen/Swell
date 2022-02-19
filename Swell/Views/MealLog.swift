@@ -12,20 +12,25 @@ struct MealLog: View {
     @State var searchText = ""
     @State var searching = false
     @StateObject var foodViewModel = FoodDataCentralViewModel()
+    @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
         VStack {
             SearchBar(searchText: $searchText, searching: $searching)
             Spacer()
-            List(foodViewModel.foodResults) { food in
-                Text("\(food.foodDescription)")
+            if foodViewModel.foodDict.totalHits != nil {
+                Text("\(String(foodViewModel.foodDict.totalHits!)) Results")
+                    .foregroundColor(.gray)
+            }
+            List(foodViewModel.foodResults) { foodItem in
+                FoodResultListItem(food: foodItem)
             }
         }
         .navigationTitle(mealType)
         .toolbar {
             if searching {
                 Button("Search") {
-                    foodViewModel.search(searchTerms: searchText, pageSize: 1)
+                    foodViewModel.search(searchTerms: searchText, pageSize: 200)
                     withAnimation {
                         hideKeyboard()
                     }

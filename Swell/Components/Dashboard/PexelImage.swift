@@ -22,7 +22,6 @@ struct PexelImage: View {
             .brightness(-0.25)
             .overlay(TextOverlay(), alignment: .bottomLeading)
             .redacted(when: isLoading, redactionType: .scaled)
-            .padding(.top, 20)
             .onAppear {
                 if ((pexelsViewModel.pexel.src?.original) != nil) {
                     isLoading = false

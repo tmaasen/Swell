@@ -86,6 +86,16 @@ public extension Text {
     }
 }
 
+extension String {
+    func capitalizingFirstLetter() -> String {
+      return prefix(1).uppercased() + self.lowercased().dropFirst()
+    }
+
+    mutating func capitalizeFirstLetter() {
+      self = self.capitalizingFirstLetter()
+    }
+}
+
 public extension UIAlertController {
   convenience init(alert: TextAlert) {
     self.init(title: alert.title, message: alert.message, preferredStyle: .alert)

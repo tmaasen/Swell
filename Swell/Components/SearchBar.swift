@@ -30,7 +30,6 @@ struct SearchBar: View {
                     }
                 }
             }
-            .foregroundColor(.gray)
             .padding(.leading, 13)
         }
         .frame(height: 40)
