@@ -6,12 +6,15 @@
 //
 
 import Foundation
+import Firebase
 
 public class FoodDataCentralViewModel: ObservableObject {
     
     @Published var foodResults = [Food]()
     @Published var error: String = ""
     var foodDict = FoodDataCentral()
+    private var db = Firestore.firestore()
+    @Published var processCompleted: Bool = false
     @Published var searchResultsNumber: Int?
     let apiKey = Bundle.main.infoDictionary?["USDA_API_KEY"] as? String ?? "food key not found"
     
@@ -53,6 +56,7 @@ public class FoodDataCentralViewModel: ObservableObject {
         if let sortOrder = sortOrder { queryItems.append(URLQueryItem(name: "sortOrder", value: sortOrder.rawValue)) }
         if let brandOwner = brandOwner { queryItems.append(URLQueryItem(name: "brandOwner", value: brandOwner)) }
         
+        self.processCompleted = false
         let API_URL = generateURL(path: "fdc/v1/foods/search", queryItems: queryItems)
         var request = URLRequest(url: API_URL!)
         request.httpMethod = "GET"
@@ -65,6 +69,7 @@ public class FoodDataCentralViewModel: ObservableObject {
                 if self.foodResults.isEmpty {
                     self.error = "No results. Please try again."
                 }
+                self.processCompleted = true
             }
         }.resume()
     }
@@ -92,6 +97,25 @@ public class FoodDataCentralViewModel: ObservableObject {
             }
         }
         task.resume()
+    }
+    
+    /// Logs a food item's fdcid into Cloud Firestore
+    func logNutrition(pFoodToLog: Food, pQuantity: Int?, pMeal: String) {
+        let docData: [String: Any] = [
+            "foodId": pFoodToLog.fdcID,
+            "quantity": pQuantity ?? 1,
+            "meal": pMeal,
+            "date": Timestamp(date: Date())
+        ]
+        
+        db.collection("users").document(Auth.auth().currentUser?.uid ?? "test").collection("food").addDocument(data: docData, completion: { error in
+            if let error = error {
+                print("Error in logNutrition method: \(error.localizedDescription)")
+            } else {
+                self.processCompleted = true
+                print("Successfully logged \(pFoodToLog.foodDescription)")
+            }
+        })
     }
     
     /// Generates a new URL with the given queryItems.

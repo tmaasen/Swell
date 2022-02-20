@@ -17,12 +17,14 @@ struct SwellApp: App {
     
     @StateObject var authViewModel = AuthenticationViewModel()
     @StateObject var userViewModel = UserViewModel()
+    @StateObject var foodViewModel = FoodDataCentralViewModel()
     
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .environmentObject(userViewModel)
                 .environmentObject(authViewModel)
+                .environmentObject(foodViewModel)
         }
     }
 }

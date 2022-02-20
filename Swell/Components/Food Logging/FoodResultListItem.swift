@@ -9,6 +9,7 @@ import SwiftUI
 
 struct FoodResultListItem: View {
     var food: Food
+    @Binding var meal: String
     @State var showFoodInfoSheet: Bool = false
     
     var body: some View {
@@ -21,13 +22,13 @@ struct FoodResultListItem: View {
             showFoodInfoSheet = true
         }
         .sheet(isPresented: $showFoodInfoSheet) {
-            FoodResultSheet(food: food, showFoodInfoSheet: $showFoodInfoSheet)
+            FoodResultSheet(food: food, meal: $meal, showFoodInfoSheet: $showFoodInfoSheet)
         }
     }
 }
 
 struct FoodResultListItem_Previews: PreviewProvider {
     static var previews: some View {
-        FoodResultListItem(food: Food(id: UUID(), fdcID: 123456, foodDescription: "McDonald's Cheeseburger", lowercaseDescription: "mcdonalds cheeseburger", score: 500.00, foodNutrients: [FoodNutrient()]))
+        FoodResultListItem(food: Food(id: UUID(), fdcID: 123456, foodDescription: "McDonald's Cheeseburger", lowercaseDescription: "mcdonalds cheeseburger", score: 500.00, foodNutrients: [FoodNutrient()]), meal: .constant("Snack"))
     }
 }

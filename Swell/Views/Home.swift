@@ -20,7 +20,6 @@ struct Home: View {
     @EnvironmentObject var hudCoordinator: JGProgressHUDCoordinator
     
     var body: some View {
-//        if userViewModel.greeting == "" ? ProgressView("Loading") :
         ZStack(alignment: .leading) {
             GeometryReader { geometry in
                 if isShowingSidebar {
@@ -41,11 +40,11 @@ struct Home: View {
             }
         }
         .background(
-                LinearGradient(
-                    gradient: userViewModel.gradient,
-                    startPoint: .top,
-                    endPoint: .bottom)
-            )
+            LinearGradient(
+                gradient: userViewModel.gradient,
+                startPoint: .top,
+                endPoint: .bottom)
+        )
         .ignoresSafeArea()
         .onTapGesture {
             if isShowingSidebar {

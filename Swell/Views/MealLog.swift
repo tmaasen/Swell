@@ -8,10 +8,11 @@
 import SwiftUI
 
 struct MealLog: View {
-    var mealType:String
+    @State var mealType: String
     @State var searchText = ""
     @State var searching = false
-    @StateObject var foodViewModel = FoodDataCentralViewModel()
+    @State var isLoading = false
+    @EnvironmentObject var foodViewModel: FoodDataCentralViewModel
     @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
@@ -23,14 +24,18 @@ struct MealLog: View {
                     .foregroundColor(.gray)
             }
             List(foodViewModel.foodResults) { foodItem in
-                FoodResultListItem(food: foodItem)
+                FoodResultListItem(food: foodItem, meal: $mealType)
             }
         }
         .navigationTitle(mealType)
         .toolbar {
             if searching {
                 Button("Search") {
+                    isLoading = true
                     foodViewModel.search(searchTerms: searchText, pageSize: 200)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
+                        isLoading = false
+                    })
                     withAnimation {
                         hideKeyboard()
                     }
@@ -42,6 +47,11 @@ struct MealLog: View {
                         hideKeyboard()
                     })
         )
+        if isLoading {
+            ZStack(alignment: .leading) {
+                LottieAnimation(filename: "loading", loopMode: .loop, width: 50, height: 50)
+            }
+        }
     }
 }
 
