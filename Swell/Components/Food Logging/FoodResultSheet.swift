@@ -10,6 +10,7 @@ import SwiftUI
 struct FoodResultSheet: View {
     var food: Food
     @State private var logCompleted: Bool = false
+    @State private var quantity: String = "1"
     @Binding var meal: String
     @Binding var showFoodInfoSheet: Bool
     @EnvironmentObject var foodViewModel: FoodDataCentralViewModel
@@ -17,32 +18,54 @@ struct FoodResultSheet: View {
     
     var body: some View {
         VStack(alignment: .leading) {
-            Text("\(food.foodDescription.capitalizingFirstLetter())")
-            Text("Category: \(food.foodCategory ?? "")")
-            Text("Score: \(food.score)")
-            Text("Meal: \(meal)")
+            LottieAnimation(filename: "cleanVegetableFood", loopMode: .loop, width: .infinity, height: .infinity)
+                .background(Rectangle()
+                                .foregroundColor(Color("FoodSheet_Purple")))
+            ScrollView {
+                VStack(alignment: .leading, spacing: 15) {
+                    Text("\(food.foodDescription.capitalizingFirstLetter())")
+                        .font(.custom("Ubuntu-Bold", size: 35))
+                        .padding(.bottom, 20)
+                    HStack {
+                        Text("Quantity:")
+                            .font(.custom("Ubuntu", size: 20))
+                        TextField(quantity, text: $quantity)
+                            .padding()
+                            .keyboardType(.numberPad)
+                            .border(Color("FoodListItem_DarkGray"))
+                            .frame(maxWidth: 50)
+                            .multilineTextAlignment(.center)
+                        Spacer()
+                        NavigationLink(
+                            destination: Home(),
+                            isActive: $logCompleted,
+                            label: {
+                                Button(action: {
+                                    foodViewModel.logNutrition(pFoodToLog: food, pQuantity: Int(quantity), pMeal: meal)
+                                    logCompleted = true
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
+                                        presentationMode.wrappedValue.dismiss()
+                                        showFoodInfoSheet = false
+                                    })
+                                }, label: {
+                                    Label("Log Item", systemImage: "checkmark")
+                                })
+                            })
+                    }
+                    Text("Category: \(food.foodCategory ?? "Fast Foods")")
+                        .font(.custom("Ubuntu", size: 20))
+                    Text("Score: \(food.score)")
+                        .font(.custom("Ubuntu", size: 20))
+                    Text("Meal: \(meal)")
+                        .font(.custom("Ubuntu", size: 20))
+                }
+            }
+            .padding()
         }
-        Button(action: {
+        .onDisappear() {
             presentationMode.wrappedValue.dismiss()
             showFoodInfoSheet = false
-        }, label: {
-            Label("Close", systemImage: "xmark.circle")
-        })
-        NavigationLink(
-            destination: Home(),
-            isActive: $logCompleted,
-            label: {
-                Button(action: {
-                    foodViewModel.logNutrition(pFoodToLog: food, pQuantity: 1, pMeal: meal)
-                    logCompleted = true
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
-                        presentationMode.wrappedValue.dismiss()
-                        showFoodInfoSheet = false
-                    })
-                }, label: {
-                    Label("Log Item", systemImage: "checkmark")
-                })
-            })
+        }
         if logCompleted {
             LottieAnimation(filename: "checkmark", loopMode: .playOnce, width: 400, height: 400)
         }

@@ -13,11 +13,29 @@ struct FoodResultListItem: View {
     @State var showFoodInfoSheet: Bool = false
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text("\(food.foodDescription.capitalizingFirstLetter())")
-            Text("Category: ").bold() + Text("\(food.foodCategory ?? "Fast food")")
-            Text("Score: ").bold() + Text("\(food.score, specifier: "%.2f")")
+        HStack(alignment: .center) {
+            VStack(alignment: .leading, spacing: 5) {
+                Text("\(food.foodDescription.capitalizingFirstLetter())")
+                    .font(.custom("Ubuntu-Bold", size: 18))
+                Text("\(food.foodCategory ?? "Fast food")")
+                    .foregroundColor(Color("FoodListItem_DarkGray"))
+                    .font(.custom("Ubuntu", size: 12))
+                Text("Contains: gluten")
+                    .foregroundColor(Color("FoodListItem_DarkGray"))
+                    .font(.custom("Ubuntu", size: 12))
+                Text("Score: \(food.score, specifier: "%.2f")")
+                    .foregroundColor(Color("FoodListItem_DarkGray"))
+                    .font(.custom("Ubuntu", size: 12))
+            }
+            Spacer()
+            Image(systemName: "plus.circle")
+                .font(.system(size: 30))
+                .foregroundColor(Color("FoodListItem_DarkGray"))
         }
+        .padding()
+        .background(Color("FoodListItem_LightGray"))
+        .cornerRadius(8)
+        .padding(.horizontal, 15)
         .onTapGesture {
             showFoodInfoSheet = true
         }
