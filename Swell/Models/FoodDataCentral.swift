@@ -354,7 +354,7 @@ extension Food {
 }
 
 // MARK: - FoodNutrient
-struct FoodNutrient: Codable {
+struct FoodNutrient: Codable, Hashable {
     var nutrientID: Int?
     var nutrientName, nutrientNumber, unitName: String?
     var derivationCode: String?

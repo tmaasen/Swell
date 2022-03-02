@@ -19,12 +19,16 @@ struct MealLog: View {
         VStack {
             SearchBar(searchText: $searchText, searching: $searching)
             Spacer()
-            if foodViewModel.foodDict.totalHits != nil {
-                Text("\(String(foodViewModel.foodDict.totalHits!)) Results")
+            if foodViewModel.foodSearchDictionary.totalHits != nil {
+                Text("\(String(foodViewModel.foodSearchDictionary.totalHits!)) Results")
                     .foregroundColor(.gray)
             }
-            List(foodViewModel.foodResults) { foodItem in
-                FoodResultListItem(food: foodItem, meal: $mealType)
+            ScrollView {
+                ForEach(foodViewModel.foodSearchResults, id: \.self.id) { foodItem in
+                    LazyVStack {
+                        FoodResultListItem(food: foodItem, meal: $mealType)
+                    }
+                }
             }
         }
         .navigationTitle(mealType)

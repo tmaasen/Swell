@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-enum MealButtonModel: Int, CaseIterable {
+enum MealButton: Int, CaseIterable {
     case breakfast
     case lunch
     case dinner

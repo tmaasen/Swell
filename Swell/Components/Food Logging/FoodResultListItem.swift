@@ -17,15 +17,17 @@ struct FoodResultListItem: View {
             VStack(alignment: .leading, spacing: 5) {
                 Text("\(food.foodDescription.capitalizingFirstLetter())")
                     .font(.custom("Ubuntu-Bold", size: 18))
-                Text("\(food.foodCategory ?? "Fast food")")
+                Text("\(food.foodCategory ?? "")")
                     .foregroundColor(Color("FoodListItem_DarkGray"))
                     .font(.custom("Ubuntu", size: 12))
-                Text("Contains: gluten")
+                Text("Contains: ")
                     .foregroundColor(Color("FoodListItem_DarkGray"))
                     .font(.custom("Ubuntu", size: 12))
-                Text("Score: \(food.score, specifier: "%.2f")")
-                    .foregroundColor(Color("FoodListItem_DarkGray"))
-                    .font(.custom("Ubuntu", size: 12))
+                if (food.brandOwner != nil) || (food.brandName != nil) {
+                    Text(food.brandOwner ?? food.brandName ?? "")
+                        .foregroundColor(Color("FoodListItem_DarkGray"))
+                        .font(.custom("Ubuntu", size: 12))
+                }
             }
             Spacer()
             Image(systemName: "plus.circle")

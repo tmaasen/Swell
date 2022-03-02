@@ -12,7 +12,7 @@ struct MealCards: View {
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 30) {
-                ForEach(MealButtonModel.allCases, id: \.self) { card in
+                ForEach(MealButton.allCases, id: \.self) { card in
                     MealCard(mealModel: card)
                 }
             }
@@ -22,7 +22,7 @@ struct MealCards: View {
 }
 
 struct MealCard: View {
-    let mealModel: MealButtonModel
+    let mealModel: MealButton
     
     var body: some View {
         NavigationLink(

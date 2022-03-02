@@ -17,8 +17,8 @@ struct Register: View {
     @State private var firstName: String = ""
     @State private var lastName: String = ""
     @State private var selectedGenderIndex: Int = 0
-//    @State private var dob = Date()
-    @State private var age: String = ""
+    @State private var currentDate = Date()
+    @State private var age: Int = 0
     @State private var height: String = ""
     @State private var weight: String = ""
     private var genderOptions = ["Male", "Female"]
@@ -99,9 +99,11 @@ struct Register: View {
                     }
                     .padding()
                     .pickerStyle(SegmentedPickerStyle())
-                    TextField("Date of Birth", text: $age)
-                        .padding()
-                        .keyboardType(.numberPad)
+                    DatePicker("Birthdate", selection: $currentDate, in: ...Date(), displayedComponents: .date)
+                        .onChange(of: currentDate, perform: { value in
+                            let diff = Calendar.current.dateComponents([.year], from: currentDate, to: Date())
+                            self.age = diff.year!
+                        })
                     Divider()
                         .frame(height: 1)
                         .padding(.horizontal, 30)
@@ -149,7 +151,7 @@ struct Register: View {
                                     userViewModel.setNewUser(
                                         fname: firstName,
                                         lname: lastName,
-                                        age: Int(age) ?? 0,
+                                        age: age,
                                         gender: (selectedGenderIndex == 0 ? "Male" : "Female"),
                                         height: Int(height) ?? 0,
                                         weight: Int(weight) ?? 0

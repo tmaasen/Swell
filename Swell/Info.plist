@@ -34,11 +34,9 @@
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Audio is recorded to transcribe food logs. Audio recordings are discarded after transcription.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
-	<string>You can view a text transcription of the nutritional item you&apos;re about to log.</string>
+	<string>You can view a text transcription of the nutritional item you're about to log.</string>
 	<key>PEXELS_API_KEY</key>
 	<string>$(PEXELS_API_KEY)</string>
-	<key>USDA_API_KEY</key>
-	<string>$(USDA_API_KEY)</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Ubuntu-Regular.ttf</string>
@@ -84,5 +82,7 @@
 	</array>
 	<key>UIUserInterfaceStyle</key>
 	<string>Light</string>
+	<key>USDA_API_KEY</key>
+	<string>$(USDA_API_KEY)</string>
 </dict>
 </plist>

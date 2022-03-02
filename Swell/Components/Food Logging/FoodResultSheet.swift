@@ -23,8 +23,9 @@ struct FoodResultSheet: View {
                                 .foregroundColor(Color("FoodSheet_Purple")))
             ScrollView {
                 VStack(alignment: .leading, spacing: 15) {
-                    Text("\(food.foodDescription.capitalizingFirstLetter())")
-                        .font(.custom("Ubuntu-Bold", size: 35))
+                    Text("\(food.foodDescription)")
+                        .textCase(.uppercase)
+                        .font(.custom("Ubuntu-Bold", size: 30))
                         .padding(.bottom, 20)
                     HStack {
                         Text("Quantity:")
@@ -33,7 +34,7 @@ struct FoodResultSheet: View {
                             .padding()
                             .keyboardType(.numberPad)
                             .border(Color("FoodListItem_DarkGray"))
-                            .frame(maxWidth: 50)
+                            .frame(maxWidth: 40)
                             .multilineTextAlignment(.center)
                         Spacer()
                         NavigationLink(
@@ -41,7 +42,7 @@ struct FoodResultSheet: View {
                             isActive: $logCompleted,
                             label: {
                                 Button(action: {
-                                    foodViewModel.logNutrition(pFoodToLog: food, pQuantity: Int(quantity), pMeal: meal)
+                                    foodViewModel.logFood(pFoodToLog: food, pQuantity: Int(quantity), pMeal: meal)
                                     logCompleted = true
                                     DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
                                         presentationMode.wrappedValue.dismiss()
@@ -52,12 +53,23 @@ struct FoodResultSheet: View {
                                 })
                             })
                     }
-                    Text("Category: \(food.foodCategory ?? "Fast Foods")")
-                        .font(.custom("Ubuntu", size: 20))
-                    Text("Score: \(food.score)")
-                        .font(.custom("Ubuntu", size: 20))
-                    Text("Meal: \(meal)")
-                        .font(.custom("Ubuntu", size: 20))
+                    Text("Category: \(food.foodCategory ?? "")")
+                        .font(.custom("Ubuntu", size: 16))
+                    Text(food.brandOwner ?? food.brandName ?? "")
+                        .font(.custom("Ubuntu", size: 16))
+                    Section(header:
+                            Text("Nutrition Facts")
+                                .bold()
+                                .font(.custom("Ubuntu", size: 18))) {
+                        ForEach(food.foodNutrients, id: \.self) { nutrient in
+                            Text("\(nutrient.nutrientName ?? ""):  \(nutrient.nutrientNumber ?? "")\(nutrient.unitName ?? "")")
+                                .font(.custom("Ubuntu", size: 16))
+                        }
+                    }
+                    if (food.ingredients != nil) {
+                        Text("Ingredients: \(food.ingredients ?? "")")
+                            .font(.custom("Ubuntu", size: 16))
+                    }
                 }
             }
             .padding()
