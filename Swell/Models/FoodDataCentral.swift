@@ -442,34 +442,6 @@ extension FoodNutrient {
     }
 }
 
-//enum DerivationCode: String, Codable {
-//    case lccd = "LCCD"
-//    case lccs = "LCCS"
-//    case lcsl = "LCSL"
-//}
-//
-//enum FoodNutrientSourceDescription: String, Codable {
-//    case manufacturerSAnalyticalPartialDocumentation = "Manufacturer's analytical; partial documentation"
-//}
-
-// MARK: - Helper functions for creating encoders and decoders
-
-//func newJSONDecoder() -> JSONDecoder {
-//    let decoder = JSONDecoder()
-//    if #available(iOS 10.0, OSX 10.12, tvOS 10.0, watchOS 3.0, *) {
-//        decoder.dateDecodingStrategy = .iso8601
-//    }
-//    return decoder
-//}
-//
-//func newJSONEncoder() -> JSONEncoder {
-//    let encoder = JSONEncoder()
-//    if #available(iOS 10.0, OSX 10.12, tvOS 10.0, watchOS 3.0, *) {
-//        encoder.dateEncodingStrategy = .iso8601
-//    }
-//    return encoder
-//}
-
 // MARK: - Encode/decode helpers
 
 class JSONNull: Codable {
@@ -477,10 +449,6 @@ class JSONNull: Codable {
     public static func == (lhs: JSONNull, rhs: JSONNull) -> Bool {
         return true
     }
-
-//    public var hashValue: Int {
-//        return 0
-//    }
 
     public init() {}
 

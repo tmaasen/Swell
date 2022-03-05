@@ -18,6 +18,12 @@ struct ContentView: View {
     @EnvironmentObject var foodViewModel: FoodDataCentralViewModel
     var hasPersistedSignedIn = UserDefaults.standard.bool(forKey: "isLoggedIn")
     var hasLaunchedBefore = UserDefaults.standard.bool(forKey: "hasLaunchedBefore")
+    
+    init() {
+        if hasLaunchedBefore == false {
+            NotificationManager.instance.requestAuthorization()
+        }
+    }
 
     var body: some View {
         JGProgressHUDPresenter(userInteractionOnHUD: blockTouches) {

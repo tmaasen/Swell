@@ -117,7 +117,6 @@ public class FoodDataCentralViewModel: ObservableObject {
         let url = generateURL(path: "fdc/v1/foods", queryItems: queryItems)
         var request = URLRequest(url: url!)
         request.httpMethod = "GET"
-        print(request)
         /// API Request using the Combine framework's dataTaskPublisher
         self.cancellable = URLSession.shared.dataTaskPublisher(for: request)
             .map { $0.data }
@@ -128,7 +127,6 @@ public class FoodDataCentralViewModel: ObservableObject {
                 DispatchQueue.main.async {
                     self.foodHistory = food
                     if !self.foodHistory.isEmpty {
-                        print(food[0].description ?? "sink received")
                         for i in 0...mealTypes.count-1 {
                             self.foodHistory[i].mealType = mealTypes[i]
                             self.foodHistory[i].servingSize = servingSizes[i]
@@ -142,6 +140,8 @@ public class FoodDataCentralViewModel: ObservableObject {
     func logFood(pFoodToLog: Food, pQuantity: Int?, pMeal: String) {
         formatter.dateFormat = "EEEE MMM dd, yyyy"
         
+        var docRef: DocumentReference? = nil
+        
         let docData: [String: Any] = [
             "foodId": pFoodToLog.fdcID,
             "quantity": pQuantity ?? 1,
@@ -149,13 +149,13 @@ public class FoodDataCentralViewModel: ObservableObject {
             "date": formatter.string(from: Timestamp(date: Date()).dateValue())
         ]
         
-        db.collection("users").document(Auth.auth().currentUser?.uid ?? "test").collection("food").addDocument(data: docData, completion: { error in
+        docRef = db.collection("users").document(Auth.auth().currentUser?.uid ?? "test").collection("food").addDocument(data: docData, completion: { error in
             if let error = error {
-                print("Error in logNutrition method: \(error.localizedDescription)")
-            } else {
-                print("Successfully logged \(pFoodToLog.foodDescription)")
+                print("Error in logFood method: \(error.localizedDescription)")
             }
         })
+        
+        NotificationManager.instance.scheduleNotification(mealType: pMeal, foodTitle: pFoodToLog.foodDescription, docRef: docRef!.documentID)
     }
     
     /// Logs a water of specific size

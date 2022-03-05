@@ -104,6 +104,7 @@ struct Register: View {
                             let diff = Calendar.current.dateComponents([.year], from: currentDate, to: Date())
                             self.age = diff.year!
                         })
+                        .padding()
                     Divider()
                         .frame(height: 1)
                         .padding(.horizontal, 30)

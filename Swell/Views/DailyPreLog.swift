@@ -11,7 +11,8 @@ struct DailyPreLog: View {
     var body: some View {
         VStack {
             Text("Daily Pre-Log")
-        }.navigationTitle("Daily Pre-Log")
+        }
+        .navigationTitle("Daily Pre-Log")
     }
 }
 

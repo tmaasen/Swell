@@ -15,31 +15,44 @@ struct History: View {
     
     var body: some View {
         VStack {
-            DatePicker("Date", selection: $selectedDate, in: ...Date(), displayedComponents: .date)
-                .padding()
-                .labelsHidden()
-                .onChange(of: selectedDate, perform: { value in
-                    isLoading = true
-                    foodViewModel.getFoodIds(date: selectedDate)
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
-                        isLoading = false
-                    })
-                })
-            ScrollView {
-                ForEach(foodViewModel.foodHistory, id: \.self.id) { item in
-                    VStack {
-                        Text("\(item.description ?? "")")
-                        Text("\(item.mealType ?? "")")
-                        Text("Serving Size: \(item.servingSize ?? 0)")
+            if !foodViewModel.foodHistory.isEmpty && !isLoading {
+                ScrollView {
+                    ForEach(foodViewModel.foodHistory, id: \.self.id) { item in
+                        VStack(alignment: .leading) {
+                            Text("\(item.description ?? "")")
+                            Text("\(item.mealType ?? "")")
+                            Text("Serving Size: \(item.servingSize ?? 0)")
+                        }
                     }
+                }
+            } else {
+                if !isLoading {
+                    Image("NoData")
+                        .resizable()
+                        .scaledToFit()
+                    Text("No logging history on this day!")
+                        .foregroundColor(.gray)
+                        .font(.system(size: 20))
                 }
             }
         }
         .navigationTitle("History")
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                DatePicker("📅", selection: $selectedDate, in: ...Date(), displayedComponents: .date)
+                    .onChange(of: selectedDate, perform: { value in
+                        isLoading = true
+                        foodViewModel.getFoodIds(date: selectedDate)
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
+                            isLoading = false
+                        })
+                    })
+            }
+        }
         .onAppear() {
             isLoading = true
             foodViewModel.getFoodIds(date: Timestamp(date: Date()).dateValue())
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
                 isLoading = false
             })
         }
