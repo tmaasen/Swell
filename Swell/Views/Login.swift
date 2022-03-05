@@ -18,6 +18,7 @@ struct Login: View {
     @State private var showInvalidPWAlert: Bool = false
     @EnvironmentObject var authViewModel: AuthenticationViewModel
     @EnvironmentObject var hudCoordinator: JGProgressHUDCoordinator
+    @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
         VStack(alignment: .center) {
@@ -26,7 +27,7 @@ struct Login: View {
                 .frame(width: 80, height: 80)
             
             Text("Swell: Live Life Well")
-                .foregroundColor(.swellOrange)
+                .foregroundColor(colorScheme == .dark ? .white : .swellOrange)
                 .font(.custom("Ubuntu-Bold", size: 35))
                 .padding(.top, 15)
                 .multilineTextAlignment(.center)

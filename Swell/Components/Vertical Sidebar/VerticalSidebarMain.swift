@@ -9,6 +9,7 @@ import SwiftUI
 struct VerticalSidebarMain: View {
     @Binding var isShowingSidebar: Bool
     @Environment(\.presentationMode) var presentationMode
+    @Environment(\.colorScheme) var colorScheme
     @EnvironmentObject var authViewModel: AuthenticationViewModel
     @State private var isShowingSignOut: Bool = false
     
@@ -48,6 +49,8 @@ struct VerticalSidebarMain: View {
             }
         }
         .withSidebarStyles()
+        .background(colorScheme == .dark ? Color(.black) : Color(.white))
+
     }
 }
 

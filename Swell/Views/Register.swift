@@ -25,6 +25,7 @@ struct Register: View {
     @EnvironmentObject var authViewModel: AuthenticationViewModel
     @EnvironmentObject var userViewModel: UserViewModel
     @EnvironmentObject var hudCoordinator: JGProgressHUDCoordinator
+    @Environment(\.colorScheme) var colorScheme
     
     var disableForm: Bool {
         if emailAddress.isEmpty || password.isEmpty || confirmPassword.isEmpty || firstName.isEmpty || lastName.isEmpty || height.isEmpty || weight.isEmpty {
@@ -41,7 +42,7 @@ struct Register: View {
                         .resizable()
                         .frame(width: 80, height: 80)
                     Text("Welcome to Swell")
-                        .foregroundColor(.swellOrange)
+                        .foregroundColor(colorScheme == .dark ? .white : .swellOrange)
                         .font(.custom("Ubuntu-Bold", size: 40))
                         .multilineTextAlignment(.center)
                 }

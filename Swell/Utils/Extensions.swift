@@ -22,7 +22,6 @@ public extension ZStack {
     func withSidebarStyles() -> some View {
         self.padding(.top, 50)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(Color(.white))
             .zIndex(1.0)
             .edgesIgnoringSafeArea(.all)
             .navigationBarHidden(true)

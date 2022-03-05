@@ -13,6 +13,7 @@ class NotificationManager {
     
     private var db = Firestore.firestore()
     var docRef: String = ""
+    var selectedMood: String = ""
     static let instance = NotificationManager()
     
     func requestAuthorization() {
@@ -38,16 +39,22 @@ class NotificationManager {
         let neutral = UNNotificationAction(identifier: "neutral",
               title: "😐",
               options: [])
+        let sick = UNNotificationAction(identifier: "sick",
+              title: "🤮",
+              options: [])
+        let overate = UNNotificationAction(identifier: "overate",
+              title: "🤢",
+              options: [])
         // Define the notification type
         let moodOptions =
               UNNotificationCategory(identifier: "mood_options",
-              actions: [happy, neutral],
+              actions: [happy, neutral, sick, overate],
               intentIdentifiers: [],
               hiddenPreviewsBodyPlaceholder: "",
               options: .customDismissAction)
         UNUserNotificationCenter.current().setNotificationCategories([moodOptions])
         // send after 20 minutes
-        let timer = UNTimeIntervalNotificationTrigger(timeInterval: (60*20), repeats: false)
+        let timer = UNTimeIntervalNotificationTrigger(timeInterval: (60*1), repeats: false)
         
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: timer)
         UNUserNotificationCenter.current().add(request)
@@ -70,17 +77,28 @@ class NotificationManager {
        
        // Parameters needed: document name of food log
        case "happy":
-        db.document(docRef).updateData([
-            "mood": "happy"
-        ])
-          break
-            
+        selectedMood = "Happy"
        case "neutral":
+        selectedMood = "Neutral"
+       case "sick":
+        selectedMood = "Sick"
+       case "overate":
+        selectedMood = "I Overate"
           break
                  
        default:
           break
        }
+        
+        db.document(docRef).updateData([
+            "mood": selectedMood
+        ]) { err in
+            if let err = err {
+                print("Error adding mood: \(err.localizedDescription)")
+            } else {
+                print("Document successfully updated")
+            }
+        }
         
        // Always call the completion handler when done.
        completionHandler()

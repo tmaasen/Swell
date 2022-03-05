@@ -20,7 +20,7 @@ struct FoodResultSheet: View {
         VStack(alignment: .leading) {
             LottieAnimation(filename: "cleanVegetableFood", loopMode: .loop, width: .infinity, height: .infinity)
                 .background(Rectangle()
-                                .foregroundColor(Color("FoodSheet_Purple")))
+                .foregroundColor(Color("FoodSheet_Purple")))
             ScrollView {
                 VStack(alignment: .leading, spacing: 15) {
                     Text("\(food.foodDescription)")
@@ -28,8 +28,14 @@ struct FoodResultSheet: View {
                         .font(.custom("Ubuntu-Bold", size: 30))
                         .padding(.bottom, 20)
                     HStack {
-                        Text("Quantity:")
-                            .font(.custom("Ubuntu", size: 20))
+                        VStack {
+                            Text("Servings:")
+                                .font(.custom("Ubuntu", size: 20))
+                            if (food.servingSize != nil) {
+                                Text("(\((food.servingSize! * Double(quantity)!), specifier: "%.2f")\(food.servingSizeUnit ?? ""))")
+                                    .font(.custom("Ubuntu", size: 14))
+                            }
+                        }
                         TextField(quantity, text: $quantity)
                             .padding()
                             .keyboardType(.numberPad)
@@ -53,17 +59,23 @@ struct FoodResultSheet: View {
                                 })
                             })
                     }
-                    Text("Category: \(food.foodCategory ?? "")")
+                    Text("Food Category: \(food.foodCategory ?? "")")
                         .font(.custom("Ubuntu", size: 16))
                     Text(food.brandOwner ?? food.brandName ?? "")
                         .font(.custom("Ubuntu", size: 16))
                     Section(header:
-                            Text("Nutrition Facts")
+                                Text("Nutrition Facts")
                                 .bold()
                                 .font(.custom("Ubuntu", size: 18))) {
                         ForEach(food.foodNutrients, id: \.self) { nutrient in
-                            Text("\(nutrient.nutrientName ?? ""):  \(nutrient.nutrientNumber ?? "")\(nutrient.unitName ?? "")")
-                                .font(.custom("Ubuntu", size: 16))
+                            HStack {
+                                Text("\(nutrient.nutrientName ?? "")")
+                                    .font(.custom("Ubuntu", size: 16))
+                                Spacer()
+                                Text("\(nutrient.value ?? 0.0, specifier: "%.2f")\(nutrient.unitName ?? "")")
+                                    .font(.custom("Ubuntu", size: 16))
+                            }
+                            Divider()
                         }
                     }
                     if (food.ingredients != nil) {

@@ -15,11 +15,33 @@ struct MealLog: View {
     @State private var noResults = false
     @EnvironmentObject var foodViewModel: FoodDataCentralViewModel
     @Environment(\.presentationMode) var presentationMode
+    @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
         VStack {
-            SearchBar(searchText: $searchText, searching: $searching)
-            Spacer()
+            HStack {
+                SearchBar(searchText: $searchText, searching: $searching)
+                Spacer()
+                if searching {
+                    Label("Go", systemImage: "arrow.forward.circle")
+                        .padding()
+                        .onTapGesture {
+                            isLoading = true
+                            foodViewModel.search(searchTerms: searchText, pageSize: 200)
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
+                                isLoading = false
+                                if foodViewModel.foodSearchDictionary.totalHits == 0 {
+                                    noResults = true
+                                } else {
+                                    noResults = false
+                                }
+                            })
+                            withAnimation {
+                                hideKeyboard()
+                            }
+                        }
+                }
+            }
             if isLoading {
                 LottieAnimation(filename: "loading", loopMode: .loop, width: 50, height: 50)
             }
@@ -29,11 +51,11 @@ struct MealLog: View {
                         .resizable()
                         .scaledToFit()
                     Text("Hmm...we couldn't find that one. What else is on your menu?")
-                        .foregroundColor(.gray)
+                        .foregroundColor(colorScheme == .dark ? .white : .gray)
                         .font(.system(size: 20))
                 } else {
                     Text("\(String(foodViewModel.foodSearchDictionary.totalHits!)) Results")
-                        .foregroundColor(.gray)
+                        .foregroundColor(colorScheme == .dark ? .white : .gray)
                     ScrollView {
                         ForEach(foodViewModel.foodSearchResults, id: \.self.id) { foodItem in
                             LazyVStack {
@@ -46,25 +68,6 @@ struct MealLog: View {
             Spacer()
         }
         .navigationTitle(mealType)
-        .toolbar {
-            if searching {
-                Button("Search") {
-                    isLoading = true
-                    foodViewModel.search(searchTerms: searchText, pageSize: 200)
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
-                        isLoading = false
-                        if foodViewModel.foodSearchDictionary.totalHits == 0 {
-                            noResults = true
-                        } else {
-                            noResults = false
-                        }
-                    })
-                    withAnimation {
-                        hideKeyboard()
-                    }
-                }
-            }
-        }
         .gesture(DragGesture()
                     .onChanged({ _ in
                         hideKeyboard()

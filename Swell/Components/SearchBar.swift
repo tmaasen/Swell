@@ -10,6 +10,7 @@ import SwiftUI
 struct SearchBar: View {
     @Binding var searchText: String
     @Binding var searching: Bool
+    @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
         ZStack {
@@ -17,6 +18,7 @@ struct SearchBar: View {
                 .foregroundColor(Color("LightGray"))
             HStack {
                 Image(systemName: "magnifyingglass")
+                    .foregroundColor(colorScheme == .dark ? .black : Color("FoodListItem_DarkGray"))
                 TextField("Search...", text: $searchText)
                 { startedEditing in
                     if startedEditing {
@@ -29,6 +31,11 @@ struct SearchBar: View {
                         searching = false
                     }
                 }
+                .foregroundColor(colorScheme == .dark ? .black : Color("FoodListItem_DarkGray"))
+                Spacer()
+                Image(systemName: "mic.fill")
+                    .foregroundColor(colorScheme == .dark ? .black : Color("FoodListItem_DarkGray"))
+                    .padding()
             }
             .padding(.leading, 13)
         }
