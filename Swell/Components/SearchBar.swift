@@ -10,16 +10,15 @@ import SwiftUI
 struct SearchBar: View {
     @Binding var searchText: String
     @Binding var searching: Bool
-    @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
         ZStack {
             Rectangle()
-                .foregroundColor(Color("LightGray"))
+                .foregroundColor(Color("iosKeyboardBackground"))
             HStack {
                 Image(systemName: "magnifyingglass")
-                    .foregroundColor(colorScheme == .dark ? .black : Color("FoodListItem_DarkGray"))
-                TextField("Search...", text: $searchText)
+                    .foregroundColor(Color("iosKeyboardFontColor"))
+                TextField("Search", text: $searchText)
                 { startedEditing in
                     if startedEditing {
                         withAnimation {
@@ -31,11 +30,14 @@ struct SearchBar: View {
                         searching = false
                     }
                 }
-                .foregroundColor(colorScheme == .dark ? .black : Color("FoodListItem_DarkGray"))
+                .foregroundColor(Color("iosKeyboardFontColor"))
                 Spacer()
                 Image(systemName: "mic.fill")
-                    .foregroundColor(colorScheme == .dark ? .black : Color("FoodListItem_DarkGray"))
-                    .padding()
+                    .font(.system(size: 30))
+                    .foregroundColor(Color("iosKeyboardFontColor"))
+                    .onTapGesture {
+                        // start voice dictation mode on keyboard
+                    }
             }
             .padding(.leading, 13)
         }
@@ -47,6 +49,6 @@ struct SearchBar: View {
 
 struct SearchBar_Previews: PreviewProvider {
     static var previews: some View {
-        SearchBar(searchText: .constant("Search..."), searching: .constant(false))
+        SearchBar(searchText: .constant("Search"), searching: .constant(false))
     }
 }

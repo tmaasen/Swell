@@ -15,6 +15,7 @@ struct FoodResultSheet: View {
     @Binding var showFoodInfoSheet: Bool
     @EnvironmentObject var foodViewModel: FoodDataCentralViewModel
     @Environment(\.presentationMode) var presentationMode
+    @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -23,25 +24,10 @@ struct FoodResultSheet: View {
                 .foregroundColor(Color("FoodSheet_Purple")))
             ScrollView {
                 VStack(alignment: .leading, spacing: 15) {
-                    Text("\(food.foodDescription)")
-                        .textCase(.uppercase)
-                        .font(.custom("Ubuntu-Bold", size: 30))
-                        .padding(.bottom, 20)
                     HStack {
-                        VStack {
-                            Text("Servings:")
-                                .font(.custom("Ubuntu", size: 20))
-                            if (food.servingSize != nil) {
-                                Text("(\((food.servingSize! * Double(quantity)!), specifier: "%.2f")\(food.servingSizeUnit ?? ""))")
-                                    .font(.custom("Ubuntu", size: 14))
-                            }
-                        }
-                        TextField(quantity, text: $quantity)
-                            .padding()
-                            .keyboardType(.numberPad)
-                            .border(Color("FoodListItem_DarkGray"))
-                            .frame(maxWidth: 40)
-                            .multilineTextAlignment(.center)
+                        Text("\(food.foodDescription)")
+                            .textCase(.uppercase)
+                            .font(.custom("Ubuntu-Bold", size: 30))
                         Spacer()
                         NavigationLink(
                             destination: Home(),
@@ -55,9 +41,34 @@ struct FoodResultSheet: View {
                                         showFoodInfoSheet = false
                                     })
                                 }, label: {
-                                    Label("Log Item", systemImage: "checkmark")
+                                    VStack {
+                                        Image(systemName: "checkmark.seal.fill")
+                                            .foregroundColor(.green)
+                                            .font(.system(size: 50))
+                                        Text("Log Item")
+                                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                                            .font(.custom("Ubuntu-Bold", size: 25))
+                                    }
                                 })
                             })
+                    }
+                    .padding(.bottom, 20)
+                    HStack {
+                        VStack {
+                            Text("Servings:")
+                                .font(.custom("Ubuntu", size: 20))
+                            if (food.servingSize != nil && !quantity.isEmpty) {
+                                Text("(\((food.servingSize! * Double(quantity)!), specifier: "%.2f")\(food.servingSizeUnit ?? ""))")
+                                    .font(.custom("Ubuntu", size: 14))
+                            }
+                        }
+                        Spacer()
+                        TextField(quantity, text: $quantity)
+                            .padding()
+                            .background(RoundedRectangle(cornerRadius: 20).fill(Color("FoodListItem_DarkGray")))
+                            .keyboardType(.numberPad)
+                            .border(Color("FoodListItem_DarkGray"))
+                            .multilineTextAlignment(.center)
                     }
                     Text("Food Category: \(food.foodCategory ?? "")")
                         .font(.custom("Ubuntu", size: 16))

@@ -16,6 +16,7 @@ struct VerticalSidebarMain: View {
     var body: some View {
         ZStack(alignment: .topLeading) {
             VStack(alignment: .leading) {
+                Spacer()
                 HStack {
                     VerticalSidebarHeader(isShowingSidebar: $isShowingSidebar)
                         .frame(height: 140)

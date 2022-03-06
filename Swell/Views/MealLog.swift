@@ -21,27 +21,28 @@ struct MealLog: View {
         VStack {
             HStack {
                 SearchBar(searchText: $searchText, searching: $searching)
-                Spacer()
                 if searching {
-                    Label("Go", systemImage: "arrow.forward.circle")
-                        .padding()
+                    Label("", systemImage: "arrow.forward.circle")
                         .onTapGesture {
-                            isLoading = true
-                            foodViewModel.search(searchTerms: searchText, pageSize: 200)
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
-                                isLoading = false
-                                if foodViewModel.foodSearchDictionary.totalHits == 0 {
-                                    noResults = true
-                                } else {
-                                    noResults = false
+                            if !searchText.isEmpty {
+                                isLoading = true
+                                foodViewModel.search(searchTerms: searchText, pageSize: 200)
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
+                                    isLoading = false
+                                    if foodViewModel.foodSearchDictionary.totalHits == 0 {
+                                        noResults = true
+                                    } else {
+                                        noResults = false
+                                    }
+                                })
+                                withAnimation {
+                                    hideKeyboard()
                                 }
-                            })
-                            withAnimation {
-                                hideKeyboard()
                             }
                         }
                 }
             }
+            Spacer()
             if isLoading {
                 LottieAnimation(filename: "loading", loopMode: .loop, width: 50, height: 50)
             }
@@ -68,11 +69,9 @@ struct MealLog: View {
             Spacer()
         }
         .navigationTitle(mealType)
-        .gesture(DragGesture()
-                    .onChanged({ _ in
-                        hideKeyboard()
-                    })
-        )
+        .onTapGesture {
+            hideKeyboard()
+        }
     }
 }
 

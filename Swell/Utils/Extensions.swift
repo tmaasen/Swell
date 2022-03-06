@@ -166,10 +166,12 @@ public extension View {
     func alert(isPresented: Binding<Bool>, _ alert: TextAlert) -> some View {
         AlertWrapper(isPresented: isPresented, alert: alert, content: self)
     }
+    
     func hideKeyboard() {
         let resign = #selector(UIResponder.resignFirstResponder)
         UIApplication.shared.sendAction(resign, to: nil, from: nil, for: nil)
     }
+    
     @ViewBuilder
     func redacted(when condition: Bool, redactionType: RedactionType) -> some View {
         if !condition {

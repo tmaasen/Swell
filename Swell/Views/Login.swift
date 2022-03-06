@@ -22,6 +22,7 @@ struct Login: View {
     
     var body: some View {
         VStack(alignment: .center) {
+            Spacer()
             Image("LoginImage")
                 .resizable()
                 .frame(width: 80, height: 80)
@@ -58,18 +59,33 @@ struct Login: View {
                 }
             }
             .padding()
-                        
+            
+            Spacer()
+            
             GoogleSignInButton()
                 .padding()
                 .onTapGesture {
                     authViewModel.signInWithGoogle()
                 }.frame(width: 220, height: 80)
             
-            NavigationLink("Register", destination: Register())
+            HStack {
+                Text("Don't have an account?")
+                    .foregroundColor(Color("FoodListItem_DarkGray"))
+                NavigationLink(destination: Register(), label: {
+                    Text("Register")
+                        .bold()
+                        .foregroundColor(.swellOrange)
+                })
+            }
             
-            Button("Forgot Password") {
+            Button {
                 showForgotPWAlert = true
-            }.alert(isPresented: $showForgotPWAlert,
+            } label: {
+                Text("Forgot Password")
+                    .bold()
+                    .foregroundColor(.swellOrange)
+            }
+            .alert(isPresented: $showForgotPWAlert,
                     TextAlert(
                         title: "Reset Password",
                         message: "Enter your Swell account email address, then check your email for further instructions.",
@@ -78,8 +94,7 @@ struct Login: View {
                         if let text = result {
                             authViewModel.resetPassword(email: text)
                         }
-                    })
-            .frame(width: 200, height: 30)
+                    }).frame(width: 200, height: 30)
         }
         .navigationBarBackButtonHidden(true)
         .navigationBarHidden(true)

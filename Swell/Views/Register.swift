@@ -43,7 +43,7 @@ struct Register: View {
                         .frame(width: 80, height: 80)
                     Text("Welcome to Swell")
                         .foregroundColor(colorScheme == .dark ? .white : .swellOrange)
-                        .font(.custom("Ubuntu-Bold", size: 40))
+                        .font(.custom("Ubuntu-Bold", size: 35))
                         .multilineTextAlignment(.center)
                 }
                 .padding()
@@ -135,8 +135,13 @@ struct Register: View {
                     }.frame(width: 220, height: 80)
                 
                 HStack() {
-                    Text("Already have an Account?")
-                    NavigationLink("Login", destination: Login())
+                    Text("Already have an account?")
+                        .foregroundColor(Color("FoodListItem_DarkGray"))
+                    NavigationLink(destination: Login(), label: {
+                        Text("Login")
+                            .bold()
+                            .foregroundColor(.swellOrange)
+                    })
                 }
                 
                 NavigationLink(

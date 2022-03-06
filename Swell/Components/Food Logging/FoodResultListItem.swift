@@ -21,7 +21,7 @@ struct FoodResultListItem: View {
         HStack(alignment: .center) {
             VStack(alignment: .leading, spacing: 5) {
                 Text("\(food.foodDescription.capitalizingFirstLetter())")
-                    .foregroundColor(colorScheme == .dark ? .black : .white)
+                    .foregroundColor(.black)
                     .font(.custom("Ubuntu-Bold", size: 18))
                 Text("\(food.foodCategory ?? "")")
                     .foregroundColor(Color("FoodListItem_DarkGray"))

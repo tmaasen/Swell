@@ -29,32 +29,33 @@ class NotificationManager {
     
     func scheduleNotification(mealType: String, foodTitle: String, docRef: String) {
         let content = UNMutableNotificationContent()
-        content.title = "How was your \(foodTitle)?"
-        content.body = "Has your mood changed since you ate \(mealType)?"
+        content.title = "How was your \(foodTitle.lowercased())?"
+        content.body = "Has your mood changed since you ate \(mealType.lowercased())?"
         content.sound = .default
+        content.categoryIdentifier = "MOOD_ACTIONS"
         // set mood options here
         let happy = UNNotificationAction(identifier: "happy",
-              title: "😀",
+              title: "Happy 😀",
               options: [])
         let neutral = UNNotificationAction(identifier: "neutral",
-              title: "😐",
+              title: "Neutral 😐",
               options: [])
         let sick = UNNotificationAction(identifier: "sick",
-              title: "🤮",
+              title: "Sick 🤮",
               options: [])
         let overate = UNNotificationAction(identifier: "overate",
-              title: "🤢",
+              title: "I Overate 🤢",
               options: [])
         // Define the notification type
         let moodOptions =
-              UNNotificationCategory(identifier: "mood_options",
+              UNNotificationCategory(identifier: "MOOD_ACTIONS",
               actions: [happy, neutral, sick, overate],
               intentIdentifiers: [],
               hiddenPreviewsBodyPlaceholder: "",
               options: .customDismissAction)
         UNUserNotificationCenter.current().setNotificationCategories([moodOptions])
         // send after 20 minutes
-        let timer = UNTimeIntervalNotificationTrigger(timeInterval: (60*1), repeats: false)
+        let timer = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
         
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: timer)
         UNUserNotificationCenter.current().add(request)
