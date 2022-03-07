@@ -18,6 +18,7 @@ struct SwellApp: App {
     @StateObject var authViewModel = AuthenticationViewModel()
     @StateObject var userViewModel = UserViewModel()
     @StateObject var foodViewModel = FoodDataCentralViewModel()
+    @StateObject var notificationDelegate = NotificationDelegate()
     
     var body: some Scene {
         WindowGroup {
@@ -25,6 +26,7 @@ struct SwellApp: App {
                 .environmentObject(userViewModel)
                 .environmentObject(authViewModel)
                 .environmentObject(foodViewModel)
+                .environmentObject(notificationDelegate)
         }
     }
 }

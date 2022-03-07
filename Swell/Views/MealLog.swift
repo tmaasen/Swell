@@ -12,36 +12,13 @@ struct MealLog: View {
     @State private var searchText = ""
     @State private var searching = false
     @State private var isLoading = false
-    @State private var noResults = false
     @EnvironmentObject var foodViewModel: FoodDataCentralViewModel
     @Environment(\.presentationMode) var presentationMode
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
         VStack {
-            HStack {
-                SearchBar(searchText: $searchText, searching: $searching)
-                if searching {
-                    Label("", systemImage: "arrow.forward.circle")
-                        .onTapGesture {
-                            if !searchText.isEmpty {
-                                isLoading = true
-                                foodViewModel.search(searchTerms: searchText, pageSize: 200)
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
-                                    isLoading = false
-                                    if foodViewModel.foodSearchDictionary.totalHits == 0 {
-                                        noResults = true
-                                    } else {
-                                        noResults = false
-                                    }
-                                })
-                                withAnimation {
-                                    hideKeyboard()
-                                }
-                            }
-                        }
-                }
-            }
+            SearchBar(searchText: $searchText, searching: $searching, isLoading: $isLoading)
             Spacer()
             if isLoading {
                 LottieAnimation(filename: "loading", loopMode: .loop, width: 50, height: 50)

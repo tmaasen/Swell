@@ -42,7 +42,7 @@ struct FoodResultSheet: View {
                                     })
                                 }, label: {
                                     VStack {
-                                        Image(systemName: "checkmark.seal.fill")
+                                        Image(systemName: "checkmark.circle")
                                             .foregroundColor(.green)
                                             .font(.system(size: 50))
                                         Text("Log Item")
@@ -65,9 +65,10 @@ struct FoodResultSheet: View {
                         Spacer()
                         TextField(quantity, text: $quantity)
                             .padding()
-                            .background(RoundedRectangle(cornerRadius: 20).fill(Color("FoodListItem_DarkGray")))
+                            .background(RoundedRectangle(cornerRadius: 20)
+                                            .border(Color("FoodListItem_DarkGray"))
+                                            .foregroundColor(Color.white))
                             .keyboardType(.numberPad)
-                            .border(Color("FoodListItem_DarkGray"))
                             .multilineTextAlignment(.center)
                     }
                     Text("Food Category: \(food.foodCategory ?? "")")

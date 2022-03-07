@@ -25,6 +25,7 @@ struct Register: View {
     @EnvironmentObject var authViewModel: AuthenticationViewModel
     @EnvironmentObject var userViewModel: UserViewModel
     @EnvironmentObject var hudCoordinator: JGProgressHUDCoordinator
+    @EnvironmentObject var notificationDelegate: NotificationDelegate
     @Environment(\.colorScheme) var colorScheme
     
     var disableForm: Bool {
@@ -187,6 +188,9 @@ struct Register: View {
         .navigationBarHidden(true)
         .onTapGesture {
             hideKeyboard()
+        }
+        .onAppear() {
+            UNUserNotificationCenter.current().delegate = notificationDelegate
         }
     }
     func toggleLoadingIndicator() {

@@ -49,5 +49,6 @@ struct ContentView_Previews: PreviewProvider {
             .environmentObject(AuthenticationViewModel())
             .environmentObject(UserViewModel())
             .environmentObject(FoodDataCentralViewModel())
+            .environmentObject(NotificationDelegate())
     }
 }

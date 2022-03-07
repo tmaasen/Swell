@@ -10,6 +10,8 @@ import SwiftUI
 struct SearchBar: View {
     @Binding var searchText: String
     @Binding var searching: Bool
+    @Binding var isLoading: Bool
+    @EnvironmentObject var foodViewModel: FoodDataCentralViewModel
     
     var body: some View {
         ZStack {
@@ -32,12 +34,23 @@ struct SearchBar: View {
                 }
                 .foregroundColor(Color("iosKeyboardFontColor"))
                 Spacer()
-                Image(systemName: "mic.fill")
-                    .font(.system(size: 30))
-                    .foregroundColor(Color("iosKeyboardFontColor"))
-                    .onTapGesture {
-                        // start voice dictation mode on keyboard
-                    }
+                if searching {
+                    Image(systemName: "arrow.forward.circle")
+                        .foregroundColor(Color("iosKeyboardFontColor"))
+                        .padding()
+                        .onTapGesture {
+                            if !searchText.isEmpty {
+                                isLoading = true
+                                foodViewModel.search(searchTerms: searchText, pageSize: 200)
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
+                                    isLoading = false
+                                })
+                                withAnimation {
+                                    hideKeyboard()
+                                }
+                            }
+                        }
+                }
             }
             .padding(.leading, 13)
         }
@@ -49,6 +62,6 @@ struct SearchBar: View {
 
 struct SearchBar_Previews: PreviewProvider {
     static var previews: some View {
-        SearchBar(searchText: .constant("Search"), searching: .constant(false))
+        SearchBar(searchText: .constant("Search"), searching: .constant(false), isLoading: .constant(false))
     }
 }

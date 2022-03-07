@@ -140,7 +140,7 @@ public class FoodDataCentralViewModel: ObservableObject {
     func logFood(pFoodToLog: Food, pQuantity: Int?, pMeal: String) {
         formatter.dateFormat = "EEEE MMM dd, yyyy"
         
-        var docRef: DocumentReference? = nil
+        var docRef: DocumentReference
         
         let docData: [String: Any] = [
             "foodId": pFoodToLog.fdcID,
@@ -155,7 +155,7 @@ public class FoodDataCentralViewModel: ObservableObject {
             }
         })
         
-        NotificationManager.instance.scheduleNotification(mealType: pMeal, foodTitle: pFoodToLog.foodDescription, docRef: docRef!.documentID)
+        NotificationManager.instance.scheduleNotification(mealType: pMeal, foodTitle: pFoodToLog.foodDescription, docRef: docRef.documentID)
     }
     
     /// Logs a water of specific size
