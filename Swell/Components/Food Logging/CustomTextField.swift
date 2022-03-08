@@ -24,6 +24,7 @@ struct CustomTextField: UIViewRepresentable {
         textField.keyboardType = self.keyboardType
         textField.returnKeyType = self.returnVal
         textField.placeholder = "Search"
+        // TEXT NOT CLEARING
         textField.clearButtonMode = .whileEditing
         textField.tag = self.tag
         textField.delegate = context.coordinator
@@ -38,12 +39,12 @@ struct CustomTextField: UIViewRepresentable {
         } else {
             uiView.resignFirstResponder()
         }
-        if uiView.window != nil, !uiView.isFirstResponder {
-            //This triggers attribute cycle if not dispatched
-            DispatchQueue.main.async {
-                uiView.becomeFirstResponder()
-            }
-        }
+//        if uiView.window != nil, !uiView.isFirstResponder {
+//            //This triggers attribute cycle if not dispatched
+//            DispatchQueue.main.async {
+//                uiView.becomeFirstResponder()
+//            }
+//        }
     }
     
     func makeCoordinator() -> Coordinator {

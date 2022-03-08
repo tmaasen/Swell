@@ -11,6 +11,9 @@ struct MyMeals: View {
     var body: some View {
         VStack {
             Text("MyMeals")
+            NavigationLink(destination: MoodLog(docRef: "")) {
+                Text("Mood Log")
+            }
         }.navigationTitle("MyMeals")
     }
 }

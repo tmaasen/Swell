@@ -11,7 +11,8 @@ struct Goals: View {
     var body: some View {
         VStack {
             Text("Goals")
-        }.navigationTitle("My Goals")
+        }
+        .navigationTitle("My Goals")
     }
 }
 

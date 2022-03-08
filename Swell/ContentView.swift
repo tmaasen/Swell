@@ -12,8 +12,7 @@ import UIKit
 
 struct ContentView: View {
     
-    @State private var isNavBarHidden: Bool = false
-    @State private var blockTouches = false
+    @State private var blockTouches: Bool = false
     @EnvironmentObject var authViewModel: AuthenticationViewModel
     @EnvironmentObject var userViewModel: UserViewModel
     @EnvironmentObject var foodViewModel: FoodDataCentralViewModel
@@ -54,17 +53,19 @@ struct ContentView_Previews: PreviewProvider {
             .environmentObject(AuthenticationViewModel())
             .environmentObject(UserViewModel())
             .environmentObject(FoodDataCentralViewModel())
+            .environmentObject(AppDelegate())
     }
 }
 
-class AppDelegate: NSObject, UIApplicationDelegate {
-  func application(
-    _ application: UIApplication,
-    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
-  ) -> Bool {
-    configureNotification()
-    return true
-  }
+class AppDelegate: NSObject, UIApplicationDelegate, ObservableObject {
+    @Published var logMoodInApp: Bool = false
+    func application(
+        _ application: UIApplication,
+        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
+    ) -> Bool {
+        configureNotification()
+        return true
+    }
 }
 
 // MARK: - UNUserNotificationCenterDelegate
@@ -79,17 +80,16 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
 
   private func configureNotification() {
     UNUserNotificationCenter.current().delegate = self
-    print("CONFIGURING NOTIFICATION")
     // 1
     let happy = UNNotificationAction(identifier: "HAPPY", title: "Happy 😀", options: [])
     let neutral = UNNotificationAction(identifier: "NEUTRAL", title: "Neutral 😐", options: [])
     let sick = UNNotificationAction(identifier: "SICK", title: "Sick 🤮", options: [])
     let overate = UNNotificationAction(identifier: "OVERATE", title: "I Overate 🤢", options: [])
-    let logInApp = UNNotificationAction(identifier: "LOG_IN_APP", title: "Log and Add Comments", options: [])
+//    let logInApp = UNNotificationAction(identifier: "LOG_IN_APP", title: "Log and Add Comments", options: [])
     // 2
     let moodOptions =
         UNNotificationCategory(identifier: "MOOD_ACTIONS",
-                               actions: [happy, neutral, sick, overate, logInApp],
+                               actions: [happy, neutral, sick, overate],
                                intentIdentifiers: [],
                                options: [])
     // 3
@@ -113,11 +113,10 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         NotificationManager.instance.logMood(pMood: "Sick")
     case "OVERATE":
         NotificationManager.instance.logMood(pMood: "I Overate")
-    case "LOG_IN_APP":
-    // Go to MoodLog screen
-    print("Wants to log mood in app")
     default:
-        break
+        logMoodInApp = true
+        print("Wants to log mood in app")
+//        NavigationLink(destination: MoodLog(), isActive: appDelegate.$logMoodInApp) {}
     }
     // 3
     completionHandler()
