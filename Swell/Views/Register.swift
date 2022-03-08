@@ -127,13 +127,14 @@ struct Register: View {
                         .background(Color.gray)
                 }
                 .padding(.horizontal, 30)
-                
 
                 GoogleSignInButton()
                     .padding()
+                    .disabled(disableForm)
                     .onTapGesture {
                         authViewModel.signInWithGoogle()
-                    }.frame(width: 220, height: 80)
+                    }
+                    .frame(width: 220, height: 80)
                 
                 HStack() {
                     Text("Already have an account?")
@@ -188,9 +189,6 @@ struct Register: View {
         .navigationBarHidden(true)
         .onTapGesture {
             hideKeyboard()
-        }
-        .onAppear() {
-            UNUserNotificationCenter.current().delegate = notificationDelegate
         }
     }
     func toggleLoadingIndicator() {

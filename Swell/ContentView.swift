@@ -8,6 +8,7 @@
 import SwiftUI
 import GoogleSignIn
 import JGProgressHUD_SwiftUI
+import UIKit
 
 struct ContentView: View {
     
@@ -21,7 +22,11 @@ struct ContentView: View {
     
     init() {
         if hasLaunchedBefore == false {
-            NotificationManager.instance.requestAuthorization()
+            NotificationManager.instance.requestAuthorization { granted in
+              if granted {
+                print("Notification access granted")
+              }
+            }
         }
     }
 
@@ -49,6 +54,72 @@ struct ContentView_Previews: PreviewProvider {
             .environmentObject(AuthenticationViewModel())
             .environmentObject(UserViewModel())
             .environmentObject(FoodDataCentralViewModel())
-            .environmentObject(NotificationDelegate())
     }
+}
+
+class AppDelegate: NSObject, UIApplicationDelegate {
+  func application(
+    _ application: UIApplication,
+    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
+  ) -> Bool {
+    configureNotification()
+    return true
+  }
+}
+
+// MARK: - UNUserNotificationCenterDelegate
+extension AppDelegate: UNUserNotificationCenterDelegate {
+  func userNotificationCenter(
+    _ center: UNUserNotificationCenter,
+    willPresent notification: UNNotification,
+    withCompletionHandler completionHandler: (UNNotificationPresentationOptions) -> Void
+  ) {
+    completionHandler(.banner)
+  }
+
+  private func configureNotification() {
+    UNUserNotificationCenter.current().delegate = self
+    print("CONFIGURING NOTIFICATION")
+    // 1
+    let happy = UNNotificationAction(identifier: "HAPPY", title: "Happy 😀", options: [])
+    let neutral = UNNotificationAction(identifier: "NEUTRAL", title: "Neutral 😐", options: [])
+    let sick = UNNotificationAction(identifier: "SICK", title: "Sick 🤮", options: [])
+    let overate = UNNotificationAction(identifier: "OVERATE", title: "I Overate 🤢", options: [])
+    let logInApp = UNNotificationAction(identifier: "LOG_IN_APP", title: "Log and Add Comments", options: [])
+    // 2
+    let moodOptions =
+        UNNotificationCategory(identifier: "MOOD_ACTIONS",
+                               actions: [happy, neutral, sick, overate, logInApp],
+                               intentIdentifiers: [],
+                               options: [])
+    // 3
+    UNUserNotificationCenter.current().setNotificationCategories([moodOptions])
+  }
+
+  func userNotificationCenter(
+    _ center: UNUserNotificationCenter,
+    didReceive response: UNNotificationResponse,
+    withCompletionHandler completionHandler: @escaping () -> Void
+  ) {
+    // 1
+    print("Notification Received")
+    // 2
+    switch response.actionIdentifier {
+    case "HAPPY":
+        NotificationManager.instance.logMood(pMood: "Happy")
+    case "NEUTRAL":
+        NotificationManager.instance.logMood(pMood: "Neutral")
+    case "SICK":
+        NotificationManager.instance.logMood(pMood: "Sick")
+    case "OVERATE":
+        NotificationManager.instance.logMood(pMood: "I Overate")
+    case "LOG_IN_APP":
+    // Go to MoodLog screen
+    print("Wants to log mood in app")
+    default:
+        break
+    }
+    // 3
+    completionHandler()
+  }
 }

@@ -34,7 +34,7 @@
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Audio is recorded to transcribe food logs. Audio recordings are discarded after transcription.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
-	<string>You can view a text transcription of the nutritional item you&apos;re about to log.</string>
+	<string>You can view a text transcription of the nutritional item you're about to log.</string>
 	<key>PEXELS_API_KEY</key>
 	<string>$(PEXELS_API_KEY)</string>
 	<key>UIAppFonts</key>
@@ -59,7 +59,7 @@
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
-		<string>remote-notification</string>
+		<string>processing</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>Launch Screen</string>
