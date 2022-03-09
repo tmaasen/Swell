@@ -80,6 +80,8 @@ public class FoodDataCentralViewModel: ObservableObject {
         var foodIds = [String]()
         var mealTypes = [String]()
         var servingSizes = [Int]()
+        var moods = [String]()
+        var comments = [String]()
         formatter.dateFormat = "EEEE MMM dd, yyyy"
         let pDate = formatter.string(from: date ?? Timestamp(date: Date()).dateValue())
         
@@ -93,12 +95,16 @@ public class FoodDataCentralViewModel: ObservableObject {
                 let fdcId: Int = document.get("foodId") as! Int
                 let mealType: String = document.get("meal") as! String
                 let servingSize: Int = document.get("quantity") as! Int
+                let mood: String = document.get("mood") as? String ?? ""
+                let comment: String = document.get("comments") as? String ?? ""
                 let toString = String(fdcId)
                 foodIds.append(toString)
                 mealTypes.append(mealType)
                 servingSizes.append(servingSize)
+                moods.append(mood)
+                comments.append(comment)
             }
-            self.getFoods(foodIds, mealTypes, servingSizes)
+            self.getFoods(foodIds, mealTypes, servingSizes, moods, comments)
         }
     }
     
@@ -107,7 +113,9 @@ public class FoodDataCentralViewModel: ObservableObject {
      - Parameter fdcIDs: An array of the food IDs whose data you'd like to retrieve.
      - Returns: An array of the food data for the given food IDs.
      */
-    public func getFoods(_ fdcIDs: [String], _ mealTypes: [String], _ servingSizes: [Int]) {
+    
+    // BUG: IF HAVE SAME FOOD LOGGED TWICE IN SAME DAY, RETURNS ONLY ONE INSTANCE OF THAT FOOD, CREATING AN INEQUALITY IN NUMBER OF FOODS AND REST OF PARAMS
+    public func getFoods(_ fdcIDs: [String], _ mealTypes: [String], _ servingSizes: [Int], _ moods: [String], _ comments: [String]) {
         
         var queryItems: [URLQueryItem] = []
         queryItems.append(URLQueryItem(name: "format", value: "abridged"))
@@ -127,9 +135,11 @@ public class FoodDataCentralViewModel: ObservableObject {
                 DispatchQueue.main.async {
                     self.foodHistory = food
                     if !self.foodHistory.isEmpty {
-                        for i in 0...mealTypes.count-1 {
+                        for i in 0...fdcIDs.count-1 {
                             self.foodHistory[i].mealType = mealTypes[i]
                             self.foodHistory[i].servingSize = servingSizes[i]
+                            self.foodHistory[i].mood = moods[i]
+                            self.foodHistory[i].comments = comments[i]
                         }
                     }
                 }

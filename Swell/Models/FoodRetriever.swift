@@ -11,6 +11,8 @@ struct FoodRetriever: Codable, Identifiable {
     var id = UUID()
     var mealType: String?
     var servingSize: Int?
+    var mood: String?
+    var comments: String?
     var fdcID: Int?
     var description, dataType, publicationDate: String?
     var foodCode: String?

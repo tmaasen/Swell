@@ -18,11 +18,7 @@ struct History: View {
             if !foodViewModel.foodHistory.isEmpty && !isLoading {
                 ScrollView {
                     ForEach(foodViewModel.foodHistory, id: \.self.id) { item in
-                        VStack(alignment: .leading) {
-                            Text("\(item.description ?? "")")
-                            Text("\(item.mealType ?? "")")
-                            Text("Serving Size: \(item.servingSize ?? 0)")
-                        }
+                        HistoryItem(item: item)
                     }
                 }
             } else {
