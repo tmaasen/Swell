@@ -8,55 +8,67 @@
 import SwiftUI
 import Firebase
 
+public enum MealTypes: Int, CaseIterable {
+    case breakfast
+    case lunch
+    case dinner
+    case snack
+    case water
+    
+    var text: String {
+        switch self {
+        case .breakfast: return "Breakfast"
+        case .lunch: return "Lunch"
+        case .dinner: return "Dinner"
+        case .snack: return "Snack"
+        case .water: return "Water"
+        }
+    }
+}
+
 struct History: View {
     @EnvironmentObject var foodViewModel: FoodDataCentralViewModel
-    @State private var isLoading = false
     @State private var selectedDate = Date()
+    var pickerOptions = ["Log", "Analytics"]
+    @State private var selectedPickerIndex: Int = 0
+    var filterOptions = ["day", "week"]
+    @State private var selectedFilterIndex: Int = 0
     
     var body: some View {
         VStack {
-            if !foodViewModel.foodHistory.isEmpty && !isLoading {
-                ScrollView {
-                    ForEach(foodViewModel.foodHistory, id: \.self.id) { item in
-                        HistoryItem(item: item)
-                    }
+            Picker("", selection: $selectedPickerIndex) {
+                ForEach(0..<pickerOptions.count) {
+                    Text(self.pickerOptions[$0])
                 }
+            }
+            .padding()
+            .pickerStyle(SegmentedPickerStyle())
+                        
+            if selectedPickerIndex == 0 {
+                LogHistory(selectedDate: $selectedDate)
             } else {
-                if !isLoading {
-                    Image("NoData")
-                        .resizable()
-                        .scaledToFit()
-                    Text("No logging history on this day!")
-                        .foregroundColor(.gray)
-                        .font(.system(size: 20))
-                }
+                AnalyticHistory(filterTag: $selectedFilterIndex)
+                    .toolbar {
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            Picker("Filter by: ", selection: $selectedFilterIndex) {
+                                ForEach(0..<filterOptions.count) {
+                                    Text(self.filterOptions[$0])
+                                }
+                            }
+                        }
+                    }
             }
         }
         .navigationTitle("History")
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                DatePicker("📅", selection: $selectedDate, in: ...Date(), displayedComponents: .date)
-                    .onChange(of: selectedDate, perform: { value in
-                        isLoading = true
-                        foodViewModel.getFoodIds(date: selectedDate)
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
-                            isLoading = false
-                        })
-                    })
-            }
-        }
         .onAppear() {
-            isLoading = true
-            foodViewModel.getFoodIds(date: Timestamp(date: Date()).dateValue())
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
-                isLoading = false
-            })
+            foodViewModel.getFoodIds(date: selectedDate)
         }
-        if isLoading {
+        if !foodViewModel.completed {
             ZStack(alignment: .leading) {
                 LottieAnimation(filename: "loading", loopMode: .loop, width: 50, height: 50)
             }
         }
+        Spacer()
     }
 }
 

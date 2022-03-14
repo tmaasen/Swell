@@ -13,33 +13,28 @@ struct HistoryItem: View {
     
     var body: some View {
         VStack(alignment: .leading) {
-            Text("\(item.mealType ?? "")")
-                .font(.custom("Ubuntu-BoldItalic", size: 20))
-                .padding(.horizontal)
             HStack {
                 // Food
                 VStack(alignment: .leading) {
                     Text("\(item.description ?? "")")
-                        .font(.custom("Ubuntu-Bold", size: 10))
+                        .font(.custom("Ubuntu-Bold", size: 12))
                     Text("Servings: \(item.servingSize ?? 0)")
-                        .font(.custom("Ubuntu-Bold", size: 10))
-                    // Nutrition Data
-                    
+                        .font(.custom("Ubuntu", size: 12))
                 }
                 // Mood
                 VStack(alignment: .center) {
                     Text("\(getMoodEmoji(pMood: item.mood ?? ""))")
-                        .font(.system(size: 30))
+                        .font(.system(size: 35))
                     Text("\(item.mood != "" ? item.mood! : "No mood specified.")")
-                        .font(.custom("Ubuntu-Bold", size: 10))
+                        .font(.custom("Ubuntu", size: 14))
                 }
                 // Comments
                 VStack(alignment: .leading) {
                     Text("\(item.comments != "" ? item.comments! : "No comments.")")
-                        .font(.custom("Ubuntu", size: 10))
+                        .font(.custom("Ubuntu", size: 14))
                 }
             }
-            .frame(maxWidth: .infinity, maxHeight: 100)
+            .frame(width: 300, height: 100)
             .padding()
             .overlay(
                 RoundedRectangle(cornerRadius: 20)
@@ -47,6 +42,7 @@ struct HistoryItem: View {
             )
             .padding(.horizontal)
         }
+        .padding(.bottom)
     }
     func getMoodEmoji(pMood: String) -> String {
         if pMood == "Happy" { return Mood.happy.emoji }

@@ -18,6 +18,7 @@ struct FoodRetriever: Codable, Identifiable {
     var foodCode: String?
     var foodNutrients: [FoodNutrient]?
     var ndbNumber: String?
+    var labelNutrients: [LabelNutrient]?
 
     enum CodingKeys: String, CodingKey {
         case fdcID = "fdcId"
@@ -58,7 +59,45 @@ extension FoodRetriever {
             publicationDate: publicationDate ?? self.publicationDate,
             foodCode: foodCode ?? self.foodCode,
             foodNutrients: foodNutrients ?? self.foodNutrients,
-            ndbNumber: ndbNumber ?? self.ndbNumber
+            ndbNumber: ndbNumber ?? self.ndbNumber,
+            labelNutrients: labelNutrients ?? self.labelNutrients
+        )
+    }
+
+    func jsonData() throws -> Data {
+        return try newJSONEncoder().encode(self)
+    }
+
+    func jsonString(encoding: String.Encoding = .utf8) throws -> String? {
+        return String(data: try self.jsonData(), encoding: encoding)
+    }
+}
+
+struct LabelNutrient: Codable {
+    var value: Double
+}
+
+extension LabelNutrient {
+    init(data: Data) throws {
+        self = try newJSONDecoder().decode(LabelNutrient.self, from: data)
+    }
+
+    init(_ json: String, using encoding: String.Encoding = .utf8) throws {
+        guard let data = json.data(using: encoding) else {
+            throw NSError(domain: "JSONDecoding", code: 0, userInfo: nil)
+        }
+        try self.init(data: data)
+    }
+
+    init(fromURL url: URL) throws {
+        try self.init(data: try Data(contentsOf: url))
+    }
+
+    func with(
+        value: Double? = nil
+    ) -> LabelNutrient {
+        return LabelNutrient(
+            value: value ?? self.value
         )
     }
 

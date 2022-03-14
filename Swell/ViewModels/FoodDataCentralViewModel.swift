@@ -22,6 +22,7 @@ public class FoodDataCentralViewModel: ObservableObject {
     var foodSearchDictionary = FoodDataCentral()
     // Retrieving Food History
     @Published var foodHistory = [FoodRetriever]()
+    @Published var completed = false
     
     public enum SearchFields: String {
         case fdcId = "fdcId"
@@ -51,7 +52,7 @@ public class FoodDataCentralViewModel: ObservableObject {
      - Returns: Results in JSON format.
      */
     public func search(searchTerms: String?, dataType: String? = nil, pageSize: Int? = nil, pageNumber: Int? = nil, brandOwner: String? = nil) {
-        
+        self.completed = false
         var queryItems: [URLQueryItem] = []
         if let searchTerms = searchTerms { queryItems.append(URLQueryItem(name: "query", value: searchTerms)) }
         if let pageSize = pageSize { queryItems.append(URLQueryItem(name: "pageSize", value: String(pageSize))) }
@@ -73,10 +74,13 @@ public class FoodDataCentralViewModel: ObservableObject {
                     self.error = "No results. Please try again."
                 }
             }
-        }.resume()
+        }
+        .resume()
+        self.completed = true
     }
     
     func getFoodIds(date: Date?) {
+        self.completed = false
         var foodIds = [String]()
         var mealTypes = [String]()
         var servingSizes = [Int]()
@@ -104,7 +108,7 @@ public class FoodDataCentralViewModel: ObservableObject {
                 moods.append(mood)
                 comments.append(comment)
             }
-            self.getFoods(foodIds, mealTypes, servingSizes, moods, comments)
+            self.getFoodsById(foodIds, mealTypes, servingSizes, moods, comments)
         }
     }
     
@@ -113,13 +117,10 @@ public class FoodDataCentralViewModel: ObservableObject {
      - Parameter fdcIDs: An array of the food IDs whose data you'd like to retrieve.
      - Returns: An array of the food data for the given food IDs.
      */
-    
-    // BUG: IF HAVE SAME FOOD LOGGED TWICE IN SAME DAY, RETURNS ONLY ONE INSTANCE OF THAT FOOD, CREATING AN INEQUALITY IN NUMBER OF FOODS AND REST OF PARAMS
-    public func getFoods(_ fdcIDs: [String], _ mealTypes: [String], _ servingSizes: [Int], _ moods: [String], _ comments: [String]) {
-        
+    public func getFoodsById(_ fdcIDs: [String], _ mealTypes: [String], _ servingSizes: [Int], _ moods: [String], _ comments: [String]) {
         var queryItems: [URLQueryItem] = []
-        queryItems.append(URLQueryItem(name: "format", value: "abridged"))
-        queryItems.append(URLQueryItem(name: "nutrients", value: "328,418,601,401,203,209,212,213,268,287,291,303,307,318,573,406,415,204,205,211,262,269,301,306"))
+//        queryItems.append(URLQueryItem(name: "nutrients", value: "328,418,601,401,203,209,212,213,268,287,291,303,307,318,573,406,415,204,205,211,262,269,301,306"))
+        queryItems.append(URLQueryItem(name: "nutrients", value: "203,204,205"))
         queryItems.append(contentsOf: fdcIDs.map { URLQueryItem(name: "fdcIds", value: $0) })
         
         let url = generateURL(path: "fdc/v1/foods", queryItems: queryItems)
@@ -144,6 +145,7 @@ public class FoodDataCentralViewModel: ObservableObject {
                     }
                 }
             })
+        self.completed = true
     }
     
     /// Logs a food item's fdcid into Cloud Firestore
