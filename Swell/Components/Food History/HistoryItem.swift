@@ -12,18 +12,13 @@ struct HistoryItem: View {
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
-        VStack {
-            VStack(alignment: .leading) {
-                Text("\(item.mealType ?? "")")
-                    .font(.custom("Ubuntu-BoldItalic", size: 20))
-            }
+        VStack(alignment: .leading) {
+            Text("\(item.mealType ?? "")")
+                .font(.custom("Ubuntu-BoldItalic", size: 20))
+                .padding(.horizontal)
             HStack {
                 // Food
                 VStack(alignment: .leading) {
-                    HStack(alignment: .top) {
-                        Text("Food")
-                            .font(.custom("Ubuntu-Bold", size: 12))
-                    }
                     Text("\(item.description ?? "")")
                         .font(.custom("Ubuntu-Bold", size: 10))
                     Text("Servings: \(item.servingSize ?? 0)")
@@ -31,30 +26,20 @@ struct HistoryItem: View {
                     // Nutrition Data
                     
                 }
-                Divider()
                 // Mood
                 VStack(alignment: .center) {
-                    HStack(alignment: .top) {
-                        Text("Mood")
-                            .font(.custom("Ubuntu-Bold", size: 12))
-                    }
                     Text("\(getMoodEmoji(pMood: item.mood ?? ""))")
                         .font(.system(size: 30))
                     Text("\(item.mood != "" ? item.mood! : "No mood specified.")")
                         .font(.custom("Ubuntu-Bold", size: 10))
                 }
-                Divider()
                 // Comments
                 VStack(alignment: .leading) {
-                    HStack(alignment: .top) {
-                        Text("Comments")
-                            .font(.custom("Ubuntu-Bold", size: 12))
-                    }
                     Text("\(item.comments != "" ? item.comments! : "No comments.")")
                         .font(.custom("Ubuntu", size: 10))
-                    
                 }
             }
+            .frame(maxWidth: .infinity, maxHeight: 100)
             .padding()
             .overlay(
                 RoundedRectangle(cornerRadius: 20)
@@ -64,10 +49,10 @@ struct HistoryItem: View {
         }
     }
     func getMoodEmoji(pMood: String) -> String {
-        if pMood == "Happy" { return moodEmojis.happy.mood }
-        if pMood == "Neutral" { return moodEmojis.neutral.mood }
-        if pMood == "Sick" { return moodEmojis.sick.mood }
-        if pMood == "Overate" { return moodEmojis.overate.mood }
+        if pMood == "Happy" { return Mood.happy.emoji }
+        if pMood == "Neutral" { return Mood.neutral.emoji }
+        if pMood == "Sick" { return Mood.sick.emoji }
+        if pMood == "Overate" { return Mood.overate.emoji }
         return ""
     }
 }
@@ -75,21 +60,5 @@ struct HistoryItem: View {
 struct HistoryItem_Previews: PreviewProvider {
     static var previews: some View {
         HistoryItem(item: FoodRetriever(id: UUID(), mealType: "Breakfast", servingSize: 1, mood: "Happy", comments: "Today was good!", fdcID: 111111, description: "Cheese Omelet"))
-    }
-}
-
-public enum moodEmojis {
-    case happy
-    case neutral
-    case sick
-    case overate
-    
-    var mood: String {
-        switch self {
-        case .happy: return "😀"
-        case .neutral: return "😐"
-        case .sick: return "🤮"
-        case .overate: return "🤢"
-        }
     }
 }

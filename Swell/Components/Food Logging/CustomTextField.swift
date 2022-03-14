@@ -25,10 +25,10 @@ struct CustomTextField: UIViewRepresentable {
         textField.returnKeyType = self.returnVal
         textField.placeholder = "Search"
         // TEXT NOT CLEARING
-        textField.clearButtonMode = .whileEditing
+        textField.clearButtonMode = .always
+        textField.adjustsFontSizeToFitWidth = true
         textField.tag = self.tag
         textField.delegate = context.coordinator
-        textField.autocorrectionType = .no
         
         return textField
     }

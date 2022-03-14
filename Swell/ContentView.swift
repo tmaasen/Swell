@@ -44,7 +44,6 @@ struct ContentView: View {
             }
         }
     }
-    
 }
 
 struct ContentView_Previews: PreviewProvider {
@@ -58,7 +57,6 @@ struct ContentView_Previews: PreviewProvider {
 }
 
 class AppDelegate: NSObject, UIApplicationDelegate, ObservableObject {
-    @Published var logMoodInApp: Bool = false
     func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
@@ -85,7 +83,6 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     let neutral = UNNotificationAction(identifier: "NEUTRAL", title: "Neutral 😐", options: [])
     let sick = UNNotificationAction(identifier: "SICK", title: "Sick 🤮", options: [])
     let overate = UNNotificationAction(identifier: "OVERATE", title: "I Overate 🤢", options: [])
-//    let logInApp = UNNotificationAction(identifier: "LOG_IN_APP", title: "Log and Add Comments", options: [])
     // 2
     let moodOptions =
         UNNotificationCategory(identifier: "MOOD_ACTIONS",
@@ -114,9 +111,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     case "OVERATE":
         NotificationManager.instance.logMood(pMood: "I Overate")
     default:
-        logMoodInApp = true
-        print("Wants to log mood in app")
-//        NavigationLink(destination: MoodLog(), isActive: appDelegate.$logMoodInApp) {}
+        NotificationCenter.default.post(name: NSNotification.Name("MoodLog"), object: nil)
     }
     // 3
     completionHandler()

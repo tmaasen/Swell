@@ -15,12 +15,18 @@ struct Home: View {
     @State private var isShowingSidebar: Bool = false
     @State private var isShowingSignOut: Bool = false
     @State private var showLoader: Bool = false
+    @State private var showMoodLog: Bool = false
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var userViewModel: UserViewModel
     @EnvironmentObject var hudCoordinator: JGProgressHUDCoordinator
     
     var body: some View {
         ZStack(alignment: .leading) {
+            // For Mood Log view from Notification tap
+            NavigationLink(
+                destination: MoodLog(docRef: NotificationManager.instance.docRef, showMoodLog: self.$showMoodLog),
+                isActive: self.$showMoodLog) {}
+            
             GeometryReader { geometry in
                 if isShowingSidebar {
                     VerticalSidebarMain(isShowingSidebar: $isShowingSidebar)
@@ -57,6 +63,11 @@ struct Home: View {
             isShowingSidebar = false
             userViewModel.getUser()
             userViewModel.getGreeting(name: GIDSignIn.sharedInstance.currentUser?.profile?.givenName ?? userViewModel.user.fname)
+            // Observer for when user taps on notification to log mood in app
+            NotificationCenter.default.addObserver(forName: NSNotification.Name("MoodLog"), object: nil, queue: .main) { (_) in
+                self.showMoodLog = true
+                print("Should show mood log: ", showMoodLog)
+            }
         }
         .gesture(DragGesture()
                     .onEnded {
