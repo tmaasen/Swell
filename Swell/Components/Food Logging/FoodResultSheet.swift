@@ -10,9 +10,10 @@ import SwiftUI
 struct FoodResultSheet: View {
     var food: Food
     @State private var logCompleted: Bool = false
-    @State private var quantity: String = "1"
+    @State private var quantity: Int = 1
     @Binding var meal: String
     @Binding var showFoodInfoSheet: Bool
+    @Binding var contains: [String]
     @EnvironmentObject var foodViewModel: FoodDataCentralViewModel
     @Environment(\.presentationMode) var presentationMode
     @Environment(\.colorScheme) var colorScheme
@@ -22,11 +23,11 @@ struct FoodResultSheet: View {
             LottieAnimation(filename: "cleanVegetableFood", loopMode: .loop, width: .infinity, height: .infinity)
                 .background(Rectangle()
                 .foregroundColor(Color("FoodSheet_Purple")))
+                .clipShape(CustomShape(corner: .bottomLeft, radii: 55))
             ScrollView {
                 VStack(alignment: .leading, spacing: 15) {
                     HStack {
-                        Text("\(food.foodDescription)")
-                            .textCase(.uppercase)
+                        Text("\(food.foodDescription.capitalizingFirstLetter())")
                             .font(.custom("Ubuntu-Bold", size: 30))
                         Spacer()
                         NavigationLink(
@@ -34,44 +35,32 @@ struct FoodResultSheet: View {
                             isActive: $logCompleted,
                             label: {
                                 Button(action: {
-                                    foodViewModel.logFood(pFoodToLog: food, pQuantity: Int(quantity), pMeal: meal)
+                                    foodViewModel.logFood(pFoodToLog: food, pQuantity: Int(quantity), pMeal: meal, pContains: contains)
                                     logCompleted = true
                                     DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
                                         presentationMode.wrappedValue.dismiss()
                                         showFoodInfoSheet = false
                                     })
                                 }, label: {
-                                    VStack {
-                                        Image(systemName: "checkmark.circle")
-                                            .foregroundColor(.green)
-                                            .font(.system(size: 50))
-                                        Text("Log Item")
-                                            .foregroundColor(colorScheme == .dark ? .white : .black)
-                                            .font(.custom("Ubuntu-Bold", size: 25))
-                                    }
+                                    Image(systemName: "checkmark.circle")
+                                        .foregroundColor(.green)
+                                        .font(.system(size: 40))
                                 })
                             })
                     }
-                    .padding(.bottom, 20)
+                    .padding(.bottom, 5)
                     HStack {
                         VStack {
                             Text("Servings:")
-                                .font(.custom("Ubuntu", size: 20))
-                            if (food.servingSize != nil && !quantity.isEmpty) {
-                                Text("(\((food.servingSize! * Double(quantity)!), specifier: "%.2f")\(food.servingSizeUnit ?? ""))")
-                                    .font(.custom("Ubuntu", size: 14))
-                            }
+                                .font(.custom("Ubuntu", size: 16))
                         }
                         Spacer()
-                        TextField(quantity, text: $quantity)
-                            .padding()
-                            .keyboardType(.numberPad)
-                            .multilineTextAlignment(.center)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 20)
-                                    .stroke(colorScheme == .dark ? Color.white : Color.black, lineWidth: 2)
-                            )
-                            .padding(.horizontal)
+                        Stepper("\(quantity)", value: $quantity, in: 1...60, step: 1)
+                            .font(.custom("Ubuntu", size: 16))
+                        if (food.servingSize != nil) {
+                            Text("(\((food.servingSize! * Double(quantity)), specifier: "%.2f")\(food.servingSizeUnit ?? ""))")
+                                .font(.custom("Ubuntu", size: 14))
+                        }
                     }
                     Text("Category: \(food.foodCategory ?? "")")
                         .font(.custom("Ubuntu", size: 16))
@@ -82,19 +71,22 @@ struct FoodResultSheet: View {
                                 .bold()
                                 .font(.custom("Ubuntu", size: 18))) {
                         ForEach(food.foodNutrients, id: \.self) { nutrient in
-                            HStack {
-                                Text("\(nutrient.nutrientName ?? "")")
-                                    .font(.custom("Ubuntu", size: 16))
-                                Spacer()
-                                Text("\(nutrient.value ?? 0.0, specifier: "%.2f")\(nutrient.unitName ?? "")")
-                                    .font(.custom("Ubuntu", size: 16))
+                            if nutrient.value ?? 0.0 > 0.0 {
+                                HStack {
+                                    Text("\(nutrient.nutrientName ?? "")")
+                                        .font(.custom("Ubuntu", size: 16))
+                                    Spacer()
+                                    Text("\(nutrient.value ?? 0.0, specifier: "%.1f")\(nutrient.unitName ?? "")")
+                                        .font(.custom("Ubuntu", size: 16))
+                                }
+                                Divider()
                             }
-                            Divider()
                         }
                     }
                     if (food.ingredients != nil) {
                         Text("Ingredients: \(food.ingredients ?? "")")
                             .font(.custom("Ubuntu", size: 16))
+                            .lineSpacing(5)
                     }
                 }
             }
@@ -112,6 +104,17 @@ struct FoodResultSheet: View {
 
 struct FoodResultSheet_Previews: PreviewProvider {
     static var previews: some View {
-        FoodResultSheet(food: Food(id: UUID(), fdcID: 123456, foodDescription: "McDonald's Cheeseburger", lowercaseDescription: "mcdonalds cheeseburger", score: 500.00, foodNutrients: [FoodNutrient()]), meal: .constant("Snack"), showFoodInfoSheet: .constant(false))
+        FoodResultSheet(food: Food(id: UUID(), fdcID: 123456, foodDescription: "McDonald's Cheeseburger", lowercaseDescription: "mcdonalds cheeseburger", score: 500.00, foodNutrients: [FoodNutrient()]), meal: .constant("Snack"), showFoodInfoSheet: .constant(false), contains: .constant(["Gluten"]))
+    }
+}
+
+struct CustomShape: Shape {
+    var corner: UIRectCorner
+    var radii: CGFloat
+    
+    func path(in rect: CGRect) -> Path {
+        let path = UIBezierPath(roundedRect: rect, byRoundingCorners: corner, cornerRadii: CGSize(width: radii, height: radii))
+        
+        return Path(path.cgPath)
     }
 }

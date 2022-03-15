@@ -26,8 +26,6 @@ class NotificationManager: ObservableObject {
             { err in
                 if let err = err {
                     print("Error updating document with mood: \(err.localizedDescription)")
-                } else {
-                    print("Document successfully updated with mood")
                 }
             }
     }

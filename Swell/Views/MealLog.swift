@@ -49,6 +49,10 @@ struct MealLog: View {
         .onTapGesture {
             hideKeyboard()
         }
+        .onAppear() {
+            foodViewModel.foodSearchResults.removeAll()
+            foodViewModel.searchResultsNumber = 0
+        }
     }
 }
 

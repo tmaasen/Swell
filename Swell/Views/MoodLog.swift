@@ -84,13 +84,11 @@ struct MoodLog: View {
             .collection("food")
             .document(docRef)
             .updateData([
-                "mood": pMood ?? "Happy",
+                "mood": pMood ?? "",
                 "comments": pComments ?? "No comments",
             ]) { err in
                 if let err = err {
                     print("Error updating document: \(err)")
-                } else {
-                    print("Document successfully updated")
                 }
             }
     }

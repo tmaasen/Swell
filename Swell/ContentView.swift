@@ -99,8 +99,6 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     withCompletionHandler completionHandler: @escaping () -> Void
   ) {
     // 1
-    print("Notification Received")
-    // 2
     switch response.actionIdentifier {
     case "HAPPY":
         NotificationManager.instance.logMood(pMood: "Happy")
@@ -113,7 +111,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     default:
         NotificationCenter.default.post(name: NSNotification.Name("MoodLog"), object: nil)
     }
-    // 3
+    // 2
     completionHandler()
   }
 }

@@ -15,6 +15,7 @@ struct FoodResultListItem: View {
     @State private var containsLactose: Bool = false
     @State private var containsCaffeine: Bool = false
     @State private var isWholeGrain: Bool = false
+    @State var contains = [String]()
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
@@ -59,27 +60,35 @@ struct FoodResultListItem: View {
             showFoodInfoSheet = true
         }
         .sheet(isPresented: $showFoodInfoSheet) {
-            FoodResultSheet(food: food, meal: $meal, showFoodInfoSheet: $showFoodInfoSheet)
+            FoodResultSheet(food: food, meal: $meal, showFoodInfoSheet: $showFoodInfoSheet, contains: $contains)
         }
         .onAppear() {
-            if(food.ingredients != nil) {
-                if ((food.ingredients?.contains("Gluten")) != false ||
-                    (food.ingredients?.contains("BREAD")) != false) {
-                    containsGluten = true
-                }
-                if ((food.ingredients?.contains("Lactose")) != false ||
-                    (food.ingredients?.contains("MILK")) != false) {
-                    containsLactose = true
-                }
-                if ((food.ingredients?.contains("Caffeine")) != false ||
-                    (food.ingredients?.contains("COFFEE")) != false ||
-                    (food.foodDescription.contains("Coffee")) != false) {
-                    containsCaffeine = true
-                }
-                if ((food.ingredients?.contains("Whole Grain")) != false ||
-                    (food.foodDescription.contains("Oatmeal")) != false) {
-                    isWholeGrain = true
-                }
+            checkSpecialFoodNutrients(food: food)
+        }
+    }
+    public func checkSpecialFoodNutrients(food: Food) {
+        if(food.ingredients != nil) {
+            if ((food.ingredients?.contains("GLUTEN")) != false ||
+                (food.ingredients?.contains("BREAD")) != false) {
+                containsGluten = true
+                contains.append("Gluten")
+            }
+            if ((food.ingredients?.contains("LACTOSE")) != false ||
+                (food.ingredients?.contains("MILK")) != false ||
+                (food.ingredients?.contains("DAIRY")) != false) {
+                containsLactose = true
+                contains.append("Dairy")
+            }
+            if ((food.ingredients?.contains("CAFFEINE")) != false ||
+                (food.ingredients?.contains("COFFEE")) != false) {
+                containsCaffeine = true
+                contains.append("Caffeine")
+            }
+            if ((food.ingredients?.contains("WHOLE GRAIN")) != false ||
+                (food.foodDescription.contains("OATMEAL")) != false ||
+                    (food.foodDescription.contains("OATS")) != false) {
+                isWholeGrain = true
+                contains.append("Whole Grain")
             }
         }
     }

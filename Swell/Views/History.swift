@@ -31,7 +31,7 @@ struct History: View {
     @State private var selectedDate = Date()
     var pickerOptions = ["Log", "Analytics"]
     @State private var selectedPickerIndex: Int = 0
-    var filterOptions = ["day", "week"]
+    var filterOptions = ["Week", "All Time"]
     @State private var selectedFilterIndex: Int = 0
     
     var body: some View {

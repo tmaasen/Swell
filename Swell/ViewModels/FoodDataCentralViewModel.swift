@@ -149,16 +149,36 @@ public class FoodDataCentralViewModel: ObservableObject {
     }
     
     /// Logs a food item's fdcid into Cloud Firestore
-    func logFood(pFoodToLog: Food, pQuantity: Int?, pMeal: String) {
+    func logFood(pFoodToLog: Food, pQuantity: Int?, pMeal: String, pContains: [String]?) {
         formatter.dateFormat = "EEEE MMM dd, yyyy"
+        var highNutrients = [String]()
         
         var docRef: DocumentReference
+        
+        // if food is high in nutrient, log nutrient
+        // 20% DV or more of a nutrient per serving is considered high (fda)
+        for nutrient in pFoodToLog.foodNutrients {
+            if nutrient.value ?? 0 > 20 {
+                if nutrient.nutrientName! == "Protein" {
+                    highNutrients.append("Protein")
+                }
+                if nutrient.nutrientName! == "Sugars, total including NLEA" {
+                    highNutrients.append("Sugar")
+                }
+                if nutrient.nutrientName! == "Carbohydrate, by difference" {
+                    highNutrients.append("Carbohydrates")
+                }
+            }
+        }
         
         let docData: [String: Any] = [
             "foodId": pFoodToLog.fdcID,
             "quantity": pQuantity ?? 1,
             "meal": pMeal,
-            "date": formatter.string(from: Timestamp(date: Date()).dateValue())
+            "highIn": highNutrients,
+            "contains": pContains ?? [],
+            "date": formatter.string(from: Timestamp(date: Date()).dateValue()),
+            "mood": ""
         ]
         
         docRef = db.collection("users").document(Auth.auth().currentUser?.uid ?? "test").collection("food").addDocument(data: docData, completion: { error in
