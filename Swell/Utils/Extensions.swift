@@ -167,10 +167,11 @@ public extension View {
         AlertWrapper(isPresented: isPresented, alert: alert, content: self)
     }
     
+    #if canImport(UIKit)
     func hideKeyboard() {
-        let resign = #selector(UIResponder.resignFirstResponder)
-        UIApplication.shared.sendAction(resign, to: nil, from: nil, for: nil)
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
+    #endif
     
     @ViewBuilder
     func redacted(when condition: Bool, redactionType: RedactionType) -> some View {

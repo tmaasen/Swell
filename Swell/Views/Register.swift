@@ -132,6 +132,7 @@ struct Register: View {
                     .padding()
                     .disabled(disableForm)
                     .onTapGesture {
+                        hideKeyboard()
                         authViewModel.signInWithGoogle()
                     }
                     .frame(width: 220, height: 80)
@@ -154,6 +155,7 @@ struct Register: View {
                             if !password.elementsEqual(confirmPassword) {
                                 showInvalidAlert = true
                             } else {
+                                hideKeyboard()
                                 toggleLoadingIndicator()
                                 authViewModel.signUp(email: emailAddress, password: password)
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 3) {

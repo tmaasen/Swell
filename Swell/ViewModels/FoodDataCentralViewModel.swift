@@ -22,23 +22,9 @@ public class FoodDataCentralViewModel: ObservableObject {
     var foodSearchDictionary = FoodDataCentral()
     // Retrieving Food History
     @Published var foodHistory = [FoodRetriever]()
-    @Published var completed = false
-    
-    public enum SearchFields: String {
-        case fdcId = "fdcId"
-        case description = "description"
-        case commonNames = "commonNames"
-        case additionalDescriptions = "additionalDescriptions"
-        case dataType = "dataType"
-        case foodCode = "foodCode"
-        case publishedDate = "publishedDate"
-        case allHighlightedFields = "allHighlightedFields"
-        case score = "score"
-    }
-    public enum SortOrder: String {
-        case ascending = "asc"
-        case descending = "desc"
-    }
+    // Retrieving Water History
+    @Published var waters = FoodRetriever()
+    var loggedOunces = [Double]()
     
     /**
      Searches the USDA Food Database and returns matching results.
@@ -52,7 +38,6 @@ public class FoodDataCentralViewModel: ObservableObject {
      - Returns: Results in JSON format.
      */
     public func search(searchTerms: String?, dataType: String? = nil, pageSize: Int? = nil, pageNumber: Int? = nil, brandOwner: String? = nil) {
-        self.completed = false
         var queryItems: [URLQueryItem] = []
         if let searchTerms = searchTerms { queryItems.append(URLQueryItem(name: "query", value: searchTerms)) }
         if let pageSize = pageSize { queryItems.append(URLQueryItem(name: "pageSize", value: String(pageSize))) }
@@ -76,18 +61,16 @@ public class FoodDataCentralViewModel: ObservableObject {
             }
         }
         .resume()
-        self.completed = true
     }
     
-    func getFoodIds(date: Date?) {
-        self.completed = false
+    func getFoodIds(date: Date = Timestamp(date: Date()).dateValue()) {
         var foodIds = [String]()
         var mealTypes = [String]()
         var servingSizes = [Int]()
         var moods = [String]()
         var comments = [String]()
         formatter.dateFormat = "EEEE MMM dd, yyyy"
-        let pDate = formatter.string(from: date ?? Timestamp(date: Date()).dateValue())
+        let pDate = formatter.string(from: date)
         
         let docRef = db.collection("users").document(Auth.auth().currentUser?.uid ?? "user").collection("food").whereField("date", isEqualTo: pDate)
         docRef.getDocuments { (querySnapshot, error) in
@@ -109,6 +92,7 @@ public class FoodDataCentralViewModel: ObservableObject {
                 comments.append(comment)
             }
             self.getFoodsById(foodIds, mealTypes, servingSizes, moods, comments)
+            self.getWater(date: date)
         }
     }
     
@@ -145,11 +129,10 @@ public class FoodDataCentralViewModel: ObservableObject {
                     }
                 }
             })
-        self.completed = true
     }
     
     /// Logs a food item's fdcid into Cloud Firestore
-    func logFood(pFoodToLog: Food, pQuantity: Int?, pMeal: String, pContains: [String]?) {
+    func logFood(pFoodToLog: Food, pQuantity: Int = 1, pMeal: String, pContains: [String] = []) {
         formatter.dateFormat = "EEEE MMM dd, yyyy"
         var highNutrients = [String]()
         
@@ -173,10 +156,10 @@ public class FoodDataCentralViewModel: ObservableObject {
         
         let docData: [String: Any] = [
             "foodId": pFoodToLog.fdcID,
-            "quantity": pQuantity ?? 1,
+            "quantity": pQuantity,
             "meal": pMeal,
             "highIn": highNutrients,
-            "contains": pContains ?? [],
+            "contains": pContains,
             "date": formatter.string(from: Timestamp(date: Date()).dateValue()),
             "mood": ""
         ]
@@ -190,8 +173,69 @@ public class FoodDataCentralViewModel: ObservableObject {
         NotificationManager.instance.scheduleNotification(mealType: pMeal, foodTitle: pFoodToLog.foodDescription, docRef: docRef.documentID)
     }
     
-    /// Logs a water of specific size
-    func logWater() {}
+    /// Logs a water of specific size into Cloud Firestore
+    func logWater(pSize: String, watersLoggedToday: Int = 1, ounces: Double) {
+        formatter.dateFormat = "EEEE MMM dd, yyyy"
+        
+        var docRef: DocumentReference
+        
+        let docData: [String: Any] = [
+            // First time entry
+            "meal": "Water",
+            "waters logged": watersLoggedToday,
+            "total ounces": ounces,
+            "date": formatter.string(from: Timestamp(date: Date()).dateValue())
+        ]
+        // if watersLoggedToday = 0, new doc...else, update doc
+        if watersLoggedToday == 1 {
+            db.collection("users").document(Auth.auth().currentUser?.uid ?? "test").collection("water").document(formatter.string(from: Timestamp(date: Date()).dateValue())).setData(docData, completion: { error in
+                if let error = error {
+                    print("Error in logWater method: \(error.localizedDescription)")
+                } else {
+                    self.loggedOunces.append(ounces)
+                }
+            })
+        } else {
+            // first get doc with today's date
+            docRef = db.collection("users")
+                .document(Auth.auth().currentUser?.uid ?? "user")
+                .collection("water")
+                .document(formatter.string(from: Timestamp(date: Date()).dateValue()))
+            // then update it
+            loggedOunces.append(ounces)
+            db.collection("users").document(Auth.auth().currentUser?.uid ?? "test").collection("water").document(docRef.documentID).updateData([
+                "waters logged": watersLoggedToday,
+                "total ounces": loggedOunces.reduce(0, +)
+            ]) { err in
+                if let err = err {
+                    print("Error updating document: \(err)")
+                }
+            }
+        }
+    }
+    
+    /**
+        getWater
+     */
+    func getWater(date: Date = Timestamp(date: Date()).dateValue()) {
+        formatter.dateFormat = "EEEE MMM dd, yyyy"
+        let pDate = formatter.string(from: date)
+        
+        db.collection("users")
+            .document(Auth.auth().currentUser?.uid ?? "test")
+            .collection("water")
+            .document(pDate)
+            .getDocument { (document, error) in
+                guard error == nil else {
+                    print("Error in getWater method:", error?.localizedDescription ?? "")
+                    return
+                }
+                if let document = document, document.exists {
+                    self.waters.waterLoggedToday = document.get("waters logged") as? Int
+                    self.waters.waterOuncesToday = document.get("total ounces") as? Double
+                }
+            }
+    }
     
     /// Generates a new URL with the given queryItems.
     private func generateURL(path: String, queryItems: [URLQueryItem]) -> URL? {
@@ -206,5 +250,24 @@ public class FoodDataCentralViewModel: ObservableObject {
             url.queryItems?.append(queryItem)
         }
         return url.url
+    }
+    
+    // wont work because wherever I call setTodaysDate it will always reset itself to the current day before I can call isNewDay
+    func setTodaysDate() {
+        formatter.dateFormat = "EEEE MMM dd, yyyy"
+        let today = formatter.string(from: Date())
+        UserDefaults.standard.set(today, forKey: "todaysDate")
+    }
+    func isNewDay() -> Bool {
+        let UDDate = UserDefaults.standard.string(forKey: "todaysDate")
+        formatter.dateFormat = "EEEE MMM dd, yyyy"
+        let today = formatter.string(from: Date())
+        if UDDate != today {
+            self.waters = FoodRetriever()
+            self.loggedOunces.removeAll()
+            return true
+        } else {
+            return false
+        }
     }
 }

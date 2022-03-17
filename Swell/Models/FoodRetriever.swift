@@ -13,6 +13,8 @@ struct FoodRetriever: Codable, Identifiable {
     var servingSize: Int?
     var mood: String?
     var comments: String?
+    var waterOuncesToday: Double?
+    var waterLoggedToday: Int?
     var fdcID: Int?
     var description, dataType, publicationDate: String?
     var foodCode: String?

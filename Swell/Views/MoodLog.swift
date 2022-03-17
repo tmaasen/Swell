@@ -4,6 +4,7 @@
 //
 //  Created by Tanner Maasen on 3/6/22.
 //
+//  MoodLog is an in-app view for users who don't choose to log their mood from a notification. This view offers the ability to provide comments on his/her mood as well.
 
 import SwiftUI
 import Firebase
@@ -54,6 +55,7 @@ struct MoodLog: View {
             .frame(maxWidth: .infinity, maxHeight: 260)
             
             Button(action: {
+                hideKeyboard()
                 MoodLog.logMood(docRef: docRef, pMood: selectedMood, pComments: comments)
                 logCompleted = true
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
@@ -97,30 +99,5 @@ struct MoodLog: View {
 struct MoodLog_Previews: PreviewProvider {
     static var previews: some View {
         MoodLog(docRef: "", showMoodLog: .constant(false))
-    }
-}
-
-public enum Mood: Int, CaseIterable {
-    case happy
-    case neutral
-    case sick
-    case overate
-    
-    var emoji: String {
-        switch self {
-        case .happy: return "😀"
-        case .neutral: return "😐"
-        case .sick: return "🤮"
-        case .overate: return "🤢"
-        }
-    }
-    
-    var text: String {
-        switch self {
-        case .happy: return "Happy"
-        case .neutral: return "Neutral"
-        case .sick: return "Sick"
-        case .overate: return "Overate"
-        }
     }
 }

@@ -71,7 +71,8 @@ struct Profile: View {
                     TextField("", text: $age)
                         .withProfileStyles()
                         .keyboardType(.numberPad)
-                        .disabled(isFormDisabled)
+                        .disabled(true)
+                        .opacity(0.6)
                 }
                 VStack(alignment: .leading) {
                     Text("Height (inches)")
@@ -96,14 +97,18 @@ struct Profile: View {
                 Spacer()
                 HStack(alignment: .bottom) {
                     Button(action: {
-                        self.userViewModel.updateUser(
-                            fname: firstName,
-                            lname: lastName,
-                            age: Int(age) ?? 0,
-                            gender: (selectedGenderIndex == 0 ? "Male" : "Female"),
-                            height: Int(height) ?? 0,
-                            weight: Int(weight) ?? 0
-                        )
+                        hideKeyboard()
+                        toggleLoadingIndicator()
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                            self.userViewModel.updateUser(
+                                fname: firstName,
+                                lname: lastName,
+                                age: Int(age) ?? 0,
+                                gender: (selectedGenderIndex == 0 ? "Male" : "Female"),
+                                height: Int(height) ?? 0,
+                                weight: Int(weight) ?? 0
+                            )
+                        }
                     }) {
                         Text("Save")
                             .withButtonStyles()
@@ -190,7 +195,7 @@ struct Profile: View {
             hud.shadow = JGProgressHUDShadow(color: .black, offset: .zero, radius: 4, opacity: 0.9)
             hud.vibrancyEnabled = true
             hud.textLabel.text = "Loading"
-            hud.dismiss(afterDelay: 3.0)
+            hud.dismiss(afterDelay: 2.0)
             return hud
         }
     }

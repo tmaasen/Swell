@@ -12,6 +12,8 @@ struct LottieView: UIViewRepresentable {
     typealias UIViewType = UIView
     var filename: String
     var loopMode: LottieLoopMode
+    var animationSpeed: CGFloat
+    var play: Bool
     
     func makeUIView(context: UIViewRepresentableContext<LottieView>) -> UIView {
         let view = UIView(frame: .zero)
@@ -20,7 +22,10 @@ struct LottieView: UIViewRepresentable {
         animationView.animation = animation
         animationView.contentMode = .scaleAspectFit
         animationView.loopMode = loopMode
-        animationView.play()
+        animationView.animationSpeed = animationSpeed
+        if play {
+            animationView.play()
+        }
         
         animationView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(animationView)

@@ -10,10 +10,11 @@ import SwiftUI
 struct LogHistory: View {
     @EnvironmentObject var foodViewModel: FoodDataCentralViewModel
     @Binding var selectedDate: Date
+    @Binding var isLoading: Bool
     
     var body: some View {
         VStack {
-            if !foodViewModel.foodHistory.isEmpty && foodViewModel.completed {
+            if !foodViewModel.foodHistory.isEmpty && !isLoading {
                 ScrollView {
                     VStack(alignment: .leading) {
                         ForEach(MealTypes.allCases, id: \.self) { meal in
@@ -21,16 +22,22 @@ struct LogHistory: View {
                                 .font(.custom("Ubuntu-BoldItalic", size: 20))
                                 .padding(.horizontal)
                             ForEach(foodViewModel.foodHistory, id: \.self.id) { item in
-                                if item.mealType == meal.text {
-                                    HistoryItem(item: item)
+                                if item.mealType == meal.text && item.mealType != "Water" {
+                                    HistoryFoodItem(item: item)
                                 }
                             }
+                        }
+                        if foodViewModel.waters.waterLoggedToday != 0 {
+                            Text("Water")
+                                .font(.custom("Ubuntu-BoldItalic", size: 20))
+                                .padding(.horizontal)
+                            HistoryWaterItem()
                         }
                     }
                 }
             } else {
                 Spacer()
-                if foodViewModel.completed {
+                if !isLoading {
                     Image("NoData")
                         .resizable()
                         .scaledToFit()
@@ -45,8 +52,13 @@ struct LogHistory: View {
             ToolbarItem(placement: .navigationBarTrailing) {
                 DatePicker("📅", selection: $selectedDate, in: ...Date(), displayedComponents: .date)
                     .onChange(of: selectedDate, perform: { value in
+                        isLoading = true
                         foodViewModel.foodHistory.removeAll()
                         foodViewModel.getFoodIds(date: selectedDate)
+                        foodViewModel.getWater(date: selectedDate)
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                            isLoading = false
+                        }
                     })
             }
         }
@@ -55,6 +67,6 @@ struct LogHistory: View {
 
 struct LogHistory_Previews: PreviewProvider {
     static var previews: some View {
-        LogHistory(selectedDate: .constant(Date()))
+        LogHistory(selectedDate: .constant(Date()), isLoading: .constant(false))
     }
 }

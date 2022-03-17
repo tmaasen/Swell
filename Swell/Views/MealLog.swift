@@ -4,6 +4,7 @@
 //
 //  Created by Tanner Maasen on 2/15/22.
 //
+//  MealLog is the main view for the food logging process.
 
 import SwiftUI
 

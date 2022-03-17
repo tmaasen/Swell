@@ -4,35 +4,17 @@
 //
 //  Created by Tanner Maasen on 2/14/22.
 //
+//  History is the main view for both food and mood history, as well as graphical data that attempts to show the relationship between one's nutrition and their mood.
 
 import SwiftUI
 import Firebase
 
-public enum MealTypes: Int, CaseIterable {
-    case breakfast
-    case lunch
-    case dinner
-    case snack
-    case water
-    
-    var text: String {
-        switch self {
-        case .breakfast: return "Breakfast"
-        case .lunch: return "Lunch"
-        case .dinner: return "Dinner"
-        case .snack: return "Snack"
-        case .water: return "Water"
-        }
-    }
-}
-
-struct History: View {
+struct History: View { 
     @EnvironmentObject var foodViewModel: FoodDataCentralViewModel
     @State private var selectedDate = Date()
-    var pickerOptions = ["Log", "Analytics"]
+    @State private var isLoading: Bool = false
     @State private var selectedPickerIndex: Int = 0
-    var filterOptions = ["Week", "All Time"]
-    @State private var selectedFilterIndex: Int = 0
+    var pickerOptions = ["Log", "Analytics"]
     
     var body: some View {
         VStack {
@@ -43,32 +25,26 @@ struct History: View {
             }
             .padding()
             .pickerStyle(SegmentedPickerStyle())
-                        
+            
+            if isLoading {
+                LottieAnimation(filename: "loading", loopMode: .loop, width: 50, height: 50)
+            }
+            
             if selectedPickerIndex == 0 {
-                LogHistory(selectedDate: $selectedDate)
+                LogHistory(selectedDate: $selectedDate, isLoading: $isLoading)
             } else {
-                AnalyticHistory(filterTag: $selectedFilterIndex)
-                    .toolbar {
-                        ToolbarItem(placement: .navigationBarTrailing) {
-                            Picker("Filter by: ", selection: $selectedFilterIndex) {
-                                ForEach(0..<filterOptions.count) {
-                                    Text(self.filterOptions[$0])
-                                }
-                            }
-                        }
-                    }
+                AnalyticHistory()
             }
         }
         .navigationTitle("History")
         .onAppear() {
+            isLoading = true
             foodViewModel.getFoodIds(date: selectedDate)
-        }
-        if !foodViewModel.completed {
-            ZStack(alignment: .leading) {
-                LottieAnimation(filename: "loading", loopMode: .loop, width: 50, height: 50)
+            foodViewModel.getWater(date: selectedDate)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                isLoading = false
             }
         }
-        Spacer()
     }
 }
 

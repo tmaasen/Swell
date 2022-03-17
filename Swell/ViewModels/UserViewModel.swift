@@ -17,6 +17,7 @@ protocol iUserViewModelProtocol {
 
 class UserViewModel: ObservableObject {
     private var db = Firestore.firestore()
+    static var isEveningGradient = false
     @Published var user = User()
     @Published var greeting: String = ""
     @Published var gradient: Gradient = Gradient(stops: [
@@ -127,9 +128,12 @@ class UserViewModel: ObservableObject {
                                         .init(color: Color.eveningLinear1, location: 0.23),
                                         .init(color: Color.eveningLinear2, location: 0.84)])
             self.greeting = "Good evening, \n\(name)"
-        case 5..<12 : self.greeting = "Good morning, \n\(name)"
+        case 5..<12 :
+            self.greeting = "Good morning, \n\(name)"
+            UserViewModel.isEveningGradient = false
         case 12..<17 : self.greeting = "Good afternoon, \n\(name)"
         case 17..<24 :
+            UserViewModel.isEveningGradient = true
             self.gradient = Gradient(stops: [
                                         .init(color: Color.eveningLinear1, location: 0.23),
                                         .init(color: Color.eveningLinear2, location: 0.84)])

@@ -10,7 +10,6 @@ import FirebaseAuth
 import JGProgressHUD_SwiftUI
 
 struct Login: View {
-    
     @State private var emailAddress: String = ""
     @State private var password: String = ""
     @State private var showAuthLoader: Bool = false
@@ -41,6 +40,7 @@ struct Login: View {
                 SecureField("Password", text: $password)
                     .withSecureFieldStyles()
                 Button(action: {
+                    hideKeyboard()
                     toggleLoadingIndicator()
                     authViewModel.signInWithEmail(email: emailAddress, password: password)
                     DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
@@ -65,6 +65,7 @@ struct Login: View {
             GoogleSignInButton()
                 .padding()
                 .onTapGesture {
+                    hideKeyboard()
                     authViewModel.signInWithGoogle()
                 }.frame(width: 220, height: 80)
             

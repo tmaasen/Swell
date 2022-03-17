@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct HistoryItem: View {
+struct HistoryFoodItem: View {
     var item: FoodRetriever
     @Environment(\.colorScheme) var colorScheme
     
@@ -53,8 +53,8 @@ struct HistoryItem: View {
     }
 }
 
-struct HistoryItem_Previews: PreviewProvider {
+struct HistoryFoodItem_Previews: PreviewProvider {
     static var previews: some View {
-        HistoryItem(item: FoodRetriever(id: UUID(), mealType: "Breakfast", servingSize: 1, mood: "Happy", comments: "Today was good!", fdcID: 111111, description: "Cheese Omelet"))
+        HistoryFoodItem(item: FoodRetriever(id: UUID(), mealType: "Breakfast", servingSize: 1, mood: "Happy", comments: "Today was good!", fdcID: 111111, description: "Cheese Omelet"))
     }
 }

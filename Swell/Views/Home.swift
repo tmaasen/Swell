@@ -36,9 +36,10 @@ struct Home: View {
                     VStack(alignment: .center, spacing: 20) {
                         // HEADER CONTENT
                         Header(isShowingSidebar: $isShowingSidebar)
-                            .padding(.bottom, 275)
+                            .padding(.bottom, 225)
                         // MAIN CONTENT
                         MealCards()
+                        WaterLog()
                         PexelImage()
                     }
                     .blur(radius: isShowingSidebar ? 2 : 0)
@@ -66,7 +67,6 @@ struct Home: View {
             // Observer for when user taps on notification to log mood in app
             NotificationCenter.default.addObserver(forName: NSNotification.Name("MoodLog"), object: nil, queue: .main) { (_) in
                 self.showMoodLog = true
-                print("Should show mood log: ", showMoodLog)
             }
         }
         .gesture(DragGesture()

@@ -11,7 +11,8 @@ import Firebase
 
 struct AnalyticHistory: View {
     @EnvironmentObject var foodViewModel: FoodDataCentralViewModel
-    @Binding var filterTag: Int
+    var filterOptions = ["All Time"]
+    @State private var filterTag: Int = 0
     let db = Firestore.firestore()
     // Graph 1
     @State var g1Label = "nutrient"
@@ -57,7 +58,8 @@ struct AnalyticHistory: View {
                     ((Mood.overate.text+Mood.overate.emoji),g1OverateMoods)
                 ]),
                 title: "High In \(g1Label.capitalizingFirstLetter())",
-                legend: filterTag==0 ? "By Week" : "All Time",
+                legend: "All Time",
+//                    filterTag==0 ? "By Week" : "All Time",
                 valueSpecifier: "%.0f")
                 .padding(.horizontal)
                 
@@ -94,7 +96,8 @@ struct AnalyticHistory: View {
                     ((Mood.overate.text+Mood.overate.emoji),g2OverateMoods)
                 ]),
                 title: "\(g2Label.capitalizingFirstLetter()) Foods",
-                legend: filterTag==0 ? "By Week" : "All Time",
+                legend: "All Time",
+//                    filterTag==0 ? "By Week" : "All Time",
                 valueSpecifier: "%.0f")
                 .padding(.horizontal)
                 
@@ -104,9 +107,17 @@ struct AnalyticHistory: View {
                 }
             }
         }
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Picker("Filter by: ", selection: $filterTag) {
+                    ForEach(0..<filterOptions.count) {
+                        Text(self.filterOptions[$0])
+                    }
+                }
+            }
+        }
     }
     func getGraph1Data(pNutrient: String?) {
-        foodViewModel.completed = false
         g1Label = pNutrient?.lowercased() ?? self.g1Label
         
         db.collection("users")
@@ -138,10 +149,9 @@ struct AnalyticHistory: View {
                 }
             }
         })
-        foodViewModel.completed = true
     }
+    
     func getGraph2Data(pContains: String?) {
-        foodViewModel.completed = false
         g2Label = pContains?.lowercased() ?? self.g2Label
         
         db.collection("users")
@@ -173,12 +183,11 @@ struct AnalyticHistory: View {
                 }
             }
         })
-        foodViewModel.completed = true
     }
 }
 
 struct AnalyticHistory_Previews: PreviewProvider {
     static var previews: some View {
-        AnalyticHistory(filterTag: .constant(0))
+        AnalyticHistory()
     }
 }
