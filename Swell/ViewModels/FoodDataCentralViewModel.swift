@@ -24,6 +24,7 @@ public class FoodDataCentralViewModel: ObservableObject {
     @Published var foodHistory = [FoodRetriever]()
     // Retrieving Water History
     @Published var waters = FoodRetriever()
+    @Published var isNewDay: Bool = false
     var loggedOunces = [Double]()
     
     /**
@@ -178,7 +179,7 @@ public class FoodDataCentralViewModel: ObservableObject {
         formatter.dateFormat = "EEEE MMM dd, yyyy"
         
         var docRef: DocumentReference
-        
+                
         let docData: [String: Any] = [
             // First time entry
             "meal": "Water",
@@ -220,6 +221,7 @@ public class FoodDataCentralViewModel: ObservableObject {
     func getWater(date: Date = Timestamp(date: Date()).dateValue()) {
         formatter.dateFormat = "EEEE MMM dd, yyyy"
         let pDate = formatter.string(from: date)
+        let today = formatter.string(from: Date())
         
         db.collection("users")
             .document(Auth.auth().currentUser?.uid ?? "test")
@@ -230,7 +232,15 @@ public class FoodDataCentralViewModel: ObservableObject {
                     print("Error in getWater method:", error?.localizedDescription ?? "")
                     return
                 }
+                if let document = document, !document.exists {
+                    if pDate == today {
+                        print("It is a new day!")
+                        self.isNewDay = true
+                        return
+                    }
+                }
                 if let document = document, document.exists {
+                    self.isNewDay = false
                     self.waters.waterLoggedToday = document.get("waters logged") as? Int
                     self.waters.waterOuncesToday = document.get("total ounces") as? Double
                 }
@@ -250,24 +260,5 @@ public class FoodDataCentralViewModel: ObservableObject {
             url.queryItems?.append(queryItem)
         }
         return url.url
-    }
-    
-    // wont work because wherever I call setTodaysDate it will always reset itself to the current day before I can call isNewDay
-    func setTodaysDate() {
-        formatter.dateFormat = "EEEE MMM dd, yyyy"
-        let today = formatter.string(from: Date())
-        UserDefaults.standard.set(today, forKey: "todaysDate")
-    }
-    func isNewDay() -> Bool {
-        let UDDate = UserDefaults.standard.string(forKey: "todaysDate")
-        formatter.dateFormat = "EEEE MMM dd, yyyy"
-        let today = formatter.string(from: Date())
-        if UDDate != today {
-            self.waters = FoodRetriever()
-            self.loggedOunces.removeAll()
-            return true
-        } else {
-            return false
-        }
     }
 }

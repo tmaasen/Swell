@@ -20,8 +20,7 @@ struct Login: View {
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
-        VStack(alignment: .center) {
-            Spacer()
+        VStack {
             Image("LoginImage")
                 .resizable()
                 .frame(width: 80, height: 80)
@@ -30,7 +29,6 @@ struct Login: View {
                 .foregroundColor(colorScheme == .dark ? .white : .swellOrange)
                 .font(.custom("Ubuntu-Bold", size: 35))
                 .padding(.top, 15)
-                .multilineTextAlignment(.center)
             
             VStack {
                 TextField("Email Address", text: $emailAddress)
@@ -97,8 +95,8 @@ struct Login: View {
                         }
                     }).frame(width: 200, height: 30)
         }
-        .navigationBarBackButtonHidden(true)
         .navigationBarHidden(true)
+        .navigationBarBackButtonHidden(true)
         .onTapGesture {
                 hideKeyboard()
             }

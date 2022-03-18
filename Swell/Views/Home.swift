@@ -33,7 +33,7 @@ struct Home: View {
                         .withShowSidebarStyles(geometry: geometry)
                 }
                 ScrollView() {
-                    VStack(alignment: .center, spacing: 20) {
+                    VStack(alignment: .center, spacing: 10) {
                         // HEADER CONTENT
                         Header(isShowingSidebar: $isShowingSidebar)
                             .padding(.bottom, 225)
@@ -43,6 +43,7 @@ struct Home: View {
                         PexelImage()
                     }
                     .blur(radius: isShowingSidebar ? 2 : 0)
+                    .disabled(isShowingSidebar ? true : false)
                 }
             }
         }

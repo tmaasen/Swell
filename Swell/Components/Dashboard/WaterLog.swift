@@ -51,6 +51,9 @@ struct WaterLog: View {
                     Button("16.9 fl oz", action: {
                             label = "16.9 fl oz"
                             ounces = 16.9})
+                    Button("24 fl oz", action: {
+                            label = "24 fl oz"
+                            ounces = 24})
                     Button("32 fl oz", action: {
                             label = "32 fl oz"
                             ounces = 32})
@@ -82,27 +85,19 @@ struct WaterLog: View {
         }
         .padding()
         .onAppear() {
-            if foodViewModel.isNewDay() == true {
-                ounces = 0
-                watersLogged = 0
-                waterLogDict = [
-                    1: false,
-                    2: false,
-                    3: false,
-                    4: false,
-                    5: false,
-                    6: false,
-                    7: false,
-                    8: false,
-                    9: false,
-                    10: false
-                ]
-            }
             foodViewModel.getWater()
             DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                let waters = foodViewModel.waters.waterLoggedToday ?? 0
-                for i in 0...waters {
-                    waterLogDict[i] = true
+                if foodViewModel.isNewDay == true {
+                    print("It's a new day on the client!")
+                    ounces = 8
+                    watersLogged = 0
+                    waterLogDict.keys.forEach { waterLogDict[$0] = false }
+                } else {
+                    print("It's NOT a new day")
+                    let waters = foodViewModel.waters.waterLoggedToday ?? 0
+                    for i in 0...waters {
+                        waterLogDict[i] = true
+                    }
                 }
             }
         }

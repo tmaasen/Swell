@@ -20,7 +20,7 @@ struct AvatarIcon: View {
                 .cornerRadius(25.0)
                 .contentShape(Rectangle())
         }
-        .padding(.top, 50)
+        .padding(.top, 35)
     }
 }
 
