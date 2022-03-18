@@ -15,12 +15,16 @@ struct Login: View {
     @State private var showAuthLoader: Bool = false
     @State private var showForgotPWAlert: Bool = false
     @State private var showInvalidPWAlert: Bool = false
+    @State private var isAuthenticated: Bool = false
     @EnvironmentObject var authViewModel: AuthenticationViewModel
     @EnvironmentObject var hudCoordinator: JGProgressHUDCoordinator
     @Environment(\.colorScheme) var colorScheme
+    @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
         VStack {
+            NavigationLink(destination: Home(), isActive: $isAuthenticated) {}
+            Spacer()
             Image("LoginImage")
                 .resizable()
                 .frame(width: 80, height: 80)
@@ -40,13 +44,14 @@ struct Login: View {
                 Button(action: {
                     hideKeyboard()
                     toggleLoadingIndicator()
-                    authViewModel.signInWithEmail(email: emailAddress, password: password)
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                    authViewModel.signInWithEmail(email: emailAddress, password: password, completion: {
                         if authViewModel.state != .signedIn {
                             showInvalidPWAlert = true
+                        } else {
+                            isAuthenticated = true
                         }
                         showAuthLoader = false
-                    }
+                    })
                 }) {
                     Text("Sign In")
                         .withButtonStyles()
@@ -65,6 +70,9 @@ struct Login: View {
                 .onTapGesture {
                     hideKeyboard()
                     authViewModel.signInWithGoogle()
+                    if authViewModel.state == .signedIn {
+                        isAuthenticated = true
+                    }
                 }.frame(width: 220, height: 80)
             
             HStack {

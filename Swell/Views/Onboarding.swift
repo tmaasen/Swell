@@ -8,11 +8,11 @@
 import SwiftUI
 
 struct Onboarding: View {
+    @State private var isNavBarHidden: Bool = false
     
     init() {
         UserDefaults.standard.set(true, forKey: "hasLaunchedBefore")
     }
-    @State private var isNavBarHidden: Bool = false
     
     var body: some View {
         TabView {
@@ -39,6 +39,7 @@ struct OnboardView: View {
     let title: String
     let description: String
     var buttonText: String?
+    @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
         VStack(spacing: 20) {

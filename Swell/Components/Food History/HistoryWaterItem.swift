@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct HistoryWaterItem: View {
-//    var item: FoodRetriever
     @Environment(\.colorScheme) var colorScheme
     @EnvironmentObject var foodViewModel: FoodDataCentralViewModel
         
@@ -36,7 +35,6 @@ struct HistoryWaterItem: View {
 
 struct HistoryWaterItem_Previews: PreviewProvider {
     static var previews: some View {
-//        HistoryWaterItem(item: FoodRetriever(id: UUID(), mealType: "Water", waterOuncesToday: 50, waterLoggedToday: 3))
         HistoryWaterItem()
     }
 }

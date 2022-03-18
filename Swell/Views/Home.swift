@@ -7,8 +7,6 @@
 import SwiftUI
 import FirebaseAuth
 import JGProgressHUD_SwiftUI
-import GoogleSignIn
-import CareKitUI
 
 struct Home: View {
     
@@ -63,8 +61,7 @@ struct Home: View {
         }
         .onAppear {
             isShowingSidebar = false
-            userViewModel.getUser()
-            userViewModel.getGreeting(name: GIDSignIn.sharedInstance.currentUser?.profile?.givenName ?? userViewModel.user.fname)
+            userViewModel.getAllUserInfo()
             // Observer for when user taps on notification to log mood in app
             NotificationCenter.default.addObserver(forName: NSNotification.Name("MoodLog"), object: nil, queue: .main) { (_) in
                 self.showMoodLog = true

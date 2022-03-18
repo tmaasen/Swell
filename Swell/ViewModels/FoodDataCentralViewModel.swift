@@ -38,7 +38,7 @@ public class FoodDataCentralViewModel: ObservableObject {
      - Parameter brandOwner: Optional. Filter based on brand. Only applies to Branded Foods.
      - Returns: Results in JSON format.
      */
-    public func search(searchTerms: String?, dataType: String? = nil, pageSize: Int? = nil, pageNumber: Int? = nil, brandOwner: String? = nil) {
+    public func search(searchTerms: String?, dataType: String? = nil, pageSize: Int? = nil, pageNumber: Int? = nil, brandOwner: String? = nil, completion: @escaping () -> () = {}) {
         var queryItems: [URLQueryItem] = []
         if let searchTerms = searchTerms { queryItems.append(URLQueryItem(name: "query", value: searchTerms)) }
         if let pageSize = pageSize { queryItems.append(URLQueryItem(name: "pageSize", value: String(pageSize))) }
@@ -52,19 +52,28 @@ public class FoodDataCentralViewModel: ObservableObject {
         request.httpMethod = "GET"
         
         URLSession.shared.dataTask(with: request) { data, response, error in
-            DispatchQueue.main.async {
-                self.foodSearchDictionary = try! JSONDecoder().decode(FoodDataCentral.self, from: data!)
-                self.foodSearchResults = self.foodSearchDictionary.foods ?? []
-                self.searchResultsNumber = self.foodSearchDictionary.totalHits
-                if self.foodSearchResults.isEmpty {
-                    self.error = "No results. Please try again."
+            do {
+                self.foodSearchDictionary = try JSONDecoder().decode(FoodDataCentral.self, from: data ?? Data())
+                DispatchQueue.main.async {
+                    self.foodSearchResults = self.foodSearchDictionary.foods ?? []
+                    self.searchResultsNumber = self.foodSearchDictionary.totalHits
+                    completion()
+                    if self.foodSearchResults.isEmpty {
+                        self.error = "No results. Please try again."
+                        completion()
+                        return
+                    }
                 }
+            } catch {
+                print("JSONSerialization error:", error)
+                completion()
+                return
             }
         }
         .resume()
     }
     
-    func getFoodIds(date: Date = Timestamp(date: Date()).dateValue()) {
+    func getFoodIds(date: Date = Timestamp(date: Date()).dateValue(), completion: @escaping () -> () = {}) {
         var foodIds = [String]()
         var mealTypes = [String]()
         var servingSizes = [Int]()
@@ -92,8 +101,10 @@ public class FoodDataCentralViewModel: ObservableObject {
                 moods.append(mood)
                 comments.append(comment)
             }
-            self.getFoodsById(foodIds, mealTypes, servingSizes, moods, comments)
-            self.getWater(date: date)
+            self.getFoodsById(foodIds, mealTypes, servingSizes, moods, comments, completion: {
+                completion()
+            })
+//            self.getWater(date: date)
         }
     }
     
@@ -102,7 +113,7 @@ public class FoodDataCentralViewModel: ObservableObject {
      - Parameter fdcIDs: An array of the food IDs whose data you'd like to retrieve.
      - Returns: An array of the food data for the given food IDs.
      */
-    public func getFoodsById(_ fdcIDs: [String], _ mealTypes: [String], _ servingSizes: [Int], _ moods: [String], _ comments: [String]) {
+    public func getFoodsById(_ fdcIDs: [String], _ mealTypes: [String], _ servingSizes: [Int], _ moods: [String], _ comments: [String], completion: @escaping () -> () = {}) {
         var queryItems: [URLQueryItem] = []
 //        queryItems.append(URLQueryItem(name: "nutrients", value: "328,418,601,401,203,209,212,213,268,287,291,303,307,318,573,406,415,204,205,211,262,269,301,306"))
         queryItems.append(URLQueryItem(name: "nutrients", value: "203,204,205"))
@@ -127,6 +138,10 @@ public class FoodDataCentralViewModel: ObservableObject {
                             self.foodHistory[i].mood = moods[i]
                             self.foodHistory[i].comments = comments[i]
                         }
+                        completion()
+                    } else {
+                        completion()
+                        return
                     }
                 }
             })
@@ -216,9 +231,10 @@ public class FoodDataCentralViewModel: ObservableObject {
     }
     
     /**
-        getWater
+     Gets the water logged and total ounces drank from a user daily.
+     Also runs a check to see if it is a new day. If so, the water logger resets itself.
      */
-    func getWater(date: Date = Timestamp(date: Date()).dateValue()) {
+    func getWater(date: Date = Timestamp(date: Date()).dateValue(), completion: @escaping () -> () = {}) {
         formatter.dateFormat = "EEEE MMM dd, yyyy"
         let pDate = formatter.string(from: date)
         let today = formatter.string(from: Date())
@@ -230,12 +246,13 @@ public class FoodDataCentralViewModel: ObservableObject {
             .getDocument { (document, error) in
                 guard error == nil else {
                     print("Error in getWater method:", error?.localizedDescription ?? "")
+                    completion()
                     return
                 }
                 if let document = document, !document.exists {
                     if pDate == today {
-                        print("It is a new day!")
                         self.isNewDay = true
+                        completion()
                         return
                     }
                 }
@@ -243,8 +260,21 @@ public class FoodDataCentralViewModel: ObservableObject {
                     self.isNewDay = false
                     self.waters.waterLoggedToday = document.get("waters logged") as? Int
                     self.waters.waterOuncesToday = document.get("total ounces") as? Double
+                    completion()
+                    return
                 }
             }
+    }
+    
+    func getAllHistoryByDate(date: Date = Timestamp(date: Date()).dateValue(), completion: @escaping () -> () = {}) {
+        self.getFoodIds(date: date, completion: {
+            print("getting food complete")
+            self.getWater(date: date, completion: {
+                print("getting water complete")
+                completion()
+                return
+            })
+        })
     }
     
     /// Generates a new URL with the given queryItems.

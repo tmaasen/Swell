@@ -6,7 +6,7 @@
 import Foundation
 
 // MARK: - Pexel
-struct Pexel: Codable {
+class Pexel: Codable {
     var totalResults, page, perPage: Int?
     var photos: [Photo]?
     var nextPage: String?
@@ -17,49 +17,6 @@ struct Pexel: Codable {
         case perPage = "per_page"
         case photos
         case nextPage = "next_page"
-    }
-}
-
-// MARK: Pexel convenience initializers and mutators
-
-extension Pexel {
-    init(data: Data) throws {
-        self = try newJSONDecoder().decode(Pexel.self, from: data)
-    }
-
-    init(_ json: String, using encoding: String.Encoding = .utf8) throws {
-        guard let data = json.data(using: encoding) else {
-            throw NSError(domain: "JSONDecoding", code: 0, userInfo: nil)
-        }
-        try self.init(data: data)
-    }
-
-    init(fromURL url: URL) throws {
-        try self.init(data: try Data(contentsOf: url))
-    }
-
-    func with(
-        totalResults: Int?? = nil,
-        page: Int?? = nil,
-        perPage: Int?? = nil,
-        photos: [Photo]?? = nil,
-        nextPage: String?? = nil
-    ) -> Pexel {
-        return Pexel(
-            totalResults: totalResults ?? self.totalResults,
-            page: page ?? self.page,
-            perPage: perPage ?? self.perPage,
-            photos: photos ?? self.photos,
-            nextPage: nextPage ?? self.nextPage
-        )
-    }
-
-    func jsonData() throws -> Data {
-        return try newJSONEncoder().encode(self)
-    }
-
-    func jsonString(encoding: String.Encoding = .utf8) throws -> String? {
-        return String(data: try self.jsonData(), encoding: encoding)
     }
 }
 

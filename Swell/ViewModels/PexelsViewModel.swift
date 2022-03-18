@@ -10,26 +10,41 @@ import Foundation
 class PexelsViewModel: ObservableObject {
     let API_URL:URL! = URL(string: "https://api.pexels.com/v1/search?query=landscape&page=1&per_page=20&size=small&orientation=landscape")
     @Published var pexel = Photo()
+    private let cache = NSCache<NSString, Pexel>()
     
     init() {
         getPexel() { pexels in
-            self.pexel = (pexels.photos?.randomElement())!
+            self.pexel = (pexels?.photos?.randomElement())!
         }
     }
     
-    func getPexel(completion:@escaping (Pexel) -> ()) {
+    func getPexel(completion: @escaping (Pexel?) -> ()) {
         guard let apiKey = Bundle.main.infoDictionary?["PEXELS_API_KEY"] as? String else {return}
 
+        if let image = cache.object(forKey: "image") {
+            print("Using cache")
+            completion(image)
+            return
+        }
+        
         var urlRequest = URLRequest(url: API_URL)
         // Setting HTTP Headers
         urlRequest.httpMethod = "GET"
         urlRequest.setValue("application/json", forHTTPHeaderField: "Accept")
         urlRequest.setValue(apiKey, forHTTPHeaderField: "Authorization")
         
+        print("Fetching image")
         URLSession.shared.dataTask(with: urlRequest) { data, response, error in
-            let pexels = try! JSONDecoder().decode(Pexel.self, from: data!)
-            DispatchQueue.main.async {
-                completion(pexels)
+            do {
+                let pexels = try JSONDecoder().decode(Pexel.self, from: data ?? Data())
+                DispatchQueue.main.async {
+                    self.cache.setObject(pexels, forKey: "image")
+                    completion(pexels)
+                }
+            } catch {
+                print("JSONSerialization error:", error)
+                completion(nil)
+                return
             }
         }.resume()
         

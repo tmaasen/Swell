@@ -74,12 +74,10 @@ struct CustomTextField: UIViewRepresentable {
             
             if !parent.searchText.isEmpty {
                 parent.isLoading = true
-                parent.foodViewModel.search(searchTerms: parent.searchText, pageSize: 200)
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
+                parent.foodViewModel.search(searchTerms: parent.searchText, pageSize: 200, completion: {
                     self.parent.isLoading = false
                 })
             }
-            
             return true
         }
         

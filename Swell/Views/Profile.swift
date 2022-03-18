@@ -99,7 +99,7 @@ struct Profile: View {
                     Button(action: {
                         hideKeyboard()
                         toggleLoadingIndicator()
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                             self.userViewModel.updateUser(
                                 fname: firstName,
                                 lname: lastName,

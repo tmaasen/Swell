@@ -18,54 +18,54 @@ class AuthenticationViewModel: UserViewModel {
     @Published var state: SignInState = .signedOut
     @Published var needsToReauthenticate: Bool = false
     @Published var errorMessage: String = ""
-    var hasPersistedSignedIn = UserDefaults.standard.bool(forKey: "isLoggedIn")
     
     override init() {
         super.init()
-        if hasPersistedSignedIn {
-            if GIDSignIn.sharedInstance.hasPreviousSignIn() {
-                GIDSignIn.sharedInstance.restorePreviousSignIn {
-                    [unowned self] user, error in
-                    authenticateUser(for: user, with: error)
-                }
+        if GIDSignIn.sharedInstance.hasPreviousSignIn() {
+            GIDSignIn.sharedInstance.restorePreviousSignIn {
+                [unowned self] user, error in
+                authenticateUser(for: user, with: error)
             }
         }
     }
     
     // sign in with email and password
-    func signInWithEmail(email: String, password: String) {
+    func signInWithEmail(email: String, password: String, completion: @escaping () -> () = {}) {
         Auth.auth().signIn(withEmail: email, password: password) {result, error in
             if result != nil, error == nil {
                 UserDefaults.standard.set(true, forKey: "isLoggedIn")
-                self.getUser()
+                self.getAllUserInfo()
                 self.setLoginTimestamp()
                 self.state = .signedIn
-                print(self.state)
+                completion()
                 return
             } else {
                 print(error?.localizedDescription ?? "Error signing in with email and pw")
+                completion()
                 return
             }
         }
     }
     
-    func signUp(email: String, password: String) {
+    func signUp(email: String, password: String, completion: @escaping () -> () = {}) {
         Auth.auth().createUser(withEmail: email, password: password) {result, error in
             if result != nil, error == nil {
                 // user is also logged in when registered
                 UserDefaults.standard.set(true, forKey: "isLoggedIn")
                 self.state = .signedIn
                 print(self.state)
+                completion()
                 return
             } else {
                 print(error?.localizedDescription ?? "Error Signing Up User")
+                completion()
                 return
             }
         }
     }
     
     // sign in with Google
-    func signInWithGoogle() {
+    func signInWithGoogle(completion: @escaping () -> () = {}) {
         if GIDSignIn.sharedInstance.hasPreviousSignIn() {
             GIDSignIn.sharedInstance.restorePreviousSignIn {
                 [unowned self] user, error in
@@ -82,12 +82,14 @@ class AuthenticationViewModel: UserViewModel {
                 else { return }
             
             GIDSignIn.sharedInstance.signIn(with: configuration, presenting: rootViewController) { [unowned self] user, error in
-                authenticateUser(for: user, with: error)
+                authenticateUser(for: user, with: error, completion: {
+                    completion()
+                })
             }
         }
     }
     
-    func authenticateUser(for user: GIDGoogleUser?, with error: Error?) {
+    func authenticateUser(for user: GIDGoogleUser?, with error: Error?, completion: @escaping () -> () = {}) {
         if let error = error {
             print(error.localizedDescription)
             return
@@ -101,13 +103,16 @@ class AuthenticationViewModel: UserViewModel {
         Auth.auth().signIn(with: credential) { [unowned self] (_, error) in
             if let error = error {
                 print(error.localizedDescription)
+                completion()
+                return
             } else {
-                self.getUser()
                 self.setLoginTimestamp()
-                self.getGreeting(name: GIDSignIn.sharedInstance.currentUser?.profile?.givenName ?? "")
+                self.getAllUserInfo()
                 UserDefaults.standard.set(true, forKey: "isLoggedIn")
                 self.state = .signedIn
                 print(self.state)
+                completion()
+                return
             }
         }
     }

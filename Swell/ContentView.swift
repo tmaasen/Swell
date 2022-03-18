@@ -6,9 +6,8 @@
 //
 
 import SwiftUI
-import GoogleSignIn
-import JGProgressHUD_SwiftUI
 import UIKit
+import JGProgressHUD_SwiftUI
 
 struct ContentView: View {
     

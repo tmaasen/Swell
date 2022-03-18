@@ -32,8 +32,9 @@ struct MealLog: View {
                     Text("Hmm...we couldn't find that one. What else is on your menu?")
                         .foregroundColor(colorScheme == .dark ? .white : .gray)
                         .font(.system(size: 20))
+                        .multilineTextAlignment(.center)
                 } else {
-                    Text("\(String(foodViewModel.foodSearchDictionary.totalHits!)) Results")
+                    Text("\(String(foodViewModel.searchResultsNumber ?? 0)) Results")
                         .foregroundColor(colorScheme == .dark ? .white : .gray)
                     ScrollView {
                         ForEach(foodViewModel.foodSearchResults, id: \.self.id) { foodItem in
@@ -50,7 +51,8 @@ struct MealLog: View {
         .onTapGesture {
             hideKeyboard()
         }
-        .onAppear() {
+        .onDisappear() {
+            foodViewModel.foodSearchDictionary.totalHits = nil
             foodViewModel.foodSearchResults.removeAll()
             foodViewModel.searchResultsNumber = 0
         }

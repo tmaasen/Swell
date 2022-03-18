@@ -28,7 +28,7 @@ struct FoodResultListItem: View {
                     .foregroundColor(Color("FoodListItem_DarkGray"))
                     .font(.custom("Ubuntu", size: 12))
                 if (containsCaffeine || containsLactose || containsGluten) {
-                    Text("Contains: \(containsGluten ? "gluten" : "") \(containsLactose ? " lactose" : "") \(containsCaffeine ? " caffeine" : "")")
+                    Text("Contains: \(containsGluten ? "Gluten" : "") \(containsLactose ? " Lactose" : "") \(containsCaffeine ? " Caffeine" : "")")
                         .foregroundColor(Color("FoodListItem_DarkGray"))
                         .font(.custom("Ubuntu", size: 12))
                 }
@@ -68,25 +68,26 @@ struct FoodResultListItem: View {
     }
     public func checkSpecialFoodNutrients(food: Food) {
         if(food.ingredients != nil) {
-            if ((food.ingredients?.contains("GLUTEN")) != false ||
-                (food.ingredients?.contains("BREAD")) != false) {
+            if ((food.ingredients?.uppercased().contains("GLUTEN")) != false ||
+                    (food.ingredients?.uppercased().contains("BREAD")) != false ||
+                    (food.ingredients?.uppercased().contains("FLOUR")) != false) {
                 containsGluten = true
                 contains.append("Gluten")
             }
-            if ((food.ingredients?.contains("LACTOSE")) != false ||
-                (food.ingredients?.contains("MILK")) != false ||
-                (food.ingredients?.contains("DAIRY")) != false) {
+            if ((food.ingredients?.uppercased().contains("LACTOSE")) != false ||
+                    (food.ingredients?.uppercased().contains("MILK")) != false ||
+                    (food.ingredients?.uppercased().contains("DAIRY")) != false) {
                 containsLactose = true
                 contains.append("Dairy")
             }
-            if ((food.ingredients?.contains("CAFFEINE")) != false ||
-                (food.ingredients?.contains("COFFEE")) != false) {
+            if ((food.ingredients?.uppercased().contains("CAFFEINE")) != false ||
+                    (food.ingredients?.uppercased().contains("COFFEE")) != false) {
                 containsCaffeine = true
                 contains.append("Caffeine")
             }
-            if ((food.ingredients?.contains("WHOLE GRAIN")) != false ||
-                (food.foodDescription.contains("OATMEAL")) != false ||
-                    (food.foodDescription.contains("OATS")) != false) {
+            if ((food.ingredients?.uppercased().contains("WHOLE GRAIN")) != false ||
+                    (food.foodDescription.uppercased().contains("OATMEAL")) != false ||
+                    (food.foodDescription.uppercased().contains("OATS")) != false) {
                 isWholeGrain = true
                 contains.append("Whole Grain")
             }

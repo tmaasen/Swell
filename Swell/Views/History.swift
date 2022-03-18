@@ -11,7 +11,6 @@ import Firebase
 
 struct History: View { 
     @EnvironmentObject var foodViewModel: FoodDataCentralViewModel
-    @State private var selectedDate = Date()
     @State private var isLoading: Bool = false
     @State private var selectedPickerIndex: Int = 0
     var pickerOptions = ["Log", "Analytics"]
@@ -31,7 +30,7 @@ struct History: View {
             }
             
             if selectedPickerIndex == 0 {
-                LogHistory(selectedDate: $selectedDate, isLoading: $isLoading)
+                LogHistory(isLoading: $isLoading)
             } else {
                 AnalyticHistory()
             }
@@ -39,11 +38,9 @@ struct History: View {
         .navigationTitle("History")
         .onAppear() {
             isLoading = true
-            foodViewModel.getFoodIds(date: selectedDate)
-            foodViewModel.getWater(date: selectedDate)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+            foodViewModel.getAllHistoryByDate(date: Date(), completion: {
                 isLoading = false
-            }
+            })
         }
     }
 }

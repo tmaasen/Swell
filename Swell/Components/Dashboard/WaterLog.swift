@@ -85,21 +85,18 @@ struct WaterLog: View {
         }
         .padding()
         .onAppear() {
-            foodViewModel.getWater()
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            foodViewModel.getWater(completion: {
                 if foodViewModel.isNewDay == true {
-                    print("It's a new day on the client!")
                     ounces = 8
                     watersLogged = 0
                     waterLogDict.keys.forEach { waterLogDict[$0] = false }
                 } else {
-                    print("It's NOT a new day")
                     let waters = foodViewModel.waters.waterLoggedToday ?? 0
                     for i in 0...waters {
                         waterLogDict[i] = true
                     }
                 }
-            }
+            })
         }
     }
 }
