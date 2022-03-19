@@ -268,9 +268,7 @@ public class FoodDataCentralViewModel: ObservableObject {
     
     func getAllHistoryByDate(date: Date = Timestamp(date: Date()).dateValue(), completion: @escaping () -> () = {}) {
         self.getFoodIds(date: date, completion: {
-            print("getting food complete")
             self.getWater(date: date, completion: {
-                print("getting water complete")
                 completion()
                 return
             })

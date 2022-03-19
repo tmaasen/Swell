@@ -24,8 +24,7 @@ struct CustomTextField: UIViewRepresentable {
         textField.keyboardType = self.keyboardType
         textField.returnKeyType = self.returnVal
         textField.placeholder = "Search"
-        // TEXT NOT CLEARING
-        textField.clearButtonMode = .always
+//        textField.clearButtonMode = .whileEditing
         textField.adjustsFontSizeToFitWidth = true
         textField.tag = self.tag
         textField.delegate = context.coordinator
@@ -39,12 +38,6 @@ struct CustomTextField: UIViewRepresentable {
         } else {
             uiView.resignFirstResponder()
         }
-//        if uiView.window != nil, !uiView.isFirstResponder {
-//            //This triggers attribute cycle if not dispatched
-//            DispatchQueue.main.async {
-//                uiView.becomeFirstResponder()
-//            }
-//        }
     }
     
     func makeCoordinator() -> Coordinator {
@@ -62,6 +55,12 @@ struct CustomTextField: UIViewRepresentable {
             textfield.becomeFirstResponder()
         }
         
+//        func textFieldShouldClear(_ textField: UITextField) -> Bool {
+//            parent.text = ""
+//            textField.text = ""
+//            return true
+//        }
+        
         func textFieldShouldReturn(_ textField: UITextField) -> Bool {
             
             if parent.tag == 0 {
@@ -71,7 +70,7 @@ struct CustomTextField: UIViewRepresentable {
                 parent.isfocusAble = [false, false]
                 parent.text = textField.text ?? ""
             }
-            
+            // Search for the food
             if !parent.searchText.isEmpty {
                 parent.isLoading = true
                 parent.foodViewModel.search(searchTerms: parent.searchText, pageSize: 200, completion: {

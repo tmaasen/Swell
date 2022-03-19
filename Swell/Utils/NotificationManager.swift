@@ -61,8 +61,8 @@ class NotificationManager: ObservableObject {
         content.body = "Has your mood changed since you ate your \(mealType.lowercased())? Long press to log your mood."
         content.categoryIdentifier = "MOOD_ACTIONS"
         // 3
-        // send after 20 minutes (60*20)
-        let timer = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
+        // send after 30 minutes (60*30)
+        let timer = UNTimeIntervalNotificationTrigger(timeInterval: (60*30), repeats: false)
         // 4
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: timer)
         // 5

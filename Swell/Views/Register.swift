@@ -17,12 +17,11 @@ struct Register: View {
     @State private var confirmPassword: String = ""
     @State private var firstName: String = ""
     @State private var lastName: String = ""
-    @State private var selectedGenderIndex: Int = 0
+    @State private var gender: String = "Gender"
     @State private var currentDate = Date()
     @State private var age: Int = 0
     @State private var height: String = ""
     @State private var weight: String = ""
-    private var genderOptions = ["Male", "Female"]
     @EnvironmentObject var authViewModel: AuthenticationViewModel
     @EnvironmentObject var userViewModel: UserViewModel
     @EnvironmentObject var hudCoordinator: JGProgressHUDCoordinator
@@ -95,19 +94,28 @@ struct Register: View {
                 }
                 .padding(.horizontal, 30)
                 Section() {
-                    Picker("Gender", selection: $selectedGenderIndex) {
-                        ForEach(0..<genderOptions.count) {
-                            Text(self.genderOptions[$0])
+                    HStack {
+                        Menu {
+                            Button("Male", action: {gender = "Male"})
+                            Button("Female", action: {gender = "Female"})
+                        } label: {
+                            Label(gender, systemImage: "chevron.down")
                         }
+                        .padding()
+                        .foregroundColor(Color.gray)
+                        Spacer()
                     }
-                    .padding()
-                    .pickerStyle(SegmentedPickerStyle())
+                    Divider()
+                        .frame(height: 1)
+                        .padding(.horizontal, 30)
+                        .background(Color.gray)
                     DatePicker("Birthdate", selection: $currentDate, in: ...Date(), displayedComponents: .date)
                         .onChange(of: currentDate, perform: { value in
                             let diff = Calendar.current.dateComponents([.year], from: currentDate, to: Date())
                             self.age = diff.year!
                         })
                         .padding()
+                        .foregroundColor(Color.gray)
                     Divider()
                         .frame(height: 1)
                         .padding(.horizontal, 30)
@@ -169,7 +177,7 @@ struct Register: View {
                                 fname: firstName,
                                 lname: lastName,
                                 age: age,
-                                gender: (selectedGenderIndex == 0 ? "Male" : "Female"),
+                                gender: gender,
                                 height: Int(height) ?? 0,
                                 weight: Int(weight) ?? 0,
                                 completion: {

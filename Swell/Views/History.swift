@@ -11,7 +11,6 @@ import Firebase
 
 struct History: View { 
     @EnvironmentObject var foodViewModel: FoodDataCentralViewModel
-    @State private var isLoading: Bool = false
     @State private var selectedPickerIndex: Int = 0
     var pickerOptions = ["Log", "Analytics"]
     
@@ -25,23 +24,13 @@ struct History: View {
             .padding()
             .pickerStyle(SegmentedPickerStyle())
             
-            if isLoading {
-                LottieAnimation(filename: "loading", loopMode: .loop, width: 50, height: 50)
-            }
-            
             if selectedPickerIndex == 0 {
-                LogHistory(isLoading: $isLoading)
+                LogHistory()
             } else {
                 AnalyticHistory()
             }
         }
         .navigationTitle("History")
-        .onAppear() {
-            isLoading = true
-            foodViewModel.getAllHistoryByDate(date: Date(), completion: {
-                isLoading = false
-            })
-        }
     }
 }
 

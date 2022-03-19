@@ -15,6 +15,7 @@ struct MoodLogItem: View {
             Text(selectedMood.emoji)
                 .font(.system(size: 28))
             Text(selectedMood.text)
+                .font(.system(size: 10))
         }
         .padding()
     }

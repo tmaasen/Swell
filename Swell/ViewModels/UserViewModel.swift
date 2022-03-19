@@ -68,7 +68,6 @@ class UserViewModel: ObservableObject {
     }
     
     func softDeleteUser() {
-        //        db.collection("users").document(Auth.auth().currentUser?.uid ?? "user").delete()
         db.collection("users").document(Auth.auth().currentUser?.uid ?? "user").updateData([
             "isDeleted": true
         ])
@@ -91,13 +90,7 @@ class UserViewModel: ObservableObject {
             "height": height,
             "weight": weight,
 //            "arrayExample": [5, true, "hello"],
-//            "nullExample": NSNull(),
-//            "objectExample": [
-//                "a": 5,
-//                "b": [
-//                    "nested": "foo"
-//                ]
-//            ]
+//            "objectExample": ["a": 5, "b": [ "nested": "foo"]]
         ]
         
         db.collection("users").document(Auth.auth().currentUser?.uid ?? "user").setData(docData, merge: true) { err in
@@ -134,44 +127,52 @@ class UserViewModel: ObservableObject {
     }
     
     // Gets greeting message and sets background gradient
-    func getGreeting(name: String, completion: @escaping () -> () = {}) {
+    func setGreeting(name: String) {
         let hour = Calendar.current.component(.hour, from: Date())
         switch hour {
         case 0..<5 :
+            self.greeting = "Good evening, \n\(name)"
+        case 5..<12 :
+            self.greeting = "Good morning, \n\(name)"
+        case 12..<17 :
+            self.greeting = "Good afternoon, \n\(name)"
+        case 17..<24 :
+            self.greeting = "Good evening, \n\(name)"
+        default:
+            self.greeting = "Hello"
+            return
+        }
+    }
+    
+    func setGradient() {
+        let hour = Calendar.current.component(.hour, from: Date())
+        switch hour {
+        case 0..<5 :
+            UserViewModel.isEveningGradient = true
             self.gradient = Gradient(stops: [
                                         .init(color: Color.eveningLinear1, location: 0.23),
                                         .init(color: Color.eveningLinear2, location: 0.84)])
-            self.greeting = "Good evening, \n\(name)"
-            completion()
-        case 5..<12 :
-            self.greeting = "Good morning, \n\(name)"
+        case 5..<17 :
             UserViewModel.isEveningGradient = false
-            completion()
-        case 12..<17 :
-            self.greeting = "Good afternoon, \n\(name)"
-            completion()
+            self.gradient = Gradient(stops: [
+                                        .init(color: Color.morningLinear1, location: 0),
+                                        .init(color: Color.morningLinear2, location: 0.22),
+                                        .init(color: Color.morningLinear3, location: 0.35)])
         case 17..<24 :
             UserViewModel.isEveningGradient = true
             self.gradient = Gradient(stops: [
                                         .init(color: Color.eveningLinear1, location: 0.23),
                                         .init(color: Color.eveningLinear2, location: 0.84)])
-            self.greeting = "Good evening, \n\(name)"
-            completion()
         default:
-            self.greeting = "Hello"
-            completion()
             return
         }
     }
     
-    func getAllUserInfo(completion: @escaping () -> () = {}) {
+    func getAllUserInfo() {
+        self.setGradient()
         self.getUser(completion: { currentUser in
-            print("got user")
-            self.getGreeting(name: GIDSignIn.sharedInstance.currentUser?.profile?.givenName ?? currentUser.fname, completion: {
-                print("got greeting")
-                completion()
-                return
-            })
+            self.setGreeting(name: GIDSignIn.sharedInstance.currentUser?.profile?.givenName ?? currentUser.fname)
+            return
         })
     }
 }
