@@ -108,9 +108,10 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     case "OVERATE":
         NotificationManager.instance.logMood(pMood: "I Overate")
     default:
+        // probably need to save a value in CoreData
         NotificationCenter.default.post(name: NSNotification.Name("MoodLog"), object: nil)
     }
-    // 2
+    // 2 
     completionHandler()
   }
 }

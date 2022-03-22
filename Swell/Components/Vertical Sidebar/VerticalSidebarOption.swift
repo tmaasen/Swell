@@ -12,14 +12,10 @@ struct VerticalSidebarOption: View {
     
     var body: some View {
         NavigationLink(destination: viewModel.navDestination) {
-            HStack {
-                Image(systemName: viewModel.imageName)
-                    .font(.system(size: 25))
-                Text(viewModel.title)
-                    .font(.system(size: 20, weight: .semibold))
-                Spacer()
-            }
-            .padding(.leading, 10)
+            Label(viewModel.title, systemImage: viewModel.imageName)
+                .font(.system(size: 20, weight: .semibold))
+                .padding(.leading, 10)
+            Spacer()
         }.buttonStyle(PlainButtonStyle())
     }
 }

@@ -6,9 +6,11 @@
 //
 
 import Foundation
+import SwiftUI
 
 struct FoodRetriever: Codable, Identifiable {
     var id = UUID()
+    var docId: String?
     var mealType: String?
     var servingSize: Int?
     var mood: String?

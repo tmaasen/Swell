@@ -9,10 +9,12 @@ import SwiftUI
 
 struct HistoryFoodItem: View {
     var item: FoodRetriever
+    @EnvironmentObject var foodViewModel: FoodDataCentralViewModel
     @Environment(\.colorScheme) var colorScheme
+    @State private var showDeleteAlert = false
     
     var body: some View {
-        VStack(alignment: .leading) {
+        ZStack(alignment: .leading) {
             HStack {
                 // Food
                 VStack(alignment: .leading) {
@@ -34,13 +36,18 @@ struct HistoryFoodItem: View {
                         .font(.custom("Ubuntu", size: 14))
                 }
             }
-            .frame(width: 300, height: 100)
+            .frame(width: 275, height: 75)
             .padding()
+            .contentShape(Rectangle())
             .overlay(
                 RoundedRectangle(cornerRadius: 20)
                     .stroke(colorScheme == .dark ? Color.white : Color.black, lineWidth: 5)
             )
             .padding(.horizontal)
+            
+            // Delete Button
+            DeleteButton(docId: item.docId ?? "", collection: "food")
+            
         }
         .padding(.bottom)
     }

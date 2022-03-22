@@ -23,7 +23,7 @@ struct LogHistory: View {
                             .padding(.horizontal)
                         ForEach(foodViewModel.foodHistory, id: \.self.id) { item in
                             if item.mealType == meal.text && item.mealType != "Water" {
-                                HistoryFoodItem(item: item)
+                                    HistoryFoodItem(item: item)
                             }
                         }
                     }
@@ -68,6 +68,8 @@ struct LogHistory: View {
                     })
             }
         }
+    }
+    func delete(at offsets: IndexSet) {
     }
 }
 

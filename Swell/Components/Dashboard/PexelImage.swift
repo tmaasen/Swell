@@ -18,7 +18,8 @@ struct PexelImage: View {
             .cornerRadius(10)
             .transition(.fade(duration: 0.5))
             .scaledToFit()
-            .frame(width: 350, height: 250, alignment: .center)
+            .padding(.horizontal)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
             .brightness(-0.25)
             .overlay(TextOverlay(), alignment: .bottomLeading)
             .redacted(when: isLoading, redactionType: .scaled)
@@ -41,7 +42,7 @@ struct TextOverlay: View {
                 .foregroundColor(.white)
                 .lineSpacing(5.0)
                 .padding(.bottom, 30.0)
-                .padding(.leading, 15.0)
+                .padding(.leading, 25.0)
         }
     }
 }

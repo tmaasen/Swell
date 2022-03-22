@@ -27,19 +27,24 @@ struct WaterLog: View {
     ]
     
     var body: some View {
-        HStack {
-            ScrollView(.horizontal) {
-                HStack {
-                    ForEach(1..<11) { i in
-                        if waterLogDict[i] == false {
-                        LottieAnimation(filename: "water", loopMode: .playOnce, width: 60, height: 70, animationSpeed: 2.5, play: false)
-                        } else {
-                            LottieAnimation(filename: "water", loopMode: .playOnce, width: 60, height: 70, animationSpeed: 2.5, play: true)
+        VStack {
+            HStack {
+                ScrollView(.horizontal) {
+                    HStack {
+                        ForEach(1..<11) { i in
+                            if waterLogDict[i] == false {
+                                LottieAnimation(filename: "water", loopMode: .playOnce, width: 60, height: 70, animationSpeed: 2.5, play: false)
+                                    .onTapGesture {
+                                        watersLogged+=1
+                                        waterLogDict[watersLogged] = true
+                                        foodViewModel.logWater(pSize: label, watersLoggedToday: watersLogged, ounces: ounces)
+                                    }
+                            } else {
+                                LottieAnimation(filename: "water", loopMode: .playOnce, width: 60, height: 70, animationSpeed: 2.5, play: true)
+                            }
                         }
                     }
                 }
-            }
-            VStack {
                 // Menu with size options
                 Menu {
                     Button("8 fl oz", action: {
@@ -65,22 +70,9 @@ struct WaterLog: View {
                             ounces = 64})
                 } label: {
                     Label(label, systemImage: "chevron.down")
-                        .font(.custom("Ubuntu-Bold", size: 12))
+                        .font(.custom("Ubuntu-Bold", size: 20))
                         .foregroundColor(UserViewModel.isEveningGradient ? .white : .black)
                 }
-                // Log Button
-                Button("Add Water") {
-                    watersLogged+=1
-                    waterLogDict[watersLogged] = true
-                    foodViewModel.logWater(pSize: label, watersLoggedToday: watersLogged, ounces: ounces)
-                }
-                .padding(6)
-                .font(.custom("Ubuntu-Bold", size: 12))
-                .foregroundColor(UserViewModel.isEveningGradient ? .white : .black)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 20)
-                        .stroke(UserViewModel.isEveningGradient ? Color.white : Color.black, lineWidth: 2)
-                )
             }
         }
         .padding()

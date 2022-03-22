@@ -79,6 +79,7 @@ public class FoodDataCentralViewModel: ObservableObject {
         var servingSizes = [Int]()
         var moods = [String]()
         var comments = [String]()
+        var docIds = [String]()
         formatter.dateFormat = "EEEE MMM dd, yyyy"
         let pDate = formatter.string(from: date)
         
@@ -86,6 +87,7 @@ public class FoodDataCentralViewModel: ObservableObject {
         docRef.getDocuments { (querySnapshot, error) in
             guard error == nil else {
                 print("Error in getFoodIds method:", error?.localizedDescription ?? "")
+                completion()
                 return
             }
             for document in querySnapshot!.documents {
@@ -100,8 +102,10 @@ public class FoodDataCentralViewModel: ObservableObject {
                 servingSizes.append(servingSize)
                 moods.append(mood)
                 comments.append(comment)
+                docIds.append(document.documentID)
             }
-            self.getFoodsById(foodIds, mealTypes, servingSizes, moods, comments, completion: {
+            completion()
+            self.getFoodsById(foodIds, mealTypes, servingSizes, moods, comments, docIds, completion: {
                 completion()
             })
 //            self.getWater(date: date)
@@ -113,7 +117,7 @@ public class FoodDataCentralViewModel: ObservableObject {
      - Parameter fdcIDs: An array of the food IDs whose data you'd like to retrieve.
      - Returns: An array of the food data for the given food IDs.
      */
-    public func getFoodsById(_ fdcIDs: [String], _ mealTypes: [String], _ servingSizes: [Int], _ moods: [String], _ comments: [String], completion: @escaping () -> () = {}) {
+    public func getFoodsById(_ fdcIDs: [String], _ mealTypes: [String], _ servingSizes: [Int], _ moods: [String], _ comments: [String], _ docIds: [String], completion: @escaping () -> () = {}) {
         var queryItems: [URLQueryItem] = []
 //        queryItems.append(URLQueryItem(name: "nutrients", value: "328,418,601,401,203,209,212,213,268,287,291,303,307,318,573,406,415,204,205,211,262,269,301,306"))
         queryItems.append(URLQueryItem(name: "nutrients", value: "203,204,205"))
@@ -137,6 +141,7 @@ public class FoodDataCentralViewModel: ObservableObject {
                             self.foodHistory[i].servingSize = servingSizes[i]
                             self.foodHistory[i].mood = moods[i]
                             self.foodHistory[i].comments = comments[i]
+                            self.foodHistory[i].docId = docIds[i]
                         }
                         completion()
                     } else {
@@ -260,6 +265,7 @@ public class FoodDataCentralViewModel: ObservableObject {
                     self.isNewDay = false
                     self.waters.waterLoggedToday = document.get("waters logged") as? Int
                     self.waters.waterOuncesToday = document.get("total ounces") as? Double
+                    self.waters.docId = document.documentID
                     completion()
                     return
                 }
@@ -272,6 +278,17 @@ public class FoodDataCentralViewModel: ObservableObject {
                 completion()
                 return
             })
+        })
+    }
+    
+    func deleteFromHistory(doc: String, collection: String, completion: @escaping () -> () = {}) {
+        db.collection("users").document(Auth.auth().currentUser?.uid ?? "user").collection(collection).document(doc).delete(completion: { error in
+            if let error = error {
+                print("Error in deleteFromHistory method: \(error.localizedDescription)")
+            } else {
+                completion()
+                return
+            }
         })
     }
     

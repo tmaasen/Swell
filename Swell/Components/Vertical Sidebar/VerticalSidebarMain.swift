@@ -23,8 +23,8 @@ struct VerticalSidebarMain: View {
                 }
                 Spacer()
                 // Options
-                ForEach(VerticalSidebar.allCases, id: \.self) {option in
-                    VerticalSidebarOption(viewModel: option)
+                ForEach(VerticalSidebar.allCases, id: \.self) { option in
+                        VerticalSidebarOption(viewModel: option)
                 }.padding()
                 Spacer()
                 //Logout Functionality
