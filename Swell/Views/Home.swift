@@ -16,6 +16,7 @@ struct Home: View {
     @State private var showMoodLog: Bool = false
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var userViewModel: UserViewModel
+    @EnvironmentObject var foodViewModel: FoodDataCentralViewModel
     @EnvironmentObject var hudCoordinator: JGProgressHUDCoordinator
     
     var body: some View {
@@ -66,6 +67,8 @@ struct Home: View {
             NotificationCenter.default.addObserver(forName: NSNotification.Name("MoodLog"), object: nil, queue: .main) { (_) in
                 self.showMoodLog = true
             }
+            foodViewModel.getAllHistoryByDate(date: Date())
+            
         }
         .gesture(DragGesture()
                     .onEnded {

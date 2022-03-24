@@ -73,8 +73,9 @@ public class FoodDataCentralViewModel: ObservableObject {
         .resume()
     }
     
-    func getFoodIds(date: Date = Timestamp(date: Date()).dateValue(), completion: @escaping () -> () = {}) {
+    func getFood(date: Date = Timestamp(date: Date()).dateValue(), completion: @escaping () -> () = {}) {
         var foodIds = [String]()
+        var foodNames = [String]()
         var mealTypes = [String]()
         var servingSizes = [Int]()
         var moods = [String]()
@@ -92,11 +93,13 @@ public class FoodDataCentralViewModel: ObservableObject {
             }
             for document in querySnapshot!.documents {
                 let fdcId: Int = document.get("foodId") as! Int
+                let foodName: String = document.get("foodName") as! String
                 let mealType: String = document.get("meal") as! String
                 let servingSize: Int = document.get("quantity") as! Int
                 let mood: String = document.get("mood") as? String ?? ""
                 let comment: String = document.get("comments") as? String ?? ""
                 let toString = String(fdcId)
+                foodNames.append(foodName)
                 foodIds.append(toString)
                 mealTypes.append(mealType)
                 servingSizes.append(servingSize)
@@ -104,11 +107,9 @@ public class FoodDataCentralViewModel: ObservableObject {
                 comments.append(comment)
                 docIds.append(document.documentID)
             }
-            completion()
-            self.getFoodsById(foodIds, mealTypes, servingSizes, moods, comments, docIds, completion: {
+            self.getFoodsById(foodIds, mealTypes, servingSizes, moods, comments, docIds, foodNames, completion: {
                 completion()
             })
-//            self.getWater(date: date)
         }
     }
     
@@ -117,7 +118,7 @@ public class FoodDataCentralViewModel: ObservableObject {
      - Parameter fdcIDs: An array of the food IDs whose data you'd like to retrieve.
      - Returns: An array of the food data for the given food IDs.
      */
-    public func getFoodsById(_ fdcIDs: [String], _ mealTypes: [String], _ servingSizes: [Int], _ moods: [String], _ comments: [String], _ docIds: [String], completion: @escaping () -> () = {}) {
+    public func getFoodsById(_ fdcIDs: [String], _ mealTypes: [String], _ servingSizes: [Int], _ moods: [String], _ comments: [String], _ docIds: [String], _ foodNames: [String], completion: @escaping () -> () = {}) {
         var queryItems: [URLQueryItem] = []
 //        queryItems.append(URLQueryItem(name: "nutrients", value: "328,418,601,401,203,209,212,213,268,287,291,303,307,318,573,406,415,204,205,211,262,269,301,306"))
         queryItems.append(URLQueryItem(name: "nutrients", value: "203,204,205"))
@@ -137,6 +138,7 @@ public class FoodDataCentralViewModel: ObservableObject {
                     self.foodHistory = food
                     if !self.foodHistory.isEmpty {
                         for i in 0...fdcIDs.count-1 {
+                            self.foodHistory[i].foodName = foodNames[i]
                             self.foodHistory[i].mealType = mealTypes[i]
                             self.foodHistory[i].servingSize = servingSizes[i]
                             self.foodHistory[i].mood = moods[i]
@@ -177,6 +179,7 @@ public class FoodDataCentralViewModel: ObservableObject {
         
         let docData: [String: Any] = [
             "foodId": pFoodToLog.fdcID,
+            "foodName": pFoodToLog.foodDescription,
             "quantity": pQuantity,
             "meal": pMeal,
             "highIn": highNutrients,
@@ -273,8 +276,10 @@ public class FoodDataCentralViewModel: ObservableObject {
     }
     
     func getAllHistoryByDate(date: Date = Timestamp(date: Date()).dateValue(), completion: @escaping () -> () = {}) {
-        self.getFoodIds(date: date, completion: {
+        self.getFood(date: date, completion: {
+            print("got food")
             self.getWater(date: date, completion: {
+                print("got water")
                 completion()
                 return
             })
