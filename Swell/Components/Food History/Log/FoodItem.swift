@@ -9,7 +9,7 @@ import SwiftUI
 
 struct FoodItem: View {
     var item: FoodRetriever
-    @EnvironmentObject var foodViewModel: FoodDataCentralViewModel
+    @EnvironmentObject var foodViewModel: FoodAndWaterViewModel
     @Environment(\.colorScheme) var colorScheme
     @State private var showDeleteAlert = false
     @State private var showFoodDataSheet = false
@@ -35,6 +35,12 @@ struct FoodItem: View {
                 VStack(alignment: .leading) {
                     Text("\(item.comments != "" ? item.comments! : "No comments.")")
                         .font(.custom("Ubuntu", size: 14))
+                }
+                // Info icon
+                VStack(alignment: .center) {
+                    Image(systemName: "info.circle")
+                        .font(.system(size: 25))
+                        .foregroundColor(.blue)
                 }
             }
             .frame(width: 275, height: 75)

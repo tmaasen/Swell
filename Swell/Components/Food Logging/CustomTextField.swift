@@ -17,7 +17,7 @@ struct CustomTextField: UIViewRepresentable {
     @Binding var isLoading: Bool
     @Binding var searchText: String
     @Binding var searching: Bool
-    @EnvironmentObject var foodViewModel: FoodDataCentralViewModel
+    @EnvironmentObject var foodViewModel: FoodAndWaterViewModel
     
     func makeUIView(context: Context) -> UITextField {
         let textField = UITextField(frame: .zero)

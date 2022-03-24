@@ -9,7 +9,7 @@ import SwiftUI
 
 struct Header: View {
     @Binding var isShowingSidebar: Bool
-    @EnvironmentObject var user: UserViewModel
+    @EnvironmentObject var user: AuthenticationViewModel
     
     var body: some View {
         GeometryReader { geometry in

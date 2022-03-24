@@ -9,7 +9,7 @@ import SwiftUI
 
 struct WaterItem: View {
     @Environment(\.colorScheme) var colorScheme
-    @EnvironmentObject var foodViewModel: FoodDataCentralViewModel
+    @EnvironmentObject var foodViewModel: FoodAndWaterViewModel
         
         var body: some View {
             ZStack(alignment: .leading) {

@@ -10,7 +10,7 @@ import SwiftUICharts
 import Firebase
 
 struct Analytics_Graph3: View {
-    @EnvironmentObject var foodViewModel: FoodDataCentralViewModel
+    @EnvironmentObject var foodViewModel: FoodAndWaterViewModel
     let db = Firestore.firestore()
     // Graph 3
     @State var g3Label = "nutrient"
@@ -47,6 +47,7 @@ struct Analytics_Graph3: View {
             ]),
             title: "\(g3Label.capitalizingFirstLetter()) Foods",
             legend: "All Time",
+            form: ChartForm.small,
 //                    filterTag==0 ? "By Week" : "All Time",
             valueSpecifier: "%.0f")
             .padding(.horizontal)

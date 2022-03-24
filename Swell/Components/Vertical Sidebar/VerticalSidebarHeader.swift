@@ -11,7 +11,7 @@ import FirebaseAuth
 
 struct VerticalSidebarHeader: View {
     private let googleUser = GIDSignIn.sharedInstance.currentUser
-    @EnvironmentObject var userViewModel: UserViewModel
+    @EnvironmentObject var authViewModel: AuthenticationViewModel
     @Binding var isShowingSidebar: Bool
     
     var body: some View {        
@@ -23,7 +23,7 @@ struct VerticalSidebarHeader: View {
                 .clipShape(Circle())
                 .padding(.bottom, 14)
             
-            Text(googleUser?.profile?.name ?? (userViewModel.user.fname + " " + userViewModel.user.lname))
+            Text(googleUser?.profile?.name ?? (authViewModel.user.fname + " " + authViewModel.user.lname))
                 .font(.custom("Ubuntu-Bold", size: 26))
             Text(Auth.auth().currentUser?.email ?? "johndoe@test.com")
                 .font(.custom("Ubuntu-Italic", size: 14))

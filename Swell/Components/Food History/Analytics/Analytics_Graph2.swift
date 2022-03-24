@@ -10,7 +10,7 @@ import SwiftUICharts
 import Firebase
 
 struct Analytics_Graph2: View {
-    @EnvironmentObject var foodViewModel: FoodDataCentralViewModel
+    @EnvironmentObject var foodViewModel: FoodAndWaterViewModel
     let db = Firestore.firestore()
     // Graph 2
     @State var g2Label = "nutrient"
@@ -47,6 +47,7 @@ struct Analytics_Graph2: View {
             ]),
             title: "High In \(g2Label.capitalizingFirstLetter())",
             legend: "All Time",
+            form: ChartForm.extraLarge,
 //                    filterTag==0 ? "By Week" : "All Time",
             valueSpecifier: "%.0f")
             .padding(.horizontal)

@@ -11,7 +11,7 @@ struct SearchBar: View {
     @Binding var searchText: String
     @Binding var searching: Bool
     @Binding var isLoading: Bool
-    @EnvironmentObject var foodViewModel: FoodDataCentralViewModel
+    @EnvironmentObject var foodViewModel: FoodAndWaterViewModel
     @State var focused: [Bool] = [false, true]
     
     var body: some View {

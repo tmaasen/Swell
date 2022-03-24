@@ -10,7 +10,7 @@ import SwiftUICharts
 import Firebase
 
 struct AnalyticHistory: View {
-    @EnvironmentObject var foodViewModel: FoodDataCentralViewModel
+    @EnvironmentObject var foodViewModel: FoodAndWaterViewModel
     var filterOptions = ["All Time"]
     @State private var filterTag: Int = 0
     let db = Firestore.firestore()

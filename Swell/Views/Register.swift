@@ -23,7 +23,6 @@ struct Register: View {
     @State private var height: String = ""
     @State private var weight: String = ""
     @EnvironmentObject var authViewModel: AuthenticationViewModel
-    @EnvironmentObject var userViewModel: UserViewModel
     @EnvironmentObject var hudCoordinator: JGProgressHUDCoordinator
     @Environment(\.colorScheme) var colorScheme
     
@@ -143,12 +142,12 @@ struct Register: View {
                         hideKeyboard()
                         authViewModel.signInWithGoogle(completion: {
                             isAuthenticated = true
-                            userViewModel.setNewUser(
+                            authViewModel.setNewUser(
                                 fname: GIDSignIn.sharedInstance.currentUser?.profile?.givenName ?? "",
                                 lname: GIDSignIn.sharedInstance.currentUser?.profile?.familyName ?? "",
                                 completion: {
-                                    userViewModel.getAllUserInfo()
-                                    userViewModel.setLoginTimestamp()
+                                    authViewModel.getAllUserInfo()
+                                    authViewModel.setLoginTimestamp()
                                 }
                             )
                         })
@@ -173,7 +172,7 @@ struct Register: View {
                         toggleLoadingIndicator()
                         authViewModel.signUp(email: emailAddress, password: password, completion: {
                             isAuthenticated = true
-                            userViewModel.setNewUser(
+                            authViewModel.setNewUser(
                                 fname: firstName,
                                 lname: lastName,
                                 age: age,
@@ -181,8 +180,8 @@ struct Register: View {
                                 height: Int(height) ?? 0,
                                 weight: Int(weight) ?? 0,
                                 completion: {
-                                    userViewModel.getAllUserInfo()
-                                    userViewModel.setLoginTimestamp()
+                                    authViewModel.getAllUserInfo()
+                                    authViewModel.setLoginTimestamp()
                                 }
                             )
                         })

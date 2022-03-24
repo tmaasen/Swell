@@ -9,7 +9,7 @@ import SwiftUI
 
 struct DeleteButton: View {
     @State private var showDeleteAlert = false
-    @EnvironmentObject var foodViewModel: FoodDataCentralViewModel
+    @EnvironmentObject var foodViewModel: FoodAndWaterViewModel
     var docId: String
     var collection: String
     

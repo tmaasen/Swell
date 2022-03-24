@@ -16,14 +16,12 @@ struct SwellApp: App {
     }
     
     @StateObject var authViewModel = AuthenticationViewModel()
-    @StateObject var userViewModel = UserViewModel()
-    @StateObject var foodViewModel = FoodDataCentralViewModel()
+    @StateObject var foodViewModel = FoodAndWaterViewModel()
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environmentObject(userViewModel)
                 .environmentObject(authViewModel)
                 .environmentObject(foodViewModel)
         }

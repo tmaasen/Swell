@@ -11,7 +11,7 @@ struct WaterLog: View {
     @State private var label: String = "8 fl oz"
     @State private var ounces: Double = 8
     @State private var watersLogged: Int = 0
-    @EnvironmentObject var foodViewModel: FoodDataCentralViewModel
+    @EnvironmentObject var foodViewModel: FoodAndWaterViewModel
     @Environment(\.colorScheme) var colorScheme
     @State private var waterLogDict = [
         1: false,

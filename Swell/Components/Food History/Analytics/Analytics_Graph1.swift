@@ -10,7 +10,7 @@ import SwiftUICharts
 import Firebase
 
 struct Analytics_Graph1: View {
-    @EnvironmentObject var foodViewModel: FoodDataCentralViewModel
+    @EnvironmentObject var foodViewModel: FoodAndWaterViewModel
     let db = Firestore.firestore()
     // Graph 1
     @State var g1HappyMoods: Double = 0
@@ -29,7 +29,7 @@ struct Analytics_Graph1: View {
             ]),
             title: "All Moods",
             legend: "All Time",
-            form: ChartForm.large,
+            form: ChartForm.detail,
 //                    filterTag==0 ? "By Week" : "All Time",
             valueSpecifier: "%.0f")
             .padding(.horizontal)

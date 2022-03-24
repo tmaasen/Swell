@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct LogHistory: View {
-    @EnvironmentObject var foodViewModel: FoodDataCentralViewModel
+    @EnvironmentObject var foodViewModel: FoodAndWaterViewModel
     // this will reset every time it goes here...need to fix
     @State private var selectedDate = Date()
     @State private var isLoading: Bool = false

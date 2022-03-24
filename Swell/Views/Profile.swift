@@ -13,7 +13,6 @@ struct Profile: View {
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var authViewModel: AuthenticationViewModel
     @EnvironmentObject var hudCoordinator: JGProgressHUDCoordinator
-    @EnvironmentObject var userViewModel: UserViewModel
     @State private var showDeleteAccountAlert: Bool = false
     @State private var isFormDisabled: Bool = true
     @State private var firstName: String = ""
@@ -98,7 +97,7 @@ struct Profile: View {
                     hideKeyboard()
                     toggleLoadingIndicator()
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                        self.userViewModel.updateUser(
+                        authViewModel.updateUser(
                             fname: firstName,
                             lname: lastName,
                             age: Int(age) ?? 0,
@@ -166,12 +165,12 @@ struct Profile: View {
                                 })
         )
         .onAppear() {
-            firstName = userViewModel.user.fname
-            lastName = userViewModel.user.lname
-            selectedGenderIndex = userViewModel.user.gender == "Female" ? 1 : 0
-            age = String(userViewModel.user.age)
-            height = String(userViewModel.user.height)
-            weight = String(userViewModel.user.weight)
+            firstName = authViewModel.user.fname
+            lastName = authViewModel.user.lname
+            selectedGenderIndex = authViewModel.user.gender == "Female" ? 1 : 0
+            age = String(authViewModel.user.age)
+            height = String(authViewModel.user.height)
+            weight = String(authViewModel.user.weight)
         }
         .onDisappear() {
             firstName = ""

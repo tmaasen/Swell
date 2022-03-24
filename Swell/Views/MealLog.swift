@@ -13,7 +13,7 @@ struct MealLog: View {
     @State private var searchText = ""
     @State private var searching = false
     @State private var isLoading = false
-    @EnvironmentObject var foodViewModel: FoodDataCentralViewModel
+    @EnvironmentObject var foodViewModel: FoodAndWaterViewModel
     @Environment(\.presentationMode) var presentationMode
     @Environment(\.colorScheme) var colorScheme
     
