@@ -19,9 +19,11 @@ struct LogHistory: View {
             VStack(alignment: .leading) {
                 if !foodViewModel.foodHistory.isEmpty {
                     ForEach(MealTypes.allCases, id: \.self) { meal in
-                        Text(foodViewModel.foodHistory.first(where: {$0.mealType == meal.text}) != nil ? meal.text : "")
-                            .font(.custom("Ubuntu-BoldItalic", size: 20))
-                            .padding()
+                        if foodViewModel.foodHistory.first(where: {$0.mealType == meal.text}) != nil {
+                            Text(meal.text)
+                                .font(.custom("Ubuntu-BoldItalic", size: 20))
+                                .padding()
+                        }
                         ForEach(foodViewModel.foodHistory, id: \.self.id) { item in
                             if item.mealType == meal.text && item.mealType != "Water" {
                                     FoodItem(item: item)
@@ -41,7 +43,7 @@ struct LogHistory: View {
             if isLoading {
                 LottieAnimation(filename: "loading", loopMode: .loop, width: 50, height: 50)
             }
-            if !isLoading && foodViewModel.foodHistory.isEmpty && foodViewModel.waters.waterLoggedToday == nil {
+            if !isLoading && foodViewModel.foodHistory.isEmpty && foodViewModel.waters.waterOuncesToday == 0 {
                 Image("NoData")
                     .resizable()
                     .scaledToFit()

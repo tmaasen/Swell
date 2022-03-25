@@ -34,6 +34,10 @@ struct Analytics_Graph1: View {
             valueSpecifier: "%.0f")
             .padding(.horizontal)
             
+            PieChartView(data: [g1HappyMoods,g1NeutralMoods,g1SickMoods,g1OverateMoods], title: "Title", legend: "Legendary").padding()
+            
+            LineChartView(data: [g1HappyMoods,g1NeutralMoods,g1SickMoods,g1OverateMoods], title: "Title", legend: "Legendary").padding()
+            
             if g1TotalDataPoints != 0 {
                 Text("\(g1TotalDataPoints) Records")
                     .foregroundColor(.gray)

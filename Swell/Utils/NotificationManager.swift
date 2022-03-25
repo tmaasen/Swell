@@ -12,23 +12,8 @@ import UserNotifications
 // Notification Manager
 class NotificationManager: ObservableObject {
     @Published var settings: UNNotificationSettings?
-    private var db = Firestore.firestore()
     var docRef: String = ""
-    var selectedMood: String = ""
     static let instance = NotificationManager()
-    
-    func logMood(pMood: String) {
-        db.collection("users")
-            .document(Auth.auth().currentUser?.uid ?? "test")
-            .collection("food")
-            .document(docRef)
-            .updateData(["mood": pMood])
-            { err in
-                if let err = err {
-                    print("Error updating document with mood: \(err.localizedDescription)")
-                }
-            }
-    }
     
     func requestAuthorization(completion: @escaping  (Bool) -> Void) {
         UNUserNotificationCenter.current()
@@ -60,9 +45,10 @@ class NotificationManager: ObservableObject {
         content.title = "How was your \(foodTitle.lowercased())?"
         content.body = "Has your mood changed since you ate your \(mealType.lowercased())? Long press to log your mood."
         content.categoryIdentifier = "MOOD_ACTIONS"
+        content.userInfo = ["docRef": self.docRef]
         // 3
         // send after 30 minutes (60*30)
-        let timer = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
+        let timer = UNTimeIntervalNotificationTrigger(timeInterval: 10, repeats: false)
         // 4
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: timer)
         // 5

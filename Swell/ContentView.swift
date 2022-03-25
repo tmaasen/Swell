@@ -95,16 +95,19 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     didReceive response: UNNotificationResponse,
     withCompletionHandler completionHandler: @escaping () -> Void
   ) {
+    let foodViewModel = FoodAndWaterViewModel()
+    let userInfo = response.notification.request.content.userInfo
+    let docRef = userInfo["docRef"] as? String ?? ""
     // 1
     switch response.actionIdentifier {
     case "HAPPY":
-        NotificationManager.instance.logMood(pMood: "Happy")
+        foodViewModel.logMood(docRef: docRef, pMood: "Happy", pComments: "")
     case "NEUTRAL":
-        NotificationManager.instance.logMood(pMood: "Neutral")
+        foodViewModel.logMood(docRef: docRef, pMood: "Neutral", pComments: "")
     case "SICK":
-        NotificationManager.instance.logMood(pMood: "Sick")
+        foodViewModel.logMood(docRef: docRef, pMood: "Sick", pComments: "")
     case "OVERATE":
-        NotificationManager.instance.logMood(pMood: "I Overate")
+        foodViewModel.logMood(docRef: docRef, pMood: "I Overate", pComments: "")
     default:
         // probably need to save a value in CoreData
         NotificationCenter.default.post(name: NSNotification.Name("MoodLog"), object: nil)
