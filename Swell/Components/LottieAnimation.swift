@@ -11,8 +11,8 @@ import Lottie
 struct LottieAnimation: View {
     var filename: String
     var loopMode: LottieLoopMode
-    var width: CGFloat
-    var height: CGFloat
+    var width: CGFloat = 200
+    var height: CGFloat = 200
     var animationSpeed: CGFloat = 1
     var play: Bool = true
     

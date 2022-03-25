@@ -70,7 +70,7 @@ struct WaterLog: View {
                             ounces = 64})
                 } label: {
                     Label(label, systemImage: "chevron.down")
-                        .font(.custom("Ubuntu-Bold", size: 20))
+                        .font(.custom("Ubuntu-Bold", size: 16))
                         .foregroundColor(UserViewModel.isEveningGradient ? .white : .black)
                 }
             }

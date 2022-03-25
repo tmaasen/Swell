@@ -9,14 +9,12 @@ import FirebaseAuth
 import JGProgressHUD_SwiftUI
 
 struct Home: View {
-    
     @State private var isShowingSidebar: Bool = false
     @State private var isShowingSignOut: Bool = false
     @State private var showLoader: Bool = false
     @State private var showMoodLog: Bool = false
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var authViewModel: AuthenticationViewModel
-    @EnvironmentObject var foodViewModel: FoodAndWaterViewModel
     @EnvironmentObject var hudCoordinator: JGProgressHUDCoordinator
     
     var body: some View {
@@ -67,8 +65,6 @@ struct Home: View {
             NotificationCenter.default.addObserver(forName: NSNotification.Name("MoodLog"), object: nil, queue: .main) { (_) in
                 self.showMoodLog = true
             }
-//            foodViewModel.getAllHistoryByDate(date: Date())
-            
         }
         .gesture(DragGesture()
                     .onEnded {

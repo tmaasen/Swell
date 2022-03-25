@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct DeleteButton: View {
-    @State private var showDeleteAlert = false
+    @State private var showDeleteActionSheet = false
     @EnvironmentObject var foodViewModel: FoodAndWaterViewModel
     var docId: String
     var collection: String
@@ -17,22 +17,28 @@ struct DeleteButton: View {
         HStack {
             Spacer()
             Button(action: {
-                showDeleteAlert = true
+                showDeleteActionSheet = true
             }, label: {
                 Image(systemName: "trash")
-                    .font(.body)
+                    .font(.title)
                     .foregroundColor(.white)
                     .background(Circle()
                                     .fill(Color.red)
-                                    .frame(width: 30, height: 30))
+                                    .frame(width: 50, height: 50))
             })
             .padding()
-            .alert(isPresented: $showDeleteAlert) {
-                Alert(title: Text("Are You Sure?"), message: Text("Delete this item from your history? This will also remove your mood history"), primaryButton: .destructive(Text("Delete")) {
-                    foodViewModel.deleteFromHistory(doc: docId, collection: collection, completion: {
-                        foodViewModel.getAllHistoryByDate()
-                    })
-                }, secondaryButton: .cancel(Text("Return")))
+            .actionSheet(isPresented: $showDeleteActionSheet) {
+                ActionSheet(
+                    title: Text("This will permanently remove this item from your history, as well as all mood data accociated with this item."),
+                    buttons: [
+                        .destructive(Text("Delete")) {
+                            foodViewModel.deleteFromHistory(doc: docId, collection: collection, completion: {
+                                foodViewModel.getAllHistoryByDate()
+                            })
+                        },
+                        .cancel()
+                    ]
+                )
             }
         }
     }

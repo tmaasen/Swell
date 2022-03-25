@@ -16,6 +16,7 @@ struct MoodLog: View {
     var docRef: String
     @Binding var showMoodLog: Bool
     @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject var moodViewModel: FoodAndWaterViewModel
     
     var body: some View {
         VStack {
@@ -56,7 +57,7 @@ struct MoodLog: View {
             
             Button(action: {
                 hideKeyboard()
-                MoodLog.logMood(docRef: docRef, pMood: selectedMood, pComments: comments)
+                moodViewModel.logMood(docRef: docRef, pMood: selectedMood, pComments: comments)
                 logCompleted = true
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
                     presentationMode.wrappedValue.dismiss()
@@ -76,23 +77,6 @@ struct MoodLog: View {
         .onTapGesture {
             hideKeyboard()
         }
-    }
-    
-    static func logMood(docRef: String, pMood: String?, pComments: String?) {
-        let db = Firestore.firestore()
-
-        db.collection("users")
-            .document(Auth.auth().currentUser?.uid ?? "test")
-            .collection("food")
-            .document(docRef)
-            .updateData([
-                "mood": pMood ?? "",
-                "comments": pComments ?? "No comments",
-            ]) { err in
-                if let err = err {
-                    print("Error updating document: \(err)")
-                }
-            }
     }
 }
 

@@ -17,11 +17,11 @@ struct FoodResultSheet: View {
     @EnvironmentObject var foodViewModel: FoodAndWaterViewModel
     @Environment(\.presentationMode) var presentationMode
     @Environment(\.colorScheme) var colorScheme
-    var lottieFoodAnimations = ["Fast Foods", "Chewing Gum & Mints", "Pizza", "Cookies & Biscuits", "Frozen Dinners & Entrees", "Powdered Drinks", "Soda", "Seasoning Mixes, Salts, Marinades & Tenderizers", "Breads & Buns"]
+    var lottieFoodAnimations = ["Fast Foods", "Chewing Gum & Mints", "Pizza", "Cookies & Biscuits", "Frozen Dinners & Entrees", "Powdered Drinks", "Soda", "Seasoning Mixes, Salts, Marinades & Tenderizers", "Breads & Buns", "Pre-Packaged Fruit & Vegetables"]
     
     var body: some View {
         VStack(alignment: .leading) {
-            LottieAnimation(filename: lottieFoodAnimations.contains(food.foodCategory!) ? food.foodCategory! : "Pre-Packaged Fruit and Vegetables", loopMode: .loop, width: .infinity, height: .infinity)
+            LottieAnimation(filename: lottieFoodAnimations.contains(food.foodCategory ?? "") ? food.foodCategory ?? "" : "Pre-Packaged Fruit & Vegetables", loopMode: .loop, width: .infinity, height: .infinity)
                 .background(Rectangle()
                 .foregroundColor(Color("FoodSheet_Purple")))
                 .clipShape(CustomShape(corner: .bottomLeft, radii: 55))

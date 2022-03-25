@@ -21,7 +21,7 @@ struct LogHistory: View {
                     ForEach(MealTypes.allCases, id: \.self) { meal in
                         Text(foodViewModel.foodHistory.first(where: {$0.mealType == meal.text}) != nil ? meal.text : "")
                             .font(.custom("Ubuntu-BoldItalic", size: 20))
-                            .padding(.horizontal)
+                            .padding()
                         ForEach(foodViewModel.foodHistory, id: \.self.id) { item in
                             if item.mealType == meal.text && item.mealType != "Water" {
                                     FoodItem(item: item)

@@ -7,19 +7,18 @@
 
 import SwiftUI
 
-struct FoodInfoSheet: View {
+struct FoodHistorySheet: View {
     var foodRetriever: FoodRetriever
     @Binding var showFoodDataSheet: Bool
     @EnvironmentObject var foodViewModel: FoodAndWaterViewModel
     @Environment(\.presentationMode) var presentationMode
     @Environment(\.colorScheme) var colorScheme
-    var lottieFoodAnimations = ["Fast Foods", "Chewing Gum & Mints", "Pizza", "Cookies & Biscuits", "Frozen Dinners & Entrees", "Powdered Drinks", "Soda", "Seasoning Mixes, Salts, Marinades & Tenderizers", "Breads & Buns"]
+    var lottieFoodAnimations = ["Fast Foods", "Chewing Gum & Mints", "Pizza", "Cookies & Biscuits", "Frozen Dinners & Entrees", "Powdered Drinks", "Soda", "Seasoning Mixes, Salts, Marinades & Tenderizers", "Breads & Buns", "Pre-Packaged Fruit & Vegetables"]
     
     var body: some View {
         VStack(alignment: .leading) {
-            LottieAnimation(filename: lottieFoodAnimations.contains(foodRetriever.brandedFoodCategory!) ? foodRetriever.brandedFoodCategory! : "Pre-Packaged Fruit and Vegetables", loopMode: .loop, width: .infinity, height: .infinity)
-                .background(Rectangle()
-                .foregroundColor(Color("FoodSheet_Purple")))
+            LottieAnimation(filename: lottieFoodAnimations.contains(foodRetriever.brandedFoodCategory ?? "") ? foodRetriever.brandedFoodCategory ?? "" : "Pre-Packaged Fruit & Vegetables", loopMode: .loop, width: .infinity, height: .infinity)
+                .background(Rectangle().foregroundColor(Color.yellow))
                 .clipShape(CustomShape(corner: .bottomLeft, radii: 55))
             ScrollView {
                 VStack(alignment: .leading, spacing: 15) {
@@ -31,15 +30,10 @@ struct FoodInfoSheet: View {
                     }
                     .padding(.bottom, 5)
                     HStack {
-                        VStack {
-                            Text("Servings:")
-                                .font(.custom("Ubuntu", size: 16))
-                        }
-                        Spacer()
-                        if (foodRetriever.servingSize != nil) {
-                            Text("\(foodRetriever.servingSize ?? 0, specifier: "%.2f")\(foodRetriever.servingSizeUnit ?? "")")
-                                .font(.custom("Ubuntu", size: 14))
-                        }
+                        Text("Servings:")
+                            .font(.custom("Ubuntu", size: 16))
+                        Text("\(foodRetriever.servingSize ?? 0)\(foodRetriever.servingSizeUnit ?? "")")
+                            .font(.custom("Ubuntu", size: 16))
                     }
                     Text("Category: \(foodRetriever.brandedFoodCategory ?? "")")
                         .font(.custom("Ubuntu", size: 16))
@@ -78,11 +72,9 @@ struct FoodInfoSheet: View {
     }
 }
 
-struct FoodInfoSheet_Previews: PreviewProvider {
+struct FoodHistorySheet_Previews: PreviewProvider {
     static var previews: some View {
-        FoodInfoSheet(
-//            food: Food(id: UUID(), fdcID: 123456, foodDescription: "McDonald's Cheeseburger", lowercaseDescription: "mcdonalds cheeseburger", score: 500.00, foodNutrients: [FoodNutrient()]),
-                      foodRetriever: FoodRetriever(id: UUID(), mealType: "Breakfast", mood: "Happy", comments: "Today was good!", fdcID: 111111, foodDescription: "Cheese Omelet"),
-                      showFoodDataSheet: .constant(false))
+        FoodHistorySheet(foodRetriever: FoodRetriever(id: UUID(), mealType: "Breakfast", mood: "Happy", comments: "Today was good!", fdcID: 111111, foodDescription: "Cheese Omelet"),
+            showFoodDataSheet: .constant(false))
     }
 }

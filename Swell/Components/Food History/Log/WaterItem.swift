@@ -10,24 +10,22 @@ import SwiftUI
 struct WaterItem: View {
     @Environment(\.colorScheme) var colorScheme
     @EnvironmentObject var foodViewModel: FoodAndWaterViewModel
-        
-        var body: some View {
-            ZStack(alignment: .leading) {
-                HStack {
-                    LottieAnimation(filename: "water", loopMode: .playOnce, width: 80, height: 90, animationSpeed: 2.5)
-                    VStack(spacing: 5) {
-                        Text("You drank \(foodViewModel.waters.waterOuncesToday ?? 0, specifier: "%.1f") fl oz of water")
-                            .font(.custom("Ubuntu", size: 16))
-                    }
+    
+    var body: some View {
+        VStack(alignment: .leading) {
+            HStack {
+                LottieAnimation(filename: "water", loopMode: .playOnce, width: 50, height: 60, animationSpeed: 2.5)
+                VStack(spacing: 5) {
+                    Text("You drank \(foodViewModel.waters.waterOuncesToday ?? 0, specifier: "%.1f") fluid ounces of water")
+                        .font(.custom("Ubuntu", size: 16))
                 }
-                .padding()
-                .frame(width: 275, height: 75)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 20)
-                        .stroke(colorScheme == .dark ? Color.white : Color.black, lineWidth: 5)
-                )
-                .padding(.horizontal)
             }
+            .padding(.horizontal, 30)
+            Divider()
+                .frame(height: 1)
+                .background(Color("FoodListItem_LightGray"))
+                .padding(.horizontal, 30)
+        }
     }
 }
 

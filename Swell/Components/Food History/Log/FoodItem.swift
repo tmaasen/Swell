@@ -16,49 +16,60 @@ struct FoodItem: View {
     
     var body: some View {
         VStack(alignment: .leading) {
-            HStack {
-                // Food
-                VStack(alignment: .leading) {
-                    Text("\(item.foodDescription ?? "")")
-                        .font(.custom("Ubuntu-Bold", size: 12))
-                    Text("Servings: \(item.servingSize ?? 0)")
-                        .font(.custom("Ubuntu", size: 12))
-                }
+            HStack(alignment: .center) {
                 // Mood
                 VStack(alignment: .center) {
-                    Text("\(getMoodEmoji(pMood: item.mood ?? ""))")
-                        .font(.system(size: 35))
-                    Text("\(item.mood != "" ? item.mood! : "No mood specified.")")
-                        .font(.custom("Ubuntu", size: 14))
+                    if getMoodEmoji(pMood: item.mood ?? "") != "" {
+                        Text("\(getMoodEmoji(pMood: item.mood ?? ""))")
+                            .font(.system(size: 45))
+                    } else {
+                        Circle()
+                            .fill(Color("FoodListItem_LightGray"))
+                            .frame(width: 45, height: 45)
+                    }
                 }
+                Spacer()
+                // Food
+                VStack(alignment: .leading) {
+                    Text("Food")
+                        .italic()
+                        .foregroundColor(.gray)
+                        .font(.system(size: 12))
+                    Text("\(item.foodDescription?.capitalizingFirstLetter() ?? "")")
+                        .font(.custom("Ubuntu-Bold", size: 12))
+//                    Text("Servings: \(item.servingSize ?? 0)")
+//                        .font(.custom("Ubuntu", size: 12))
+                }
+                Spacer()
                 // Comments
                 VStack(alignment: .leading) {
+                    Text("Comments")
+                        .italic()
+                        .foregroundColor(.gray)
+                        .font(.system(size: 12))
                     Text("\(item.comments != "" ? item.comments! : "No comments.")")
                         .font(.custom("Ubuntu", size: 14))
                 }
+                Spacer()
                 // Info icon
                 VStack(alignment: .center) {
                     Image(systemName: "info.circle")
-                        .font(.system(size: 25))
+                        .font(.system(size: 22))
                         .foregroundColor(.blue)
+                        .sheet(isPresented: $showFoodDataSheet) {
+                            FoodHistorySheet(foodRetriever: item, showFoodDataSheet: $showFoodDataSheet)
+                        }
+                        .onTapGesture {
+                            showFoodDataSheet = true
+                        }
                 }
             }
-            .frame(width: 275, height: 75)
-            .padding()
-            .contentShape(Rectangle())
-            .overlay(
-                RoundedRectangle(cornerRadius: 20)
-                    .stroke(colorScheme == .dark ? Color.white : Color.black, lineWidth: 5)
-            )
-            .padding(.horizontal)
-            .onTapGesture {
-                showFoodDataSheet = true
-            }
-            .sheet(isPresented: $showFoodDataSheet) {
-                FoodInfoSheet(foodRetriever: item, showFoodDataSheet: $showFoodDataSheet)
-            }
+            .padding(.horizontal, 30)
+            Divider()
+                .frame(height: 1)
+                .background(Color("FoodListItem_LightGray"))
+                .padding(.horizontal, 30)
         }
-        .padding(.bottom)
     }
     func getMoodEmoji(pMood: String) -> String {
         if pMood == "Happy" { return Mood.happy.emoji }

@@ -38,14 +38,19 @@ struct VerticalSidebarMain: View {
                     Spacer()
                 }
                 .onTapGesture { isShowingSignOut = true }
-                .alert(isPresented: $isShowingSignOut) {
-                    Alert(title: Text("Are You Sure?"), message: Text("If you sign out, you will return to the login screen."), primaryButton: .destructive(Text("Sign Out")) {
-                        authViewModel.signOut()
-                        presentationMode.wrappedValue.dismiss()
-                    }, secondaryButton: .cancel(Text("Return")))
+                .actionSheet(isPresented: $isShowingSignOut) {
+                    ActionSheet(
+                        title: Text("Are You Sure? If you sign out, you will return to the login screen."),
+                        buttons: [
+                            .destructive(Text("Sign out")) {
+                                authViewModel.signOut()
+                                presentationMode.wrappedValue.dismiss()
+                            },
+                            .cancel()
+                        ]
+                    )
                 }
                 .padding(25)
-
                 Spacer()
             }
         }

@@ -95,6 +95,8 @@ class FoodAndWaterViewModel: FoodDataCentralViewModel {
         docRef = db.collection("users").document(Auth.auth().currentUser?.uid ?? "test").collection("food").addDocument(data: docData, completion: { error in
             if let error = error {
                 print("Error in logFood method: \(error.localizedDescription)")
+            } else {
+                self.getAllHistoryByDate(date: Date())
             }
         })
         
@@ -137,9 +139,28 @@ class FoodAndWaterViewModel: FoodDataCentralViewModel {
             ]) { err in
                 if let err = err {
                     print("Error updating document: \(err)")
+                } else {
+                    self.getAllHistoryByDate(date: Date())
                 }
             }
         }
+    }
+    
+    func logMood(docRef: String, pMood: String?, pComments: String?) {
+        db.collection("users")
+            .document(Auth.auth().currentUser?.uid ?? "test")
+            .collection("food")
+            .document(docRef)
+            .updateData([
+                "mood": pMood ?? "",
+                "comments": pComments ?? "No comments",
+            ]) { err in
+                if let err = err {
+                    print("Error updating document: \(err)")
+                } else {
+                    self.getAllHistoryByDate(date: Date())
+                }
+            }
     }
     
     /**
