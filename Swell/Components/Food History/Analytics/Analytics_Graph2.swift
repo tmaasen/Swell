@@ -10,10 +10,11 @@ import SwiftUICharts
 import Firebase
 
 struct Analytics_Graph2: View {
-    @EnvironmentObject var foodViewModel: FoodAndWaterViewModel
-    let db = Firestore.firestore()
+    var analyticsViewModel: HistoryAnalyticsViewModel
+    @Environment(\.colorScheme) var colorScheme
+    @State private var isLoading: Bool = false
     // Graph 2
-    @State var g2Label = "nutrient"
+    @State var g2Label = "protein"
     @State var g2HappyMoods: Double = 0
     @State var g2NeutralMoods: Double = 0
     @State var g2SickMoods: Double = 0
@@ -26,31 +27,65 @@ struct Analytics_Graph2: View {
                 Text("When I eat foods high in ")
                     .font(.system(size: 16))
                 Menu {
-                    Button("protein", action: {getGraph2Data(pNutrient: "Protein")})
-                    Button("sugar", action: {getGraph2Data(pNutrient: "Sugar")})
-                    Button("carbohydrates", action: {getGraph2Data(pNutrient: "Carbohydrates")})
+                    Button("protein", action: {
+                        g2Label = "protein"
+                        getData(pNutrient: "Protein")
+                    })
+                    Button("sugar", action: {
+                        g2Label = "sugar"
+                        getData(pNutrient: "Sugar")
+                    })
+                    Button("carbohydrates", action: {
+                        g2Label = "carbohydrates"
+                        getData(pNutrient: "Carbohydrates")
+                    })
                 } label: {
                     Label(g2Label+",", systemImage: "chevron.down")
                         .font(.custom("Ubuntu-BoldItalic", size: 16))
-                        .foregroundColor(.black)
+                        .foregroundColor(colorScheme == .dark ? .white : .black)
                 }
             }
+            .padding(.horizontal)
             Text("I usually feel...")
                 .font(.system(size: 16))
+                .padding(.horizontal)
                 .padding(.bottom)
-
-//            BarChartView(data: ChartData(values: [
-//                ((Mood.happy.text+Mood.happy.emoji),g2HappyMoods),
-//                ((Mood.neutral.text+Mood.neutral.emoji),g2NeutralMoods),
-//                ((Mood.sick.text+Mood.sick.emoji),g2SickMoods),
-//                ((Mood.overate.text+Mood.overate.emoji),g2OverateMoods)
-//            ]),
-//            title: "High In \(g2Label.capitalizingFirstLetter())",
-//            legend: "All Time",
-//            form: ChartForm.extraLarge,
-////                    filterTag==0 ? "By Week" : "All Time",
-//            valueSpecifier: "%.0f")
-//            .padding(.horizontal)
+            
+            ZStack(alignment: .center) {
+                //filterTag==0 ? "By Week" : "All Time",
+                //title: "All Moods", legend: "All Time", form: ChartForm.extraLarge, valueSpecifier: "%.0f")
+                CardView {
+                    ChartLabel("Foods High In...", type: .subTitle, format: "")
+                    BarChart()
+                }
+                .data(
+                    [((Mood.happy.text+Mood.happy.emoji), g2HappyMoods),
+                     ((Mood.neutral.text+Mood.neutral.emoji), g2NeutralMoods),
+                     ((Mood.sick.text+Mood.sick.emoji), g2SickMoods),
+                     ((Mood.overate.text+Mood.overate.emoji), g2OverateMoods)
+                    ])
+                .chartStyle(ChartStyle(backgroundColor: .white,
+                                       foregroundColor: ColorGradient(.orange, .purple))
+                )
+                .frame(height: 200)
+                .padding(.horizontal)
+                .onAppear() {
+                    getData(pNutrient: "Protein")
+                }
+                
+                if isLoading {
+                    LottieAnimation(filename: "loading", loopMode: .loop, width: 50, height: 50)
+                }
+            }
+            
+            // Legend
+            HStack {
+                ForEach(Mood.allCases, id: \.self) { mood in
+                    Text("\(mood.text)")
+                    Spacer()
+                }
+            }
+            .padding(.horizontal)
             
             if g2TotalDataPoints != 0 {
                 Text("\(g2TotalDataPoints) Records")
@@ -58,49 +93,23 @@ struct Analytics_Graph2: View {
                     .padding(.horizontal)
             }
         }
-        .padding(.bottom)
-        .onAppear() {
-            getGraph2Data(pNutrient: "Protein")
-        }
+        .padding()
     }
-    
-    func getGraph2Data(pNutrient: String?) {
-        g2Label = pNutrient?.lowercased() ?? self.g2Label
-        
-        db.collection("users")
-            .document(Auth.auth().currentUser?.uid ?? "test")
-            .collection("food")
-            .whereField("highIn", arrayContains: pNutrient ?? "")
-            .getDocuments(completion: { querySnapshot, error in
-            if let error = error {
-                print("Error in getAggregateData method: \(error.localizedDescription)")
-            } else {
-                g2TotalDataPoints = querySnapshot?.count ?? 0
-                g2HappyMoods = 0
-                g2NeutralMoods = 0
-                g2SickMoods = 0
-                g2OverateMoods = 0
-                // sort them by mood
-                for document in querySnapshot!.documents {
-                    let mood = document.get("mood") as! String
-                    switch mood {
-                    case Mood.happy.text:
-                        g2HappyMoods+=1
-                    case Mood.neutral.text:
-                        g2NeutralMoods+=1
-                    case Mood.sick.text:
-                        g2SickMoods+=1
-                    default:
-                        g2OverateMoods+=1
-                    }
-                }
-            }
+    func getData(pNutrient: String) {
+        isLoading = true
+        analyticsViewModel.getGraph2Data(pNutrient: pNutrient, completion: { moods in
+            g2TotalDataPoints = Int(moods[0])
+            g2HappyMoods = moods[1]
+            g2NeutralMoods = moods[2]
+            g2SickMoods = moods[3]
+            g2OverateMoods = moods[4]
+            isLoading = false
         })
     }
 }
 
 struct Analytics_Graph2_Previews: PreviewProvider {
     static var previews: some View {
-        Analytics_Graph2()
+        Analytics_Graph2(analyticsViewModel: HistoryAnalyticsViewModel())
     }
 }

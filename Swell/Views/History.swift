@@ -12,7 +12,7 @@ import Firebase
 struct History: View { 
     @EnvironmentObject var foodViewModel: FoodAndWaterViewModel
     @State private var selectedPickerIndex: Int = 0
-    var pickerOptions = ["Log", "Analytics"]
+    var pickerOptions = ["Food", "Mood"]
     
     var body: some View {
         VStack {

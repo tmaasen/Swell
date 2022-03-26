@@ -10,10 +10,11 @@ import SwiftUICharts
 import Firebase
 
 struct Analytics_Graph3: View {
-    @EnvironmentObject var foodViewModel: FoodAndWaterViewModel
-    let db = Firestore.firestore()
+    var analyticsViewModel: HistoryAnalyticsViewModel
+    @Environment(\.colorScheme) var colorScheme
+    @State private var isLoading: Bool = false
     // Graph 3
-    @State var g3Label = "nutrient"
+    @State var g3Label = "whole grain"
     @State var g3HappyMoods: Double = 0
     @State var g3NeutralMoods: Double = 0
     @State var g3SickMoods: Double = 0
@@ -26,81 +27,94 @@ struct Analytics_Graph3: View {
                 Text("When I eat foods containing ")
                     .font(.system(size: 16))
                 Menu {
-                    Button("whole grain", action: {getGraph3Data(pContains: "Whole Grain")})
-                    Button("dairy", action: {getGraph3Data(pContains: "Dairy")})
-                    Button("gluten", action: {getGraph3Data(pContains: "Gluten")})
+                    Button("whole grain", action: {
+                        g3Label = "whole grain"
+                        getData(pNutrient: "Whole Grain")
+                    })
+                    Button("dairy", action: {
+                        g3Label = "dairy"
+                        getData(pNutrient: "Dairy")
+                    })
+                    Button("gluten", action: {
+                        g3Label = "gluten"
+                        getData(pNutrient: "Gluten")
+                    })
+                    Button("caffeine", action: {
+                        g3Label = "caffeine"
+                        getData(pNutrient: "Caffeine")
+                    })
                 } label: {
                     Label(g3Label+",", systemImage: "chevron.down")
                         .font(.custom("Ubuntu-BoldItalic", size: 16))
-                        .foregroundColor(.black)
+                        .foregroundColor(colorScheme == .dark ? .white : .black)
                 }
             }
+            .padding(.horizontal)
             Text("I usually feel...")
                 .font(.system(size: 16))
                 .padding(.bottom)
+                .padding(.horizontal)
             
-//            BarChartView(data: ChartData(values: [
-//                ((Mood.happy.text+Mood.happy.emoji),g3HappyMoods),
-//                ((Mood.neutral.text+Mood.neutral.emoji),g3NeutralMoods),
-//                ((Mood.sick.text+Mood.sick.emoji),g3SickMoods),
-//                ((Mood.overate.text+Mood.overate.emoji),g3OverateMoods)
-//            ]),
-//            title: "\(g3Label.capitalizingFirstLetter()) Foods",
-//            legend: "All Time",
-//            form: ChartForm.small,
-////                    filterTag==0 ? "By Week" : "All Time",
-//            valueSpecifier: "%.0f")
-//            .padding(.horizontal)
+            ZStack(alignment: .center) {
+                //filterTag==0 ? "By Week" : "All Time",
+                //title: "All Moods", legend: "All Time", form: ChartForm.extraLarge, valueSpecifier: "%.0f")
+                CardView {
+                    ChartLabel("Foods Containing...", type: .subTitle, format: "")
+                    BarChart()
+                }
+                .data(
+                    [((Mood.happy.text+Mood.happy.emoji), g3HappyMoods),
+                     ((Mood.neutral.text+Mood.neutral.emoji), g3NeutralMoods),
+                     ((Mood.sick.text+Mood.sick.emoji), g3SickMoods),
+                     ((Mood.overate.text+Mood.overate.emoji), g3OverateMoods)
+                    ])
+                .chartStyle(ChartStyle(backgroundColor: .white,
+                                       foregroundColor: ColorGradient(.yellow, .red))
+                )
+                .frame(height: 200)
+                .padding(.horizontal)
+                .onAppear() {
+                    getData(pNutrient: "Whole Grain")
+                }
+                
+                if isLoading {
+                    LottieAnimation(filename: "loading", loopMode: .loop, width: 50, height: 50)
+                }
+            }
             
+            // Legend
+            HStack{
+                ForEach(Mood.allCases, id: \.self) { mood in
+                    Text("\(mood.text)")
+                    Spacer()
+                }
+            }
+            .padding(.horizontal)
+            
+            // Record Count
             if g3TotalDataPoints != 0 {
                 Text("\(g3TotalDataPoints) Records")
                     .foregroundColor(.gray)
                     .padding(.horizontal)
             }
         }
-        .padding(.bottom)
-        .onAppear() {
-            getGraph3Data(pContains: "Whole Grain")
-        }
+        .padding()
     }
-    
-    func getGraph3Data(pContains: String?) {
-        g3Label = pContains?.lowercased() ?? self.g3Label
-        
-        db.collection("users")
-            .document(Auth.auth().currentUser?.uid ?? "test")
-            .collection("food")
-            .whereField("highIn", arrayContains: pContains ?? "")
-            .getDocuments(completion: { querySnapshot, error in
-            if let error = error {
-                print("Error in getAggregateData method: \(error.localizedDescription)")
-            } else {
-                g3TotalDataPoints = querySnapshot?.count ?? 0
-                g3HappyMoods = 0
-                g3NeutralMoods = 0
-                g3SickMoods = 0
-                g3OverateMoods = 0
-                // sort them by mood
-                for document in querySnapshot!.documents {
-                    let mood = document.get("mood") as! String
-                    switch mood {
-                    case Mood.happy.text:
-                        g3HappyMoods+=1
-                    case Mood.neutral.text:
-                        g3NeutralMoods+=1
-                    case Mood.sick.text:
-                        g3SickMoods+=1
-                    default:
-                        g3OverateMoods+=1
-                    }
-                }
-            }
+    func getData(pNutrient: String) {
+        isLoading = true
+        analyticsViewModel.getGraph3Data(pContains: pNutrient, completion: { moods in
+            g3TotalDataPoints = Int(moods[0])
+            g3HappyMoods = moods[1]
+            g3NeutralMoods = moods[2]
+            g3SickMoods = moods[3]
+            g3OverateMoods = moods[4]
+            isLoading = false
         })
     }
 }
 
 struct Analytics_Graph3_Previews: PreviewProvider {
     static var previews: some View {
-        Analytics_Graph3()
+        Analytics_Graph3(analyticsViewModel: HistoryAnalyticsViewModel())
     }
 }

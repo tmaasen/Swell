@@ -10,8 +10,8 @@ import SwiftUICharts
 import Firebase
 
 struct Analytics_Graph1: View {
-    @EnvironmentObject var foodViewModel: FoodAndWaterViewModel
-    @StateObject var analyticsViewModel = HistoryAnalyticsViewModel()
+    var analyticsViewModel: HistoryAnalyticsViewModel
+    @Environment(\.colorScheme) var colorScheme
     @State private var isLoading: Bool = false
     // Graph 1
     @State var g1HappyMoods: Double = 0
@@ -25,43 +25,42 @@ struct Analytics_Graph1: View {
         VStack(alignment: .leading) {
             VStack(alignment: .center) {
                 Label("Refresh", systemImage: "arrow.clockwise")
-                    .onTapGesture {
-                        isLoading = true
-                        DispatchQueue.main.asyncAfter(deadline: .now()+2, execute: {
-                            data = [2, 3, 5, 1]
-//                            analyticsViewModel.getGraph1Data(total: g1TotalDataPoints, happy: g1HappyMoods, neutral: g1NeutralMoods, sick: g1SickMoods, overate: g1OverateMoods, completion: {
-//                                isLoading = false
-//                            })
-//                            print(g1HappyMoods)
-                        })
-                    }
+                    .onTapGesture { getData() }
+                    .padding(.horizontal)
             }
             ZStack(alignment: .center) {
-                //                BarChartView(data: ChartData(values: [
-                //                    ((Mood.happy.text+Mood.happy.emoji), data[0]),
-                //                    ((Mood.neutral.text+Mood.neutral.emoji), data[1]),
-                //                    ((Mood.sick.text+Mood.sick.emoji), data[2]),
-                //                    ((Mood.overate.text+Mood.overate.emoji), data[3])
-                //                    //                    filterTag==0 ? "By Week" : "All Time",
-                //                ]), title: "All Moods", legend: "All Time", form: ChartForm.extraLarge, valueSpecifier: "%.0f")
-                //                    .padding(.horizontal)
-                BarChart()
-                    .data(data)
-                    .chartStyle(ChartStyle(backgroundColor: .white,
-                                           foregroundColor: ColorGradient(.blue, .purple))
-                    )
-                    .shadow(color: .black, radius: 10, x: 1, y: 1)
-                    .onAppear() {
-                        isLoading = true
-                        analyticsViewModel.getGraph1Data(total: g1TotalDataPoints, happy: g1HappyMoods, neutral: g1NeutralMoods, sick: g1SickMoods, overate: g1OverateMoods, completion: {
-                            isLoading = false
-                        })
-                    }
+                //filterTag==0 ? "By Week" : "All Time",
+                //title: "All Moods", legend: "All Time", form: ChartForm.extraLarge, valueSpecifier: "%.0f")
+                CardView {
+                    ChartLabel("All Moods", type: .subTitle, format: "")
+                    BarChart()
+                }
+                .data(
+                    [((Mood.happy.text+Mood.happy.emoji), g1HappyMoods),
+                     ((Mood.neutral.text+Mood.neutral.emoji), g1NeutralMoods),
+                     ((Mood.sick.text+Mood.sick.emoji), g1SickMoods),
+                     ((Mood.overate.text+Mood.overate.emoji), g1OverateMoods)
+                    ])
+                .chartStyle(ChartStyle(backgroundColor: .white,
+                                       foregroundColor: ColorGradient(.blue, .purple))
+                )
+                .frame(height: 200)
+                .padding(.horizontal)
+                .onAppear() { getData() }
                 
                 if isLoading {
                     LottieAnimation(filename: "loading", loopMode: .loop, width: 50, height: 50)
                 }
             }
+            
+            // Legend
+            HStack {
+                ForEach(Mood.allCases, id: \.self) { mood in
+                    Text("\(mood.text)")
+                    Spacer()
+                }
+            }
+            .padding(.horizontal)
             
             if g1TotalDataPoints != 0 {
                 Text("\(g1TotalDataPoints) Records")
@@ -71,10 +70,21 @@ struct Analytics_Graph1: View {
         }
         .padding()
     }
+    func getData() {
+        isLoading = true
+        analyticsViewModel.getGraph1Data(completion: { moods in
+            g1TotalDataPoints = Int(moods[0])
+            g1HappyMoods = moods[1]
+            g1NeutralMoods = moods[2]
+            g1SickMoods = moods[3]
+            g1OverateMoods = moods[4]
+            isLoading = false
+        })
+    }
 }
 
 struct Analytics_Graph1_Previews: PreviewProvider {
     static var previews: some View {
-        Analytics_Graph1()
+        Analytics_Graph1(analyticsViewModel: HistoryAnalyticsViewModel())
     }
 }

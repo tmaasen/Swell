@@ -46,7 +46,7 @@ class UserViewModel: ObservableObject {
             }
             if let document = document, document.exists {
                 do {
-                    self.user = try document.data(as: User.self) ?? self.user
+                    self.user = try document.data(as: User.self)
                     completion(self.user)
                 }
                 catch {
