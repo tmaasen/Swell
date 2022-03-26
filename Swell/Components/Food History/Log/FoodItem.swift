@@ -9,9 +9,6 @@ import SwiftUI
 
 struct FoodItem: View {
     var item: FoodRetriever
-    @EnvironmentObject var foodViewModel: FoodAndWaterViewModel
-    @Environment(\.colorScheme) var colorScheme
-    @State private var showDeleteAlert = false
     @State private var showFoodDataSheet = false
     
     var body: some View {
@@ -56,11 +53,11 @@ struct FoodItem: View {
                     Image(systemName: "info.circle")
                         .font(.system(size: 22))
                         .foregroundColor(.blue)
-                        .sheet(isPresented: $showFoodDataSheet) {
-                            FoodHistorySheet(foodRetriever: item, showFoodDataSheet: $showFoodDataSheet)
-                        }
                         .onTapGesture {
-                            showFoodDataSheet = true
+                            showFoodDataSheet.toggle()
+                        }
+                        .fullScreenCover(isPresented: $showFoodDataSheet) {
+                            FoodHistorySheet(foodRetriever: item, showFoodDataSheet: $showFoodDataSheet)
                         }
                 }
             }

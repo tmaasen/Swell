@@ -11,32 +11,57 @@ import Firebase
 
 struct Analytics_Graph1: View {
     @EnvironmentObject var foodViewModel: FoodAndWaterViewModel
-    let db = Firestore.firestore()
+    @StateObject var analyticsViewModel = HistoryAnalyticsViewModel()
+    @State private var isLoading: Bool = false
     // Graph 1
     @State var g1HappyMoods: Double = 0
     @State var g1NeutralMoods: Double = 0
     @State var g1SickMoods: Double = 0
     @State var g1OverateMoods: Double = 0
     @State var g1TotalDataPoints: Int = 0
+    @State var data: [Double] = [0, 0, 0, 0]
     
     var body: some View {
         VStack(alignment: .leading) {
-            BarChartView(data: ChartData(values: [
-                ((Mood.happy.text+Mood.happy.emoji),g1HappyMoods),
-                ((Mood.neutral.text+Mood.neutral.emoji),g1NeutralMoods),
-                ((Mood.sick.text+Mood.sick.emoji),g1SickMoods),
-                ((Mood.overate.text+Mood.overate.emoji),g1OverateMoods)
-            ]),
-            title: "All Moods",
-            legend: "All Time",
-            form: ChartForm.detail,
-//                    filterTag==0 ? "By Week" : "All Time",
-            valueSpecifier: "%.0f")
-            .padding(.horizontal)
-            
-            PieChartView(data: [g1HappyMoods,g1NeutralMoods,g1SickMoods,g1OverateMoods], title: "Title", legend: "Legendary").padding()
-            
-            LineChartView(data: [g1HappyMoods,g1NeutralMoods,g1SickMoods,g1OverateMoods], title: "Title", legend: "Legendary").padding()
+            VStack(alignment: .center) {
+                Label("Refresh", systemImage: "arrow.clockwise")
+                    .onTapGesture {
+                        isLoading = true
+                        DispatchQueue.main.asyncAfter(deadline: .now()+2, execute: {
+                            data = [2, 3, 5, 1]
+//                            analyticsViewModel.getGraph1Data(total: g1TotalDataPoints, happy: g1HappyMoods, neutral: g1NeutralMoods, sick: g1SickMoods, overate: g1OverateMoods, completion: {
+//                                isLoading = false
+//                            })
+//                            print(g1HappyMoods)
+                        })
+                    }
+            }
+            ZStack(alignment: .center) {
+                //                BarChartView(data: ChartData(values: [
+                //                    ((Mood.happy.text+Mood.happy.emoji), data[0]),
+                //                    ((Mood.neutral.text+Mood.neutral.emoji), data[1]),
+                //                    ((Mood.sick.text+Mood.sick.emoji), data[2]),
+                //                    ((Mood.overate.text+Mood.overate.emoji), data[3])
+                //                    //                    filterTag==0 ? "By Week" : "All Time",
+                //                ]), title: "All Moods", legend: "All Time", form: ChartForm.extraLarge, valueSpecifier: "%.0f")
+                //                    .padding(.horizontal)
+                BarChart()
+                    .data(data)
+                    .chartStyle(ChartStyle(backgroundColor: .white,
+                                           foregroundColor: ColorGradient(.blue, .purple))
+                    )
+                    .shadow(color: .black, radius: 10, x: 1, y: 1)
+                    .onAppear() {
+                        isLoading = true
+                        analyticsViewModel.getGraph1Data(total: g1TotalDataPoints, happy: g1HappyMoods, neutral: g1NeutralMoods, sick: g1SickMoods, overate: g1OverateMoods, completion: {
+                            isLoading = false
+                        })
+                    }
+                
+                if isLoading {
+                    LottieAnimation(filename: "loading", loopMode: .loop, width: 50, height: 50)
+                }
+            }
             
             if g1TotalDataPoints != 0 {
                 Text("\(g1TotalDataPoints) Records")
@@ -45,40 +70,6 @@ struct Analytics_Graph1: View {
             }
         }
         .padding()
-        .onAppear() {
-            getGraph1Data()
-        }
-    }
-    
-    func getGraph1Data() {
-        db.collection("users")
-            .document(Auth.auth().currentUser?.uid ?? "test")
-            .collection("food")
-            .getDocuments(completion: { querySnapshot, error in
-            if let error = error {
-                print("Error in getAggregateData method: \(error.localizedDescription)")
-            } else {
-                g1TotalDataPoints = querySnapshot?.count ?? 0
-                g1HappyMoods = 0
-                g1NeutralMoods = 0
-                g1SickMoods = 0
-                g1OverateMoods = 0
-                // sort them by mood
-                for document in querySnapshot!.documents {
-                    let mood = document.get("mood") as! String
-                    switch mood {
-                    case Mood.happy.text:
-                        g1HappyMoods+=1
-                    case Mood.neutral.text:
-                        g1NeutralMoods+=1
-                    case Mood.sick.text:
-                        g1SickMoods+=1
-                    default:
-                        g1OverateMoods+=1
-                    }
-                }
-            }
-        })
     }
 }
 

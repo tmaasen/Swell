@@ -8,7 +8,6 @@ import SwiftUI
 
 struct VerticalSidebarMain: View {
     @Binding var isShowingSidebar: Bool
-    @Environment(\.presentationMode) var presentationMode
     @Environment(\.colorScheme) var colorScheme
     @EnvironmentObject var authViewModel: AuthenticationViewModel
     @State private var isShowingSignOut: Bool = false
@@ -22,11 +21,13 @@ struct VerticalSidebarMain: View {
                         .frame(height: 140)
                 }
                 Spacer()
-                // Options
+                // Nav Options
                 ForEach(VerticalSidebar.allCases, id: \.self) { option in
                         VerticalSidebarOption(viewModel: option)
-                }.padding()
+                }
+                .padding()
                 Spacer()
+                
                 //Logout Functionality
                 Divider()
                 HStack {
@@ -44,7 +45,6 @@ struct VerticalSidebarMain: View {
                         buttons: [
                             .destructive(Text("Sign out")) {
                                 authViewModel.signOut()
-                                presentationMode.wrappedValue.dismiss()
                             },
                             .cancel()
                         ]
@@ -56,12 +56,11 @@ struct VerticalSidebarMain: View {
         }
         .withSidebarStyles()
         .background(colorScheme == .dark ? Color(.black) : Color(.white))
-
     }
 }
 
 struct VerticalSidebarMain_Previews: PreviewProvider {
     static var previews: some View {
-        VerticalSidebarMain(isShowingSidebar: .constant(true))
+        VerticalSidebarMain(isShowingSidebar: .constant(false))
     }
 }

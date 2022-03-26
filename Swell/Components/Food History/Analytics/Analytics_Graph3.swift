@@ -39,18 +39,18 @@ struct Analytics_Graph3: View {
                 .font(.system(size: 16))
                 .padding(.bottom)
             
-            BarChartView(data: ChartData(values: [
-                ((Mood.happy.text+Mood.happy.emoji),g3HappyMoods),
-                ((Mood.neutral.text+Mood.neutral.emoji),g3NeutralMoods),
-                ((Mood.sick.text+Mood.sick.emoji),g3SickMoods),
-                ((Mood.overate.text+Mood.overate.emoji),g3OverateMoods)
-            ]),
-            title: "\(g3Label.capitalizingFirstLetter()) Foods",
-            legend: "All Time",
-            form: ChartForm.small,
-//                    filterTag==0 ? "By Week" : "All Time",
-            valueSpecifier: "%.0f")
-            .padding(.horizontal)
+//            BarChartView(data: ChartData(values: [
+//                ((Mood.happy.text+Mood.happy.emoji),g3HappyMoods),
+//                ((Mood.neutral.text+Mood.neutral.emoji),g3NeutralMoods),
+//                ((Mood.sick.text+Mood.sick.emoji),g3SickMoods),
+//                ((Mood.overate.text+Mood.overate.emoji),g3OverateMoods)
+//            ]),
+//            title: "\(g3Label.capitalizingFirstLetter()) Foods",
+//            legend: "All Time",
+//            form: ChartForm.small,
+////                    filterTag==0 ? "By Week" : "All Time",
+//            valueSpecifier: "%.0f")
+//            .padding(.horizontal)
             
             if g3TotalDataPoints != 0 {
                 Text("\(g3TotalDataPoints) Records")

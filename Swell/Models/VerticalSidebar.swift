@@ -49,13 +49,14 @@ enum VerticalSidebar: Int, CaseIterable {
         }
     }
     
+    @ViewBuilder
     var navDestination: some View {
         switch self {
-        case .profile: return AnyView(Profile())
+        case .profile: Profile()
 //        case .myMeals: return AnyView(MyMeals())
 //        case .preLog: return AnyView(DailyPreLog())
 //        case .goals: return AnyView(Goals())
-        case .history: return AnyView(History())
+        case .history: History()
 //        case .learn: return AnyView(Learn())
         }
     }

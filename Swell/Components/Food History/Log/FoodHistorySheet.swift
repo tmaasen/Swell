@@ -9,17 +9,41 @@ import SwiftUI
 
 struct FoodHistorySheet: View {
     var foodRetriever: FoodRetriever
-    @Binding var showFoodDataSheet: Bool
-    @EnvironmentObject var foodViewModel: FoodAndWaterViewModel
     @Environment(\.presentationMode) var presentationMode
-    @Environment(\.colorScheme) var colorScheme
+    @Binding var showFoodDataSheet: Bool
+    @State private var liked: Bool = false
     var lottieFoodAnimations = ["Fast Foods", "Chewing Gum & Mints", "Pizza", "Cookies & Biscuits", "Frozen Dinners & Entrees", "Powdered Drinks", "Soda", "Seasoning Mixes, Salts, Marinades & Tenderizers", "Breads & Buns", "Pre-Packaged Fruit & Vegetables"]
     
     var body: some View {
         VStack(alignment: .leading) {
-            LottieAnimation(filename: lottieFoodAnimations.contains(foodRetriever.brandedFoodCategory ?? "") ? foodRetriever.brandedFoodCategory ?? "" : "Pre-Packaged Fruit & Vegetables", loopMode: .loop, width: .infinity, height: .infinity)
-                .background(Rectangle().foregroundColor(Color.yellow))
-                .clipShape(CustomShape(corner: .bottomLeft, radii: 55))
+            // Top back button and like buttons
+            ZStack(alignment: .top) {
+                HStack {
+                    Image(systemName: "arrow.backward")
+                        .font(.system(size: 25))
+                        .padding(.leading, 20)
+                        .onTapGesture {
+                            presentationMode.wrappedValue.dismiss()
+                        }
+                    Spacer()
+                    Image(systemName: liked ? "heart.fill" : "heart")
+                        .font(.system(size: 25))
+                        .foregroundColor(liked ? .red : .black)
+                        .scaleEffect(liked ? 1.2 : 1)
+                        .animation(.spring(response: 0.4, dampingFraction: 0.6))
+                        .padding(.trailing, 20)
+                        .onTapGesture {
+                            liked.toggle()
+                            // add to MyMeals
+                        }
+                }
+                .padding(.top, 70)
+                .zIndex(1.0)
+                LottieAnimation(filename: lottieFoodAnimations.contains(foodRetriever.brandedFoodCategory ?? "") ? foodRetriever.brandedFoodCategory ?? "" : "Pre-Packaged Fruit & Vegetables", loopMode: .loop, width: .infinity, height: .infinity)
+            }
+            .background(Rectangle().foregroundColor(Color.yellow))
+            .clipShape(CustomShape(corner: .bottomLeft, radii: 55))
+            .edgesIgnoringSafeArea(.top)
             ScrollView {
                 VStack(alignment: .leading, spacing: 15) {
                     HStack {
@@ -66,7 +90,6 @@ struct FoodHistorySheet: View {
             .padding()
         }
         .onDisappear() {
-            presentationMode.wrappedValue.dismiss()
             showFoodDataSheet = false
         }
     }

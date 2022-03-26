@@ -39,18 +39,18 @@ struct Analytics_Graph2: View {
                 .font(.system(size: 16))
                 .padding(.bottom)
 
-            BarChartView(data: ChartData(values: [
-                ((Mood.happy.text+Mood.happy.emoji),g2HappyMoods),
-                ((Mood.neutral.text+Mood.neutral.emoji),g2NeutralMoods),
-                ((Mood.sick.text+Mood.sick.emoji),g2SickMoods),
-                ((Mood.overate.text+Mood.overate.emoji),g2OverateMoods)
-            ]),
-            title: "High In \(g2Label.capitalizingFirstLetter())",
-            legend: "All Time",
-            form: ChartForm.extraLarge,
-//                    filterTag==0 ? "By Week" : "All Time",
-            valueSpecifier: "%.0f")
-            .padding(.horizontal)
+//            BarChartView(data: ChartData(values: [
+//                ((Mood.happy.text+Mood.happy.emoji),g2HappyMoods),
+//                ((Mood.neutral.text+Mood.neutral.emoji),g2NeutralMoods),
+//                ((Mood.sick.text+Mood.sick.emoji),g2SickMoods),
+//                ((Mood.overate.text+Mood.overate.emoji),g2OverateMoods)
+//            ]),
+//            title: "High In \(g2Label.capitalizingFirstLetter())",
+//            legend: "All Time",
+//            form: ChartForm.extraLarge,
+////                    filterTag==0 ? "By Week" : "All Time",
+//            valueSpecifier: "%.0f")
+//            .padding(.horizontal)
             
             if g2TotalDataPoints != 0 {
                 Text("\(g2TotalDataPoints) Records")

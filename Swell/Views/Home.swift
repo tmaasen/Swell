@@ -13,7 +13,6 @@ struct Home: View {
     @State private var isShowingSignOut: Bool = false
     @State private var showLoader: Bool = false
     @State private var showMoodLog: Bool = false
-    @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var authViewModel: AuthenticationViewModel
     @EnvironmentObject var hudCoordinator: JGProgressHUDCoordinator
     
@@ -29,12 +28,11 @@ struct Home: View {
                     VerticalSidebarMain(isShowingSidebar: $isShowingSidebar)
                         .withShowSidebarStyles(geometry: geometry)
                 }
+                // MAIN CONTENT
                 ScrollView() {
                     VStack(alignment: .center, spacing: 10) {
-                        // HEADER CONTENT
                         Header(isShowingSidebar: $isShowingSidebar)
                             .padding(.bottom, 225)
-                        // MAIN CONTENT
                         MealCards()
                         WaterLog()
                         PexelImage()

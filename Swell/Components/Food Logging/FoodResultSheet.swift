@@ -10,6 +10,7 @@ import SwiftUI
 struct FoodResultSheet: View {
     var food: Food
     @State private var logCompleted: Bool = false
+    @State private var liked: Bool = false
     @State private var quantity: Int = 1
     @Binding var meal: String
     @Binding var showFoodInfoSheet: Bool
@@ -21,10 +22,34 @@ struct FoodResultSheet: View {
     
     var body: some View {
         VStack(alignment: .leading) {
-            LottieAnimation(filename: lottieFoodAnimations.contains(food.foodCategory ?? "") ? food.foodCategory ?? "" : "Pre-Packaged Fruit & Vegetables", loopMode: .loop, width: .infinity, height: .infinity)
-                .background(Rectangle()
-                .foregroundColor(Color("FoodSheet_Purple")))
-                .clipShape(CustomShape(corner: .bottomLeft, radii: 55))
+            // Top back button and like buttons
+            ZStack(alignment: .top) {
+                HStack {
+                    Image(systemName: "arrow.backward")
+                        .font(.system(size: 25))
+                        .padding(.leading, 20)
+                        .onTapGesture {
+                            presentationMode.wrappedValue.dismiss()
+                        }
+                    Spacer()
+                    Image(systemName: liked ? "heart.fill" : "heart")
+                        .font(.system(size: 25))
+                        .foregroundColor(liked ? .red : .black)
+                        .scaleEffect(liked ? 1.2 : 1)
+                        .animation(.spring(response: 0.4, dampingFraction: 0.6))
+                        .padding(.trailing, 20)
+                        .onTapGesture {
+                            liked.toggle()
+                            // add to MyMeals
+                        }
+                }
+                .padding(.top, 70)
+                .zIndex(1.0)
+                LottieAnimation(filename: lottieFoodAnimations.contains(food.foodCategory ?? "") ? food.foodCategory ?? "" : "Pre-Packaged Fruit & Vegetables", loopMode: .loop, width: .infinity, height: .infinity)
+            }
+            .background(Rectangle().foregroundColor(Color("FoodSheet_Purple")))
+            .clipShape(CustomShape(corner: .bottomLeft, radii: 55))
+            .edgesIgnoringSafeArea(.top)
             ScrollView {
                 VStack(alignment: .leading, spacing: 15) {
                     HStack {

@@ -20,11 +20,11 @@ struct DeleteButton: View {
                 showDeleteActionSheet = true
             }, label: {
                 Image(systemName: "trash")
-                    .font(.title)
+                    .font(.system(size: 20))
                     .foregroundColor(.white)
                     .background(Circle()
                                     .fill(Color.red)
-                                    .frame(width: 50, height: 50))
+                                    .frame(width: 40, height: 40))
             })
             .padding()
             .actionSheet(isPresented: $showDeleteActionSheet) {
