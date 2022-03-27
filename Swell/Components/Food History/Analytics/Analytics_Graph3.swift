@@ -21,6 +21,11 @@ struct Analytics_Graph3: View {
     @State var g3OverateMoods: Double = 0
     @State var g3TotalDataPoints: Int = 0
     
+    let blueStyle = ChartStyle(backgroundColor: .white,
+                               foregroundColor: [ColorGradient(.purple, .blue)])
+    let orangeStyle = ChartStyle(backgroundColor: .white,
+                                 foregroundColor: [ColorGradient(ChartColors.orangeBright, ChartColors.orangeDark)])
+    
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
@@ -68,9 +73,7 @@ struct Analytics_Graph3: View {
                      ((Mood.sick.text+Mood.sick.emoji), g3SickMoods),
                      ((Mood.overate.text+Mood.overate.emoji), g3OverateMoods)
                     ])
-                .chartStyle(ChartStyle(backgroundColor: .white,
-                                       foregroundColor: ColorGradient(.yellow, .red))
-                )
+                .chartStyle(orangeStyle)
                 .frame(height: 200)
                 .padding(.horizontal)
                 .onAppear() {

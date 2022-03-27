@@ -31,7 +31,7 @@ struct LogHistory: View {
                         }
                     }
                 }
-                if foodViewModel.waters.waterLoggedToday != nil {
+                if foodViewModel.waters.waterOuncesToday != 0 {
                     Text("Water")
                         .font(.custom("Ubuntu-BoldItalic", size: 20))
                         .padding(.horizontal)
@@ -42,8 +42,7 @@ struct LogHistory: View {
             Spacer()
             if isLoading {
                 LottieAnimation(filename: "loading", loopMode: .loop, width: 50, height: 50)
-            }
-            if !isLoading && foodViewModel.foodHistory.isEmpty && foodViewModel.waters.waterOuncesToday == 0 {
+            } else if foodViewModel.foodHistory.isEmpty && foodViewModel.waters.waterOuncesToday == 0 {
                 Image("NoData")
                     .resizable()
                     .scaledToFit()
@@ -57,13 +56,15 @@ struct LogHistory: View {
                 DatePicker("📅", selection: $selectedDate, in: ...Date(), displayedComponents: .date)
                     .onChange(of: selectedDate, perform: { _ in
                         isLoading = true
-                        foodViewModel.foodHistory.removeAll()
-                        foodViewModel.waters.waterLoggedToday = nil
                         foodViewModel.getAllHistoryByDate(date: selectedDate, completion: {
+                            print("done")
                             isLoading = false
                         })
                     })
             }
+        }
+        .onAppear() {
+            selectedDate = foodViewModel.selectedLogDate
         }
     }
 }

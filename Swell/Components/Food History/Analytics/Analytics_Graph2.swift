@@ -20,6 +20,11 @@ struct Analytics_Graph2: View {
     @State var g2SickMoods: Double = 0
     @State var g2OverateMoods: Double = 0
     @State var g2TotalDataPoints: Int = 0
+
+    let mixedColorStyle = ChartStyle(backgroundColor: .white, foregroundColor: [
+        ColorGradient(ChartColors.orangeBright, ChartColors.orangeDark),
+        ColorGradient(.purple, .blue)
+    ])
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -64,9 +69,7 @@ struct Analytics_Graph2: View {
                      ((Mood.sick.text+Mood.sick.emoji), g2SickMoods),
                      ((Mood.overate.text+Mood.overate.emoji), g2OverateMoods)
                     ])
-                .chartStyle(ChartStyle(backgroundColor: .white,
-                                       foregroundColor: ColorGradient(.orange, .purple))
-                )
+                .chartStyle(mixedColorStyle)
                 .frame(height: 200)
                 .padding(.horizontal)
                 .onAppear() {

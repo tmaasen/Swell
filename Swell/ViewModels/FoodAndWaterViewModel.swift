@@ -12,6 +12,7 @@ class FoodAndWaterViewModel: FoodDataCentralViewModel {
     // Retrieving Water History
     @Published var waters = FoodRetriever()
     @Published var isNewDay: Bool = false
+    @Published var selectedLogDate: Date = Date()
     var loggedOunces = [Double]()
     
     override init() {
@@ -52,7 +53,7 @@ class FoodAndWaterViewModel: FoodDataCentralViewModel {
                 comments.append(comment)
                 docIds.append(document.documentID)
             }
-            self.getFoodsById(foodIds, mealTypes, servingSizes, moods, comments, docIds, foodNames, completion: {
+            foodIds.isEmpty ? completion() : self.getFoodsById(foodIds, mealTypes, servingSizes, moods, comments, docIds, foodNames, completion: {
                 completion()
             })
         }
@@ -179,34 +180,36 @@ class FoodAndWaterViewModel: FoodDataCentralViewModel {
             .getDocument { (document, error) in
                 guard error == nil else {
                     print("Error in getWater method:", error?.localizedDescription ?? "")
-                    completion()
+//                    completion()
                     return
                 }
                 if let document = document, !document.exists {
                     if pDate == today {
                         self.isNewDay = true
                         completion()
-                        return
+//                        return
                     }
-                }
-                if let document = document, document.exists {
+                } else if let document = document, document.exists {
                     self.isNewDay = false
                     self.waters.waterLoggedToday = document.get("waters logged") as? Int
                     self.waters.waterOuncesToday = document.get("total ounces") as? Double
                     self.waters.docId = document.documentID
                     completion()
-                    return
+//                    return
                 }
             }
     }
     
     func getAllHistoryByDate(date: Date = Timestamp(date: Date()).dateValue(), completion: @escaping () -> () = {}) {
+        self.selectedLogDate = date
+        self.foodHistory.removeAll()
+        self.waters.waterOuncesToday = 0
+        self.waters.waterLoggedToday = 0
         self.getFood(date: date, completion: {
             print("got food")
             self.getWater(date: date, completion: {
                 print("got water")
                 completion()
-                return
             })
         })
     }

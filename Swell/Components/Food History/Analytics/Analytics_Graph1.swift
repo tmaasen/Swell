@@ -19,7 +19,15 @@ struct Analytics_Graph1: View {
     @State var g1SickMoods: Double = 0
     @State var g1OverateMoods: Double = 0
     @State var g1TotalDataPoints: Int = 0
-    @State var data: [Double] = [0, 0, 0, 0]
+
+    let multiStyle = ChartStyle(backgroundColor: Color.green.opacity(0.2),
+                                foregroundColor:
+                                    [ColorGradient(.purple, .blue),
+                                     ColorGradient(.orange, .red),
+                                     ColorGradient(.green, .yellow),
+                                     ColorGradient(.red, .purple),
+                                     ColorGradient(.yellow, .orange),
+                                    ])
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -41,9 +49,7 @@ struct Analytics_Graph1: View {
                      ((Mood.sick.text+Mood.sick.emoji), g1SickMoods),
                      ((Mood.overate.text+Mood.overate.emoji), g1OverateMoods)
                     ])
-                .chartStyle(ChartStyle(backgroundColor: .white,
-                                       foregroundColor: ColorGradient(.blue, .purple))
-                )
+                .chartStyle(multiStyle)
                 .frame(height: 200)
                 .padding(.horizontal)
                 .onAppear() { getData() }
