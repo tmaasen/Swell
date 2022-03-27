@@ -40,6 +40,7 @@ struct MoodLog: View {
                 }
             }
             .padding(.horizontal)
+            
             Spacer()
             
             VStack(alignment: .leading) {
@@ -57,9 +58,11 @@ struct MoodLog: View {
             
             Button(action: {
                 hideKeyboard()
-                moodViewModel.logMood(docRef: docRef, pMood: selectedMood, pComments: comments)
-                logCompleted = true
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
+                moodViewModel.logMood(docRef: docRef, pMood: selectedMood, pComments: comments, completion: {
+                    moodViewModel.getAllHistoryByDate(date: Date())
+                    logCompleted = true
+                })
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
                     presentationMode.wrappedValue.dismiss()
                 })
             }, label: {

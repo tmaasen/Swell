@@ -20,14 +20,15 @@ struct AvatarIcon: View {
                 .cornerRadius(25.0)
                 .contentShape(Rectangle())
         }
-        .padding(.top, 35)
+        .padding(.top, 60)
     }
 }
 
 /// A generic view that shows images from the network.
 struct NetworkImage: View {
-  let url: URL?
+    let url: URL?
     @Binding var isShowingSidebar: Bool
+    @Environment(\.colorScheme) var colorScheme
 
   var body: some View {
     if let url = url,

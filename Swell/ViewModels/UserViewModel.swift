@@ -156,8 +156,8 @@ class UserViewModel: ObservableObject {
             UserViewModel.isEveningGradient = false
             self.gradient = Gradient(stops: [
                                         .init(color: Color.morningLinear1, location: 0),
-                                        .init(color: Color.morningLinear2, location: 0.22),
-                                        .init(color: Color.morningLinear3, location: 0.35)])
+                                        .init(color: Color.morningLinear2, location: 0.42),
+                                        .init(color: Color.morningLinear3, location: 0.60)])
         case 17..<24 :
             UserViewModel.isEveningGradient = true
             self.gradient = Gradient(stops: [

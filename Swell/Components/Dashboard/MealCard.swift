@@ -16,7 +16,6 @@ struct MealCards: View {
                     MealCard(mealModel: card)
                 }
             }
-            .padding(.horizontal, 20)
         }
     }
 }

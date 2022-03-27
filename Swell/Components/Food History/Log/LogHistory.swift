@@ -9,7 +9,6 @@ import SwiftUI
 
 struct LogHistory: View {
     @EnvironmentObject var foodViewModel: FoodAndWaterViewModel
-    // this will reset every time it goes here...need to fix
     @State private var selectedDate = Date()
     @State private var isLoading: Bool = false
     
@@ -57,7 +56,6 @@ struct LogHistory: View {
                     .onChange(of: selectedDate, perform: { _ in
                         isLoading = true
                         foodViewModel.getAllHistoryByDate(date: selectedDate, completion: {
-                            print("done")
                             isLoading = false
                         })
                     })

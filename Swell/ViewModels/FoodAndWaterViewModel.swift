@@ -147,7 +147,7 @@ class FoodAndWaterViewModel: FoodDataCentralViewModel {
         }
     }
     
-    func logMood(docRef: String, pMood: String?, pComments: String?) {
+    func logMood(docRef: String, pMood: String?, pComments: String?, completion: @escaping () -> () = {}) {
         db.collection("users")
             .document(Auth.auth().currentUser?.uid ?? "test")
             .collection("food")
@@ -158,8 +158,9 @@ class FoodAndWaterViewModel: FoodDataCentralViewModel {
             ]) { err in
                 if let err = err {
                     print("Error updating document: \(err)")
+                    return
                 } else {
-                    self.getAllHistoryByDate(date: Date())
+                    completion()
                 }
             }
     }
@@ -180,14 +181,12 @@ class FoodAndWaterViewModel: FoodDataCentralViewModel {
             .getDocument { (document, error) in
                 guard error == nil else {
                     print("Error in getWater method:", error?.localizedDescription ?? "")
-//                    completion()
                     return
                 }
                 if let document = document, !document.exists {
                     if pDate == today {
                         self.isNewDay = true
                         completion()
-//                        return
                     }
                 } else if let document = document, document.exists {
                     self.isNewDay = false
@@ -195,7 +194,6 @@ class FoodAndWaterViewModel: FoodDataCentralViewModel {
                     self.waters.waterOuncesToday = document.get("total ounces") as? Double
                     self.waters.docId = document.documentID
                     completion()
-//                    return
                 }
             }
     }

@@ -26,7 +26,6 @@ struct Header: View {
                     .foregroundColor(.white)
                     .fixedSize(horizontal: false, vertical: true)
             }
-            .padding()
             .frame(width: geometry.size.width, height: geometry.size.height, alignment: .topLeading)
             .navigationBarHidden(true)
         }

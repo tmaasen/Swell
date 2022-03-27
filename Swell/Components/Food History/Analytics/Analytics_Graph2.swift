@@ -61,6 +61,7 @@ struct Analytics_Graph2: View {
                 //title: "All Moods", legend: "All Time", form: ChartForm.extraLarge, valueSpecifier: "%.0f")
                 CardView {
                     ChartLabel("Foods High In...", type: .subTitle, format: "")
+//                    ChartLabel(g2Label, type: .legend)
                     BarChart()
                 }
                 .data(
@@ -82,19 +83,16 @@ struct Analytics_Graph2: View {
             }
             
             // Legend
-            HStack {
+            HStack(alignment: .center) {
                 ForEach(Mood.allCases, id: \.self) { mood in
-                    Text("\(mood.text)")
+                    Text("\(mood.emoji)")
+                        .padding(.horizontal)
                     Spacer()
                 }
             }
-            .padding(.horizontal)
-            
-            if g2TotalDataPoints != 0 {
-                Text("\(g2TotalDataPoints) Records")
-                    .foregroundColor(.gray)
-                    .padding(.horizontal)
-            }
+            Text("\(g2TotalDataPoints) Records")
+                .foregroundColor(.gray)
+                .padding(.horizontal)
         }
         .padding()
     }

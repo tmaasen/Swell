@@ -18,7 +18,6 @@ struct PexelImage: View {
             .cornerRadius(10)
             .transition(.fade(duration: 0.5))
             .scaledToFit()
-            .padding(.horizontal)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
             .brightness(-0.25)
             .overlay(TextOverlay(), alignment: .bottomLeading)

@@ -30,13 +30,15 @@ struct Home: View {
                 }
                 // MAIN CONTENT
                 ScrollView() {
-                    VStack(alignment: .center, spacing: 10) {
+                    VStack(alignment: .center, spacing: 25) {
                         Header(isShowingSidebar: $isShowingSidebar)
-                            .padding(.bottom, 225)
-                        MealCards()
+                            .padding(.bottom, 235)
+                        TodaysLog()
                         WaterLog()
+                        MealCards()
                         PexelImage()
                     }
+                    .padding(.horizontal)
                     .blur(radius: isShowingSidebar ? 2 : 0)
                     .disabled(isShowingSidebar ? true : false)
                 }

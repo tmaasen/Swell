@@ -65,6 +65,7 @@ struct Analytics_Graph3: View {
                 //title: "All Moods", legend: "All Time", form: ChartForm.extraLarge, valueSpecifier: "%.0f")
                 CardView {
                     ChartLabel("Foods Containing...", type: .subTitle, format: "")
+//                    ChartLabel(g3Label, type: .legend)
                     BarChart()
                 }
                 .data(
@@ -86,20 +87,16 @@ struct Analytics_Graph3: View {
             }
             
             // Legend
-            HStack{
+            HStack(alignment: .center) {
                 ForEach(Mood.allCases, id: \.self) { mood in
-                    Text("\(mood.text)")
+                    Text("\(mood.emoji)")
+                        .padding(.horizontal)
                     Spacer()
                 }
             }
-            .padding(.horizontal)
-            
-            // Record Count
-            if g3TotalDataPoints != 0 {
-                Text("\(g3TotalDataPoints) Records")
-                    .foregroundColor(.gray)
-                    .padding(.horizontal)
-            }
+            Text("\(g3TotalDataPoints) Records")
+                .foregroundColor(.gray)
+                .padding(.horizontal)
         }
         .padding()
     }

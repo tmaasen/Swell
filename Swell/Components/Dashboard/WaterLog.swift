@@ -27,55 +27,52 @@ struct WaterLog: View {
     ]
     
     var body: some View {
-        VStack {
-            HStack {
-                ScrollView(.horizontal) {
-                    HStack {
-                        ForEach(1..<11) { i in
-                            if waterLogDict[i] == false {
-                                LottieAnimation(filename: "water", loopMode: .playOnce, width: 60, height: 70, animationSpeed: 2.5, play: false)
-                                    .onTapGesture {
-                                        watersLogged+=1
-                                        waterLogDict[watersLogged] = true
-                                        foodViewModel.logWater(pSize: label, watersLoggedToday: watersLogged, ounces: ounces)
-                                    }
-                            } else {
-                                LottieAnimation(filename: "water", loopMode: .playOnce, width: 60, height: 70, animationSpeed: 2.5, play: true)
-                            }
+        HStack {
+            ScrollView(.horizontal) {
+                HStack {
+                    ForEach(1..<11) { i in
+                        if waterLogDict[i] == false {
+                            LottieAnimation(filename: "water", loopMode: .playOnce, width: 60, height: 70, animationSpeed: 2.5, play: false)
+                                .onTapGesture {
+                                    watersLogged+=1
+                                    waterLogDict[watersLogged] = true
+                                    foodViewModel.logWater(pSize: label, watersLoggedToday: watersLogged, ounces: ounces)
+                                }
+                        } else {
+                            LottieAnimation(filename: "water", loopMode: .playOnce, width: 60, height: 70, animationSpeed: 2.5, play: true)
                         }
                     }
                 }
-                // Menu with size options
-                Menu {
-                    Button("8 fl oz", action: {
-                            label = "8 fl oz"
-                            ounces = 8})
-                    Button("12 fl oz", action: {
-                            label = "12 fl oz"
-                            ounces = 12})
-                    Button("16.9 fl oz", action: {
-                            label = "16.9 fl oz"
-                            ounces = 16.9})
-                    Button("24 fl oz", action: {
-                            label = "24 fl oz"
-                            ounces = 24})
-                    Button("32 fl oz", action: {
-                            label = "32 fl oz"
-                            ounces = 32})
-                    Button("40 fl oz", action: {
-                            label = "40 fl oz"
-                            ounces = 40})
-                    Button("64 fl oz", action: {
-                            label = "64 fl oz"
-                            ounces = 64})
-                } label: {
-                    Label(label, systemImage: "chevron.down")
-                        .font(.custom("Ubuntu-Bold", size: 16))
-                        .foregroundColor(UserViewModel.isEveningGradient ? .white : .black)
-                }
+            }
+            // Menu with size options
+            Menu {
+                Button("8 fl oz", action: {
+                        label = "8 fl oz"
+                        ounces = 8})
+                Button("12 fl oz", action: {
+                        label = "12 fl oz"
+                        ounces = 12})
+                Button("16.9 fl oz", action: {
+                        label = "16.9 fl oz"
+                        ounces = 16.9})
+                Button("24 fl oz", action: {
+                        label = "24 fl oz"
+                        ounces = 24})
+                Button("32 fl oz", action: {
+                        label = "32 fl oz"
+                        ounces = 32})
+                Button("40 fl oz", action: {
+                        label = "40 fl oz"
+                        ounces = 40})
+                Button("64 fl oz", action: {
+                        label = "64 fl oz"
+                        ounces = 64})
+            } label: {
+                Label(label, systemImage: "chevron.down")
+                    .font(.custom("Ubuntu-Bold", size: 16))
+                    .foregroundColor(UserViewModel.isEveningGradient ? .white : .black)
             }
         }
-        .padding()
         .onAppear() {
             foodViewModel.getWater(completion: {
                 if foodViewModel.isNewDay == true {

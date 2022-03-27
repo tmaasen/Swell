@@ -14,7 +14,7 @@ class PexelsViewModel: ObservableObject {
     
     init() {
         getPexel() { pexels in
-            self.pexel = (pexels?.photos?.randomElement())!
+            self.pexel = (pexels?.photos?.randomElement()) ?? Photo()
         }
     }
     

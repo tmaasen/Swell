@@ -60,19 +60,16 @@ struct Analytics_Graph1: View {
             }
             
             // Legend
-            HStack {
+            HStack(alignment: .center) {
                 ForEach(Mood.allCases, id: \.self) { mood in
-                    Text("\(mood.text)")
+                    Text("\(mood.emoji)")
+                        .padding(.horizontal)
                     Spacer()
                 }
             }
-            .padding(.horizontal)
-            
-            if g1TotalDataPoints != 0 {
-                Text("\(g1TotalDataPoints) Records")
-                    .foregroundColor(.gray)
-                    .padding(.horizontal)
-            }
+            Text("\(g1TotalDataPoints) Records")
+                .foregroundColor(.gray)
+                .padding(.horizontal)
         }
         .padding()
     }
