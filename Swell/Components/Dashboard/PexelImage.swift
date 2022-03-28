@@ -13,20 +13,26 @@ struct PexelImage: View {
     @State private var isLoading: Bool = true
     
     var body: some View {
-        WebImage(url: URL(string: pexelsViewModel.pexel.src?.original ?? ""))
-            .resizable()
-            .cornerRadius(10)
-            .transition(.fade(duration: 0.5))
-            .scaledToFit()
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-            .brightness(-0.25)
-            .overlay(TextOverlay(), alignment: .bottomLeading)
-            .redacted(when: isLoading, redactionType: .scaled)
-            .onAppear {
-                if ((pexelsViewModel.pexel.src?.original) != nil) {
-                    isLoading = false
-                }
+        VStack {
+            if isLoading {
+                LoadingShimmer(width: 250, height: 300)
+            } else {
+                WebImage(url: URL(string: pexelsViewModel.pexel.src?.original ?? ""))
+                    .resizable()
+                    .cornerRadius(10)
+                    .transition(.fade(duration: 0.5))
+                    .scaledToFit()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                    .brightness(-0.25)
+                    .overlay(TextOverlay(), alignment: .bottomLeading)
             }
+        }
+        .onAppear {
+            pexelsViewModel.getPexel(completion: { pexels in
+                pexelsViewModel.pexel = (pexels?.photos?.randomElement())!
+                isLoading = false
+            })
+        }
     }
 }
 

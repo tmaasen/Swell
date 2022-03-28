@@ -15,10 +15,10 @@ class FoodAndWaterViewModel: FoodDataCentralViewModel {
     @Published var selectedLogDate: Date = Date()
     var loggedOunces = [Double]()
     
-    override init() {
-        super.init()
-        getAllHistoryByDate(date: Date())
-    }
+//    override init() {
+//        super.init()
+//        getAllHistoryByDate(date: Date())
+//    }
 
     func getFood(date: Date = Timestamp(date: Date()).dateValue(), completion: @escaping () -> () = {}) {
         var foodIds = [String]()

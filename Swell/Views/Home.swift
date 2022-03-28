@@ -11,9 +11,10 @@ import JGProgressHUD_SwiftUI
 struct Home: View {
     @State private var isShowingSidebar: Bool = false
     @State private var isShowingSignOut: Bool = false
-    @State private var showLoader: Bool = false
+    @State private var isLoading: Bool = false
     @State private var showMoodLog: Bool = false
     @EnvironmentObject var authViewModel: AuthenticationViewModel
+    @EnvironmentObject var foodViewModel: FoodAndWaterViewModel
     @EnvironmentObject var hudCoordinator: JGProgressHUDCoordinator
     
     var body: some View {
@@ -33,7 +34,7 @@ struct Home: View {
                     VStack(alignment: .center, spacing: 25) {
                         Header(isShowingSidebar: $isShowingSidebar)
                             .padding(.bottom, 235)
-                        TodaysLog()
+                        TodaysLog(isLoadingFromHome: $isLoading)
                         WaterLog()
                         MealCards()
                         PexelImage()
@@ -60,7 +61,11 @@ struct Home: View {
         }
         .onAppear {
             isShowingSidebar = false
+            isLoading = true
             authViewModel.getAllUserInfo()
+            foodViewModel.getAllHistoryByDate(date: Date(), completion: {
+                isLoading = false
+            })
             // Observer for when user taps on notification to log mood in app
             NotificationCenter.default.addObserver(forName: NSNotification.Name("MoodLog"), object: nil, queue: .main) { (_) in
                 self.showMoodLog = true

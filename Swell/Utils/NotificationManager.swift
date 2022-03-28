@@ -42,6 +42,7 @@ class NotificationManager: ObservableObject {
         self.docRef = docRef
         // 2
         let content = UNMutableNotificationContent()
+        content.sound = .default
         content.title = "How was your \(foodTitle.lowercased())?"
         content.body = "Has your mood changed since you ate your \(mealType.lowercased())? Long press to log your mood."
         content.categoryIdentifier = "MOOD_ACTIONS"

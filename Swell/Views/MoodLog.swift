@@ -15,11 +15,12 @@ struct MoodLog: View {
     @State private var logCompleted: Bool = false
     var docRef: String
     @Binding var showMoodLog: Bool
-    @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var moodViewModel: FoodAndWaterViewModel
     
     var body: some View {
         VStack {
+            NavigationLink(destination: Home(), isActive: $logCompleted) {}
+            
             Text("How are you feeling?")
                 .font(.system(size: 40))
                 .bold()
@@ -60,10 +61,9 @@ struct MoodLog: View {
                 hideKeyboard()
                 moodViewModel.logMood(docRef: docRef, pMood: selectedMood, pComments: comments, completion: {
                     moodViewModel.getAllHistoryByDate(date: Date())
-                    logCompleted = true
                 })
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
-                    presentationMode.wrappedValue.dismiss()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
+                    logCompleted = true
                 })
             }, label: {
                 Text("Submit")
