@@ -13,6 +13,7 @@ struct FoodRetriever: Codable, Identifiable {
     var docId: String?
     var foodName: String?
     var mealType: String?
+    var quantity: Int?
     var mood: String?
     var comments: String?
     var waterOuncesToday: Double?
@@ -27,16 +28,18 @@ struct FoodRetriever: Codable, Identifiable {
     var dataType, foodClass, modifiedDate, availableDate: String?
     var brandOwner, brandName, dataSource, brandedFoodCategory: String?
     var gtinUpc, ingredients, marketCountry: String?
-    var servingSize: Int?
+    var servingSize: Double?
     var servingSizeUnit, packageWeight: String?
     var foodUpdateLog: [FoodRetriever]?
     var labelNutrients: LabelNutrients?
+    var householdServingFullText: String?
+    var subbrandName, notaSignificantSourceOf: String?
 
     enum CodingKeys: String, CodingKey {
         case discontinuedDate, foodComponents, foodAttributes, foodPortions
         case fdcID = "fdcId"
         case foodDescription = "description"
-        case publicationDate, foodNutrients, dataType, foodClass, modifiedDate, availableDate, brandOwner, brandName, dataSource, brandedFoodCategory, gtinUpc, ingredients, marketCountry, servingSize, servingSizeUnit, packageWeight, foodUpdateLog, labelNutrients
+        case publicationDate, foodNutrients, dataType, foodClass, modifiedDate, availableDate, brandOwner, brandName, dataSource, brandedFoodCategory, gtinUpc, ingredients, marketCountry, servingSize, servingSizeUnit, packageWeight, foodUpdateLog, labelNutrients, householdServingFullText, subbrandName, notaSignificantSourceOf
     }
 }
 

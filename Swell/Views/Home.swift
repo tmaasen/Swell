@@ -20,9 +20,9 @@ struct Home: View {
     var body: some View {
         ZStack(alignment: .leading) {
             // For Mood Log view from Notification tap
-            NavigationLink(
-                destination: MoodLog(docRef: NotificationManager.instance.docRef, showMoodLog: self.$showMoodLog),
-                isActive: self.$showMoodLog) {}
+//            NavigationLink(
+//                destination: MoodLog(docRef: NotificationManager.instance.docRef, showMoodLog: self.$showMoodLog),
+//                isActive: self.$showMoodLog) {}
             
             GeometryReader { geometry in
                 if isShowingSidebar {
@@ -31,7 +31,7 @@ struct Home: View {
                 }
                 // MAIN CONTENT
                 ScrollView() {
-                    VStack(alignment: .center, spacing: 25) {
+                    VStack(alignment: .leading, spacing: 25) {
                         Header(isShowingSidebar: $isShowingSidebar)
                             .padding(.bottom, 235)
                         TodaysLog(isLoadingFromHome: $isLoading)
@@ -40,6 +40,7 @@ struct Home: View {
                         PexelImage()
                     }
                     .padding(.horizontal)
+                    .padding(.bottom, 30)
                     .blur(radius: isShowingSidebar ? 2 : 0)
                     .disabled(isShowingSidebar ? true : false)
                 }
@@ -61,11 +62,14 @@ struct Home: View {
         }
         .onAppear {
             isShowingSidebar = false
-            isLoading = true
             authViewModel.getAllUserInfo()
-            foodViewModel.getAllHistoryByDate(date: Date(), completion: {
-                isLoading = false
-            })
+//            if foodViewModel.foodHistory.isEmpty {
+//            isLoading = true
+//            foodViewModel.foodHistory.removeAll()
+//            foodViewModel.getAllHistoryByDate(date: Date(), completion: {
+//                isLoading = false
+//            })
+//            }
             // Observer for when user taps on notification to log mood in app
             NotificationCenter.default.addObserver(forName: NSNotification.Name("MoodLog"), object: nil, queue: .main) { (_) in
                 self.showMoodLog = true

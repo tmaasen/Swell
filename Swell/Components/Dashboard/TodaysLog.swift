@@ -16,7 +16,7 @@ struct TodaysLog: View {
             Text("Today's Log")
                 .font(.custom("Ubuntu-Bold", size: 30))
                 .foregroundColor(.white)
-            if !foodViewModel.foodHistory.isEmpty && !isLoadingFromHome {
+            if !foodViewModel.foodHistory.isEmpty && !foodViewModel.isLoading {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 20) {
                         ForEach(MealTypes.allCases, id: \.self) { meal in
@@ -30,11 +30,11 @@ struct TodaysLog: View {
                         }
                     }
                 }
-            } else {
+            } else if foodViewModel.isLoading {
                 HStack(spacing: 20) {
-                    LoadingShimmer(width: 200, height: 125)
-                    LoadingShimmer(width: 200, height: 125)
-                    LoadingShimmer(width: 200, height: 125)
+                    LoadingShimmer(width: 200, height: 150)
+                    LoadingShimmer(width: 200, height: 150)
+                    LoadingShimmer(width: 200, height: 150)
                 }
             }
         }

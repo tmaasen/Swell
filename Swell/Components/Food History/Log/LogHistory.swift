@@ -61,9 +61,10 @@ struct LogHistory: View {
                     })
             }
         }
-        .onAppear() {
-            selectedDate = foodViewModel.selectedLogDate
-        }
+// Problem child
+//        .onAppear() {
+//            selectedDate = foodViewModel.selectedLogDate
+//        }
     }
 }
 

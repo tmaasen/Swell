@@ -60,7 +60,8 @@ struct MoodLog: View {
             Button(action: {
                 hideKeyboard()
                 moodViewModel.logMood(docRef: docRef, pMood: selectedMood, pComments: comments, completion: {
-                    moodViewModel.getAllHistoryByDate(date: Date())
+                    print("mood logged")
+//                    moodViewModel.getAllHistoryByDate(date: Date())
                 })
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
                     logCompleted = true

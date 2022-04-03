@@ -12,7 +12,7 @@ struct FoodHistorySheet: View {
     @Environment(\.presentationMode) var presentationMode
     @Binding var showFoodDataSheet: Bool
     @State private var liked: Bool = false
-    var lottieFoodAnimations = ["Fast Foods", "Chewing Gum & Mints", "Pizza", "Cookies & Biscuits", "Frozen Dinners & Entrees", "Powdered Drinks", "Soda", "Seasoning Mixes, Salts, Marinades & Tenderizers", "Breads & Buns", "Pre-Packaged Fruit & Vegetables"]
+//    var lottieFoodAnimations = ["Fast Foods", "Chewing Gum & Mints", "Pizza", "Cookies & Biscuits", "Frozen Dinners & Entrees", "Powdered Drinks", "Soda", "Seasoning Mixes, Salts, Marinades & Tenderizers", "Breads & Buns", "Pre-Packaged Fruit & Vegetables"]
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -33,13 +33,16 @@ struct FoodHistorySheet: View {
                         .animation(.spring(response: 0.4, dampingFraction: 0.6))
                         .padding(.trailing, 20)
                         .onTapGesture {
+                            let impactMed = UIImpactFeedbackGenerator(style: .medium)
+                            impactMed.impactOccurred()
                             liked.toggle()
                             // add to MyMeals
                         }
                 }
                 .padding(.top, 70)
                 .zIndex(1.0)
-                LottieAnimation(filename: lottieFoodAnimations.contains(foodRetriever.brandedFoodCategory ?? "") ? foodRetriever.brandedFoodCategory ?? "" : "Pre-Packaged Fruit & Vegetables", loopMode: .loop, width: .infinity, height: .infinity)
+//                lottieFoodAnimations.contains(foodRetriever.brandedFoodCategory ?? "") ? foodRetriever.brandedFoodCategory ?? "" : "Pre-Packaged Fruit & Vegetables"
+                LottieAnimation(filename: FoodCategories.categoryDict.first(where: {$0.value.contains(foodRetriever.brandedFoodCategory ?? "")})!.key, loopMode: .loop, width: .infinity, height: .infinity)
             }
             .background(Rectangle().foregroundColor(Color.yellow))
             .clipShape(CustomShape(corner: .bottomLeft, radii: 55))
@@ -56,7 +59,7 @@ struct FoodHistorySheet: View {
                     HStack {
                         Text("Servings:")
                             .font(.custom("Ubuntu", size: 16))
-                        Text("\(foodRetriever.servingSize ?? 0)\(foodRetriever.servingSizeUnit ?? "")")
+                        Text("\(foodRetriever.quantity ?? 0)")
                             .font(.custom("Ubuntu", size: 16))
                     }
                     Text("Category: \(foodRetriever.brandedFoodCategory ?? "")")

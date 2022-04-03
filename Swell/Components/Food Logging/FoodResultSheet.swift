@@ -18,7 +18,6 @@ struct FoodResultSheet: View {
     @EnvironmentObject var foodViewModel: FoodAndWaterViewModel
     @Environment(\.presentationMode) var presentationMode
     @Environment(\.colorScheme) var colorScheme
-    var lottieFoodAnimations = ["Fast Foods", "Chewing Gum & Mints", "Pizza", "Cookies & Biscuits", "Frozen Dinners & Entrees", "Powdered Drinks", "Soda", "Seasoning Mixes, Salts, Marinades & Tenderizers", "Breads & Buns", "Pre-Packaged Fruit & Vegetables"]
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -39,13 +38,15 @@ struct FoodResultSheet: View {
                         .animation(.spring(response: 0.4, dampingFraction: 0.6))
                         .padding(.trailing, 20)
                         .onTapGesture {
+                            let impactMed = UIImpactFeedbackGenerator(style: .medium)
+                            impactMed.impactOccurred()
                             liked.toggle()
                             // add to MyMeals
                         }
                 }
                 .padding(.top, 70)
                 .zIndex(1.0)
-                LottieAnimation(filename: lottieFoodAnimations.contains(food.foodCategory ?? "") ? food.foodCategory ?? "" : "Pre-Packaged Fruit & Vegetables", loopMode: .loop, width: .infinity, height: .infinity)
+                LottieAnimation(filename: FoodCategories.categoryDict.first(where: {$0.value.contains(food.foodCategory ?? "")})!.key, loopMode: .loop, width: .infinity, height: .infinity)
             }
             .background(Rectangle().foregroundColor(Color("FoodSheet_Purple")))
             .clipShape(CustomShape(corner: .bottomLeft, radii: 55))

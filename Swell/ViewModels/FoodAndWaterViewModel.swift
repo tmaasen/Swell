@@ -12,13 +12,9 @@ class FoodAndWaterViewModel: FoodDataCentralViewModel {
     // Retrieving Water History
     @Published var waters = FoodRetriever()
     @Published var isNewDay: Bool = false
+    @Published var isLoading: Bool = false
     @Published var selectedLogDate: Date = Date()
     var loggedOunces = [Double]()
-    
-//    override init() {
-//        super.init()
-//        getAllHistoryByDate(date: Date())
-//    }
 
     func getFood(date: Date = Timestamp(date: Date()).dateValue(), completion: @escaping () -> () = {}) {
         var foodIds = [String]()
@@ -31,7 +27,8 @@ class FoodAndWaterViewModel: FoodDataCentralViewModel {
         formatter.dateFormat = "EEEE MMM dd, yyyy"
         let pDate = formatter.string(from: date)
         let docRef = db.collection("users").document(Auth.auth().currentUser?.uid ?? "user").collection("food").whereField("date", isEqualTo: pDate)
-        docRef.getDocuments { (querySnapshot, error) in
+        
+        docRef.addSnapshotListener { (querySnapshot, error) in
             guard error == nil else {
                 print("Error in getFoodIds method:", error?.localizedDescription ?? "")
                 completion()
@@ -53,9 +50,11 @@ class FoodAndWaterViewModel: FoodDataCentralViewModel {
                 comments.append(comment)
                 docIds.append(document.documentID)
             }
-            foodIds.isEmpty ? completion() : self.getFoodsById(foodIds, mealTypes, servingSizes, moods, comments, docIds, foodNames, completion: {
-                completion()
-            })
+            foodIds.isEmpty ?
+                completion() :
+                self.getFoodsById(foodIds, mealTypes, servingSizes, moods, comments, docIds, foodNames, completion: {
+                    completion()
+                })
         }
     }
     
@@ -96,12 +95,47 @@ class FoodAndWaterViewModel: FoodDataCentralViewModel {
         docRef = db.collection("users").document(Auth.auth().currentUser?.uid ?? "test").collection("food").addDocument(data: docData, completion: { error in
             if let error = error {
                 print("Error in logFood method: \(error.localizedDescription)")
-            } else {
-                self.getAllHistoryByDate(date: Date())
             }
+//            else {
+                // wish I could just append the food to my foodHistory array, but the data types and json structure don't match up in the API search and get methods
+//                self.getAllHistoryByDate(date: Date())
+//            }
         })
         
         NotificationManager.instance.scheduleNotification(mealType: pMeal, foodTitle: pFoodToLog.foodDescription, docRef: docRef.documentID)
+    }
+    
+    /**
+     Gets the water logged and total ounces drank from a user daily.
+     Also runs a check to see if it is a new day. If so, the water logger resets itself.
+     */
+    func getWater(date: Date = Timestamp(date: Date()).dateValue(), completion: @escaping () -> () = {}) {
+        formatter.dateFormat = "EEEE MMM dd, yyyy"
+        let pDate = formatter.string(from: date)
+        let today = formatter.string(from: Date())
+        
+        db.collection("users")
+            .document(Auth.auth().currentUser?.uid ?? "test")
+            .collection("water")
+            .document(pDate)
+            .addSnapshotListener { (documentSnapshot, error) in
+                guard error == nil else {
+                    print("Error in getWater method:", error?.localizedDescription ?? "")
+                    return
+                }
+                if let documentSnapshot = documentSnapshot, !documentSnapshot.exists {
+                    if pDate == today {
+                        self.isNewDay = true
+                        completion()
+                    }
+                } else if let documentSnapshot = documentSnapshot, documentSnapshot.exists {
+                    self.isNewDay = false
+                    self.waters.waterLoggedToday = documentSnapshot.get("waters logged") as? Int
+                    self.waters.waterOuncesToday = documentSnapshot.get("total ounces") as? Double
+                    self.waters.docId = documentSnapshot.documentID
+                    completion()
+                }
+            }
     }
     
     /// Logs a water of specific size into Cloud Firestore
@@ -117,7 +151,7 @@ class FoodAndWaterViewModel: FoodDataCentralViewModel {
             "total ounces": ounces,
             "date": formatter.string(from: Timestamp(date: Date()).dateValue())
         ]
-        // if watersLoggedToday = 0, new doc...else, update doc
+        // if watersLoggedToday = 1, new doc...else, update doc
         if watersLoggedToday == 1 {
             db.collection("users").document(Auth.auth().currentUser?.uid ?? "test").collection("water").document(formatter.string(from: Timestamp(date: Date()).dateValue())).setData(docData, completion: { error in
                 if let error = error {
@@ -140,8 +174,6 @@ class FoodAndWaterViewModel: FoodDataCentralViewModel {
             ]) { err in
                 if let err = err {
                     print("Error updating document: \(err)")
-                } else {
-                    self.getAllHistoryByDate(date: Date())
                 }
             }
         }
@@ -160,39 +192,6 @@ class FoodAndWaterViewModel: FoodDataCentralViewModel {
                     print("Error updating document: \(err)")
                     return
                 } else {
-                    completion()
-                }
-            }
-    }
-    
-    /**
-     Gets the water logged and total ounces drank from a user daily.
-     Also runs a check to see if it is a new day. If so, the water logger resets itself.
-     */
-    func getWater(date: Date = Timestamp(date: Date()).dateValue(), completion: @escaping () -> () = {}) {
-        formatter.dateFormat = "EEEE MMM dd, yyyy"
-        let pDate = formatter.string(from: date)
-        let today = formatter.string(from: Date())
-        
-        db.collection("users")
-            .document(Auth.auth().currentUser?.uid ?? "test")
-            .collection("water")
-            .document(pDate)
-            .getDocument { (document, error) in
-                guard error == nil else {
-                    print("Error in getWater method:", error?.localizedDescription ?? "")
-                    return
-                }
-                if let document = document, !document.exists {
-                    if pDate == today {
-                        self.isNewDay = true
-                        completion()
-                    }
-                } else if let document = document, document.exists {
-                    self.isNewDay = false
-                    self.waters.waterLoggedToday = document.get("waters logged") as? Int
-                    self.waters.waterOuncesToday = document.get("total ounces") as? Double
-                    self.waters.docId = document.documentID
                     completion()
                 }
             }

@@ -96,7 +96,7 @@ class FoodDataCentralViewModel: ObservableObject {
                         for i in 0...fdcIDs.count-1 {
                             self.foodHistory[i].foodName = foodNames[i]
                             self.foodHistory[i].mealType = mealTypes[i]
-                            self.foodHistory[i].servingSize = servingSizes[i]
+                            self.foodHistory[i].quantity = servingSizes[i]
                             self.foodHistory[i].mood = moods[i]
                             self.foodHistory[i].comments = comments[i]
                             self.foodHistory[i].docId = docIds[i]
