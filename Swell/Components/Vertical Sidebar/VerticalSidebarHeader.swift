@@ -16,13 +16,8 @@ struct VerticalSidebarHeader: View {
     
     var body: some View {        
         VStack(alignment: .leading) {
-            NetworkImage(url: googleUser?.profile?.imageURL(withDimension: 100), isShowingSidebar: $isShowingSidebar)
-                .scaledToFit()
-                .clipped()
-                .frame(width: 80, height: 80)
-                .clipShape(Circle())
+            AvatarIcon(isShowingSidebar: $isShowingSidebar, showPhotoPickerSheet: .constant(false), width: 80, height: 80)
                 .padding(.bottom, 14)
-            
             Text(googleUser?.profile?.name ?? (authViewModel.user.fname + " " + authViewModel.user.lname))
                 .font(.custom("Ubuntu-Bold", size: 26))
             Text(Auth.auth().currentUser?.email ?? "johndoe@test.com")

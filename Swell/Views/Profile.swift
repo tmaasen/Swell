@@ -14,6 +14,7 @@ struct Profile: View {
     @EnvironmentObject var authViewModel: AuthenticationViewModel
     @EnvironmentObject var hudCoordinator: JGProgressHUDCoordinator
     @State private var showDeleteAccountAlert: Bool = false
+    @State private var showPhotoPickerSheet: Bool = false
     @State private var isFormDisabled: Bool = true
     @State private var firstName: String = ""
     @State private var lastName: String = ""
@@ -26,70 +27,86 @@ struct Profile: View {
     
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading) {
-                Text("First Name")
-                    .font(.body)
-                    .foregroundColor(.secondary)
-                    .padding(.leading, 10)
-                TextField("", text: $firstName)
-                    .withProfileStyles()
-                    .textContentType(.givenName)
-                    .disabled(isFormDisabled)
-            }
-            VStack(alignment: .leading) {
-                Text("Last Name")
-                    .font(.body)
-                    .foregroundColor(.secondary)
-                    .padding(.leading, 10)
-                TextField("", text: $lastName)
-                    .withProfileStyles()
-                    .textContentType(.name)
-                    .disabled(isFormDisabled)
-            }
-            VStack(alignment: .leading) {
-                Text("Gender")
-                    .font(.body)
-                    .foregroundColor(.secondary)
-                    .padding(.leading, 10)
-                Picker("", selection: $selectedGenderIndex) {
-                    ForEach(0..<genderOptions.count) {
-                        Text(self.genderOptions[$0])
-                    }
+            Section {
+                ZStack(alignment: .bottomTrailing) {
+                    AvatarIcon(isShowingSidebar: .constant(true), showPhotoPickerSheet: $showPhotoPickerSheet, width: 120, height: 120)
+                        .foregroundColor(.black)
+                    Image(systemName: "plus")
+                        .foregroundColor(.white)
+                        .frame(width: 25, height: 25)
+                        .background(Color.blue)
+                        .clipShape(Circle())
+                        .overlay(Circle().stroke(Color.white, lineWidth: 2))
                 }
                 .disabled(isFormDisabled)
-                .padding()
-                .pickerStyle(SegmentedPickerStyle())
+                .onTapGesture { showPhotoPickerSheet = true }
             }
-            VStack(alignment: .leading) {
-                Text("Age")
-                    .font(.body)
-                    .foregroundColor(.secondary)
-                    .padding(.leading, 10)
-                TextField("", text: $age)
-                    .withProfileStyles()
-                    .keyboardType(.numberPad)
-                    .disabled(true)
-                    .opacity(0.6)
-            }
-            VStack(alignment: .leading) {
-                Text("Height (inches)")
-                    .font(.body)
-                    .foregroundColor(.secondary)
-                    .padding(.leading, 10)
-                TextField("", text: $height)
-                    .withProfileStyles()
-                    .keyboardType(.numberPad)
+            Section {
+                VStack(alignment: .leading) {
+                    Text("First Name")
+                        .font(.body)
+                        .foregroundColor(.secondary)
+                        .padding(.leading, 10)
+                    TextField("", text: $firstName)
+                        .withProfileStyles()
+                        .textContentType(.givenName)
+                        .disabled(isFormDisabled)
+                }
+                VStack(alignment: .leading) {
+                    Text("Last Name")
+                        .font(.body)
+                        .foregroundColor(.secondary)
+                        .padding(.leading, 10)
+                    TextField("", text: $lastName)
+                        .withProfileStyles()
+                        .textContentType(.name)
+                        .disabled(isFormDisabled)
+                }
+                VStack(alignment: .leading) {
+                    Text("Gender")
+                        .font(.body)
+                        .foregroundColor(.secondary)
+                        .padding(.leading, 10)
+                    Picker("", selection: $selectedGenderIndex) {
+                        ForEach(0..<genderOptions.count) {
+                            Text(self.genderOptions[$0])
+                        }
+                    }
                     .disabled(isFormDisabled)
-            }
-            VStack(alignment: .leading) {
-                Text("Weight (lbs)")
-                    .font(.body)
-                    .foregroundColor(.secondary)
-                    .padding(.leading, 10)
-                TextField("", text: $weight)
-                    .withProfileStyles()
-                    .keyboardType(.numberPad)
-                    .disabled(isFormDisabled)
+                    .padding()
+                    .pickerStyle(SegmentedPickerStyle())
+                }
+                VStack(alignment: .leading) {
+                    Text("Age")
+                        .font(.body)
+                        .foregroundColor(.secondary)
+                        .padding(.leading, 10)
+                    TextField("", text: $age)
+                        .withProfileStyles()
+                        .keyboardType(.numberPad)
+                        .disabled(true)
+                        .opacity(0.6)
+                }
+                VStack(alignment: .leading) {
+                    Text("Height (inches)")
+                        .font(.body)
+                        .foregroundColor(.secondary)
+                        .padding(.leading, 10)
+                    TextField("", text: $height)
+                        .withProfileStyles()
+                        .keyboardType(.numberPad)
+                        .disabled(isFormDisabled)
+                }
+                VStack(alignment: .leading) {
+                    Text("Weight (lbs)")
+                        .font(.body)
+                        .foregroundColor(.secondary)
+                        .padding(.leading, 10)
+                    TextField("", text: $weight)
+                        .withProfileStyles()
+                        .keyboardType(.numberPad)
+                        .disabled(isFormDisabled)
+                }
             }
             Spacer()
             HStack(alignment: .bottom) {
