@@ -4,7 +4,6 @@
 //
 //  Created by Tanner Maasen on 1/26/22.
 //
-
 import Foundation
 import Firebase
 import SwiftUI
@@ -23,6 +22,7 @@ class UserViewModel: ObservableObject {
     @Published var user = User()
     var hasPersistedSignedIn = UserDefaults.standard.bool(forKey: "isLoggedIn")
     @Published var greeting: String = ""
+    static var avatarImage: UIImage = UIImage(systemName: "person.circle.fill")!
     @Published var gradient: Gradient = Gradient(stops: [
                                                     .init(color: Color.morningLinear1, location: 0),
                                                     .init(color: Color.morningLinear2, location: 0.22),
@@ -126,6 +126,40 @@ class UserViewModel: ObservableObject {
         }
     }
     
+    func getAvatarImage(completion: @escaping (UIImage) -> () = {_ in }) {
+        let ref = Storage.storage().reference().child(Auth.auth().currentUser?.uid ?? "")
+        // Download in memory with a maximum allowed size of 1MB (1 * 1024 * 1024 bytes)
+        ref.getData(maxSize: 1 * 1024 * 1024) { data, error in
+          if let error = error {
+            print("Error retrieving image: \(error.localizedDescription)")
+            completion(UIImage())
+            return
+          } else {
+            let image = UIImage(data: data!)
+            completion(image!)
+          }
+        }
+    }
+    
+    static func setAvatarImage(pImage: UIImage) {
+        guard let uid = Auth.auth().currentUser?.uid else {return}
+        let storage = Storage.storage()
+        let ref = storage.reference(withPath: uid)
+        guard let imageData = pImage.jpegData(compressionQuality: 0.3) else {return}
+        ref.putData(imageData, metadata: nil) { metaData, error in
+            if let error = error {
+                print("Error putting image in storage: \(error.localizedDescription)")
+                return
+            }
+//            ref.downloadURL { url, err in
+//                if let error = error {
+//                    print("Error retrieving image from storage: \(error.localizedDescription)")
+//                    return
+//                }
+//            }
+        }
+    }
+    
     // Gets greeting message and sets background gradient
     func setGreeting(name: String) {
         let hour = Calendar.current.component(.hour, from: Date())
@@ -171,6 +205,9 @@ class UserViewModel: ObservableObject {
     func getAllUserInfo() {
         self.setGradient()
         self.getUser(completion: { currentUser in
+            self.getAvatarImage(completion: { image in
+                UserViewModel.avatarImage = image
+            })
             self.setGreeting(name: GIDSignIn.sharedInstance.currentUser?.profile?.givenName ?? currentUser.fname)
             return
         })

@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct PhotoPicker: UIViewControllerRepresentable {
-    @Binding var avatarImage: UIImage
     
     func makeUIViewController(context: Context) -> UIImagePickerController {
         let picker = UIImagePickerController()
@@ -20,16 +19,10 @@ struct PhotoPicker: UIViewControllerRepresentable {
     func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) { }
     
     func makeCoordinator() -> Coordinator {
-        return Coordinator(photoPicker: self)
+        return Coordinator()
     }
     
     final class Coordinator: NSObject, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
-        
-        let photoPicker: PhotoPicker
-        
-        init(photoPicker: PhotoPicker) {
-            self.photoPicker = photoPicker
-        }
         
         func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
             if let image = info[.editedImage] as? UIImage {
@@ -38,8 +31,10 @@ struct PhotoPicker: UIViewControllerRepresentable {
                     // return error
                     return
                 }
-                photoPicker.avatarImage = compressedImage
-                // save to firestore
+                // set it locally
+                UserViewModel.avatarImage = compressedImage
+                // save to firebase storage
+                UserViewModel.setAvatarImage(pImage: compressedImage)
             } else {
                 //return an error message
             }

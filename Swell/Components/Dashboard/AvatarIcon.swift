@@ -11,7 +11,6 @@ import GoogleSignIn
 struct AvatarIcon: View {
     private let googleUser = GIDSignIn.sharedInstance.currentUser
     @EnvironmentObject var user: AuthenticationViewModel
-    @State var avatarImage: UIImage = UIImage(systemName: "person.circle.fill")!
     @Binding var isShowingSidebar: Bool
     @Binding var showPhotoPickerSheet: Bool
     var width: CGFloat
@@ -19,55 +18,40 @@ struct AvatarIcon: View {
     
     var body: some View {
         HStack {
-            Image(uiImage: (getAvatarImage()))
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: width, height: height, alignment: .topLeading)
-                .clipShape(Circle())
-//                .cornerRadius(25.0)
-//                .contentShape(Rectangle())
+            if GIDSignIn.sharedInstance.currentUser != nil && UserViewModel.avatarImage.pngData() == nil {
+                NetworkImage(url: googleUser?.profile?.imageURL(withDimension: 100))
+                    .frame(width: width, height: height, alignment: .topLeading)
+                    .clipShape(Circle())
+                    .foregroundColor(isShowingSidebar ? .black : .white)
+            } else {
+                Image(uiImage: (UserViewModel.avatarImage))
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: width, height: height, alignment: .topLeading)
+                    .clipShape(Circle())
+                    .foregroundColor(isShowingSidebar ? .black : .white)
+            }
         }
         .sheet(isPresented: $showPhotoPickerSheet, content: {
-            PhotoPicker(avatarImage: $avatarImage)
+            PhotoPicker()
         })
         .padding(.top, 60)
-    }
-    
-    func getAvatarImage() -> UIImage {
-        if user.user.avatarImage != "" {
-            avatarImage = UIImage(named: user.user.avatarImage)!
-        } else if GIDSignIn.sharedInstance.currentUser != nil {
-            avatarImage = UIImage(data: try! Data(contentsOf: (googleUser?.profile?.imageURL(withDimension: 100))!))!
-        }
-        return avatarImage
-    }
-    
-    func setAvatarImage(pImage: UIImage) {
-        avatarImage = pImage
     }
 }
 
 /// A generic view that shows images from the network.
-//struct NetworkImage: View {
-//    let url: URL?
-//    @Binding var isShowingSidebar: Bool
-//    @Environment(\.colorScheme) var colorScheme
-//
-//    var body: some View {
-//        if let url = url,
-//           let data = try? Data(contentsOf: url),
-//           let uiImage = UIImage(data: data) {
-//            Image(uiImage: uiImage)
-//                .resizable()
-//                .aspectRatio(contentMode: .fit)
-//        } else {
-//            Image(systemName: "person.circle.fill")
-//                .resizable()
-//                .aspectRatio(contentMode: .fit)
-//                .foregroundColor(isShowingSidebar ? .black : .white)
-//        }
-//    }
-//}
+struct NetworkImage: View {
+    let url: URL?
+    var body: some View {
+        if let url = url,
+           let data = try? Data(contentsOf: url),
+           let uiImage = UIImage(data: data) {
+            Image(uiImage: uiImage)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+        }
+    }
+}
 
 struct AvatarIcon_Previews: PreviewProvider {
     static var previews: some View {
