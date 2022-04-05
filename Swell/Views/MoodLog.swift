@@ -14,7 +14,6 @@ struct MoodLog: View {
     @State private var comments: String = ""
     @State private var logCompleted: Bool = false
     var docRef: String
-    @Binding var showMoodLog: Bool
     @EnvironmentObject var moodViewModel: FoodAndWaterViewModel
     
     var body: some View {
@@ -86,6 +85,6 @@ struct MoodLog: View {
 
 struct MoodLog_Previews: PreviewProvider {
     static var previews: some View {
-        MoodLog(docRef: "", showMoodLog: .constant(false))
+        MoodLog(docRef: "")
     }
 }

@@ -34,7 +34,12 @@ struct ContentView: View {
                     Onboarding()
                 } else {
                     if hasPersistedSignedIn || authViewModel.state == .signedIn {
-                        Home()
+                        if isFromNotif {
+                            MoodLog(docRef: docRef)
+                                .onAppear() { isFromNotif = false }
+                        } else {
+                            Home()
+                        }
                     } else {
                         Login()
                     }
@@ -62,6 +67,9 @@ class AppDelegate: NSObject, UIApplicationDelegate, ObservableObject {
         return true
     }
 }
+
+var isFromNotif: Bool = false
+var docRef: String = ""
 
 // MARK: - UNUserNotificationCenterDelegate
 extension AppDelegate: UNUserNotificationCenterDelegate {
@@ -97,7 +105,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
   ) {
     let foodViewModel = FoodAndWaterViewModel()
     let userInfo = response.notification.request.content.userInfo
-    let docRef = userInfo["docRef"] as? String ?? ""
+    docRef = userInfo["docRef"] as? String ?? ""
     // 1
     switch response.actionIdentifier {
     case "HAPPY":
@@ -109,8 +117,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     case "OVERATE":
         foodViewModel.logMood(docRef: docRef, pMood: "I Overate", pComments: "")
     default:
-        // probably need to save a value in CoreData
-        NotificationCenter.default.post(name: NSNotification.Name("MoodLog"), object: nil)
+        isFromNotif = true
     }
     // 2 
     completionHandler()

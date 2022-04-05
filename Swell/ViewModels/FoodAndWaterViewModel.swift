@@ -12,18 +12,11 @@ class FoodAndWaterViewModel: FoodDataCentralViewModel {
     // Retrieving Water History
     @Published var waters = FoodRetriever()
     @Published var isNewDay: Bool = false
-    @Published var isLoading: Bool = false
+    @Published var isLoadingHistory: Bool = false
     @Published var selectedLogDate: Date = Date()
     var loggedOunces = [Double]()
 
     func getFood(date: Date = Timestamp(date: Date()).dateValue(), completion: @escaping () -> () = {}) {
-        var foodIds = [String]()
-        var foodNames = [String]()
-        var mealTypes = [String]()
-        var servingSizes = [Int]()
-        var moods = [String]()
-        var comments = [String]()
-        var docIds = [String]()
         formatter.dateFormat = "EEEE MMM dd, yyyy"
         let pDate = formatter.string(from: date)
         let docRef = db.collection("users").document(Auth.auth().currentUser?.uid ?? "user").collection("food").whereField("date", isEqualTo: pDate)
@@ -34,6 +27,15 @@ class FoodAndWaterViewModel: FoodDataCentralViewModel {
                 completion()
                 return
             }
+            self.isLoadingHistory = true
+            var foodIds = [String]()
+            var foodNames = [String]()
+            var mealTypes = [String]()
+            var servingSizes = [Int]()
+            var moods = [String]()
+            var comments = [String]()
+            var docIds = [String]()
+            
             for document in querySnapshot!.documents {
                 let fdcId: Int = document.get("foodId") as! Int
                 let foodName: String = document.get("foodName") as! String
@@ -50,10 +52,13 @@ class FoodAndWaterViewModel: FoodDataCentralViewModel {
                 comments.append(comment)
                 docIds.append(document.documentID)
             }
+            print("doc count: \(querySnapshot!.documents.count)")
+            print("IDs:", foodIds)
             foodIds.isEmpty ?
                 completion() :
                 self.getFoodsById(foodIds, mealTypes, servingSizes, moods, comments, docIds, foodNames, completion: {
                     completion()
+                    self.isLoadingHistory = false
                 })
         }
     }

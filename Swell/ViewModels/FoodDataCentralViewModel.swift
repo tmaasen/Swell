@@ -101,6 +101,7 @@ class FoodDataCentralViewModel: ObservableObject {
                             self.foodHistory[i].comments = comments[i]
                             self.foodHistory[i].docId = docIds[i]
                         }
+                        print("food history count: \(self.foodHistory.count)")
                         completion()
                     } else {
                         completion()

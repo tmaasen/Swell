@@ -19,11 +19,6 @@ struct Home: View {
     
     var body: some View {
         ZStack(alignment: .leading) {
-            // For Mood Log view from Notification tap
-//            NavigationLink(
-//                destination: MoodLog(docRef: NotificationManager.instance.docRef, showMoodLog: self.$showMoodLog),
-//                isActive: self.$showMoodLog) {}
-            
             GeometryReader { geometry in
                 if isShowingSidebar {
                     VerticalSidebarMain(isShowingSidebar: $isShowingSidebar)
@@ -64,16 +59,11 @@ struct Home: View {
             isShowingSidebar = false
             authViewModel.getAllUserInfo()
 //            if foodViewModel.foodHistory.isEmpty {
-//            isLoading = true
-//            foodViewModel.foodHistory.removeAll()
-//            foodViewModel.getAllHistoryByDate(date: Date(), completion: {
-//                isLoading = false
-//            })
+            isLoading = true
+            foodViewModel.getAllHistoryByDate(date: Date(), completion: {
+                isLoading = false
+            })
 //            }
-            // Observer for when user taps on notification to log mood in app
-            NotificationCenter.default.addObserver(forName: NSNotification.Name("MoodLog"), object: nil, queue: .main) { (_) in
-                self.showMoodLog = true
-            }
         }
         .gesture(DragGesture()
                     .onEnded {

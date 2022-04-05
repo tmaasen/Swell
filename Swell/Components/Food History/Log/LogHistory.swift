@@ -39,7 +39,7 @@ struct LogHistory: View {
             }
             // Loading indicator and no data image
             Spacer()
-            if isLoading {
+            if foodViewModel.isLoadingHistory || isLoading {
                 LottieAnimation(filename: "loading", loopMode: .loop, width: 50, height: 50)
             } else if foodViewModel.foodHistory.isEmpty && foodViewModel.waters.waterOuncesToday == 0 {
                 Image("NoData")
