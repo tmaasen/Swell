@@ -52,14 +52,16 @@ class FoodAndWaterViewModel: FoodDataCentralViewModel {
                 comments.append(comment)
                 docIds.append(document.documentID)
             }
-            print("doc count: \(querySnapshot!.documents.count)")
-            print("IDs:", foodIds)
-            foodIds.isEmpty ?
-                completion() :
+
+            if foodIds.isEmpty {
+                self.isLoadingHistory = false
+                completion()
+            } else {
                 self.getFoodsById(foodIds, mealTypes, servingSizes, moods, comments, docIds, foodNames, completion: {
                     completion()
                     self.isLoadingHistory = false
                 })
+            }
         }
     }
     

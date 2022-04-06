@@ -22,7 +22,7 @@ class UserViewModel: ObservableObject {
     @Published var user = User()
     var hasPersistedSignedIn = UserDefaults.standard.bool(forKey: "isLoggedIn")
     @Published var greeting: String = ""
-    static var avatarImage: UIImage = UIImage(systemName: "person.circle.fill")!
+    @Published var avatarImage: UIImage = UIImage(systemName: "person.circle.fill")!
     @Published var gradient: Gradient = Gradient(stops: [
                                                     .init(color: Color.morningLinear1, location: 0),
                                                     .init(color: Color.morningLinear2, location: 0.22),
@@ -63,19 +63,6 @@ class UserViewModel: ObservableObject {
                 print("Error in setLoginTimestamp method: \(err.localizedDescription)")
             } else {
                 print("Login timestamp successfully written!")
-            }
-        }
-    }
-    
-    func softDeleteUser() {
-        db.collection("users").document(Auth.auth().currentUser?.uid ?? "user").updateData([
-            "isDeleted": true
-        ])
-        { err in
-            if let err = err {
-                print("Error in deleteUser method: \(err.localizedDescription)")
-            } else {
-                print("User \(Auth.auth().currentUser?.uid ?? "nil") successfully deleted")
             }
         }
     }
@@ -141,7 +128,7 @@ class UserViewModel: ObservableObject {
         }
     }
     
-    static func setAvatarImage(pImage: UIImage) {
+    func setAvatarImage(pImage: UIImage) {
         guard let uid = Auth.auth().currentUser?.uid else {return}
         let storage = Storage.storage()
         let ref = storage.reference(withPath: uid)
@@ -206,10 +193,33 @@ class UserViewModel: ObservableObject {
         self.setGradient()
         self.getUser(completion: { currentUser in
             self.getAvatarImage(completion: { image in
-                UserViewModel.avatarImage = image
+                self.avatarImage = image
             })
             self.setGreeting(name: GIDSignIn.sharedInstance.currentUser?.profile?.givenName ?? currentUser.fname)
             return
         })
+    }
+    
+    func softDeleteUser() {
+        db.collection("users").document(Auth.auth().currentUser?.uid ?? "user").updateData([
+            "isDeleted": true
+        ])
+        { err in
+            if let err = err {
+                print("Error in deleteUser method: \(err.localizedDescription)")
+            } else {
+                self.deleteAvatarImage(pUser: Auth.auth().currentUser?.uid ?? "")
+                print("User \(Auth.auth().currentUser?.uid ?? "nil") successfully deleted")
+            }
+        }
+    }
+    func deleteAvatarImage(pUser: String) {
+        let ref = Storage.storage().reference().child(Auth.auth().currentUser?.uid ?? "")
+
+        ref.delete { error in
+          if let error = error {
+            print("Error removing avatar image: \(error.localizedDescription)")
+          }
+        }
     }
 }

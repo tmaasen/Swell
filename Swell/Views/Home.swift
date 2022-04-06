@@ -11,7 +11,6 @@ import JGProgressHUD_SwiftUI
 struct Home: View {
     @State private var isShowingSidebar: Bool = false
     @State private var isShowingSignOut: Bool = false
-    @State private var isLoading: Bool = false
     @State private var showMoodLog: Bool = false
     @EnvironmentObject var authViewModel: AuthenticationViewModel
     @EnvironmentObject var foodViewModel: FoodAndWaterViewModel
@@ -29,7 +28,7 @@ struct Home: View {
                     VStack(alignment: .leading, spacing: 25) {
                         Header(isShowingSidebar: $isShowingSidebar)
                             .padding(.bottom, 235)
-                        TodaysLog(isLoadingFromHome: $isLoading)
+                        TodaysLog()
                         WaterLog()
                         MealCards()
                         PexelImage()
@@ -58,12 +57,9 @@ struct Home: View {
         .onAppear {
             isShowingSidebar = false
             authViewModel.getAllUserInfo()
-//            if foodViewModel.foodHistory.isEmpty {
-            isLoading = true
             foodViewModel.getAllHistoryByDate(date: Date(), completion: {
-                isLoading = false
+                print("done")
             })
-//            }
         }
         .gesture(DragGesture()
                     .onEnded {

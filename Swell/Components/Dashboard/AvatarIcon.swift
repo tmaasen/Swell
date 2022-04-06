@@ -18,13 +18,13 @@ struct AvatarIcon: View {
     
     var body: some View {
         HStack {
-            if GIDSignIn.sharedInstance.currentUser != nil && UserViewModel.avatarImage.pngData() == nil {
+            if GIDSignIn.sharedInstance.currentUser != nil && user.avatarImage.pngData() == nil {
                 NetworkImage(url: googleUser?.profile?.imageURL(withDimension: 100))
                     .frame(width: width, height: height, alignment: .topLeading)
                     .clipShape(Circle())
                     .foregroundColor(isShowingSidebar ? .black : .white)
             } else {
-                Image(uiImage: (UserViewModel.avatarImage))
+                Image(uiImage: (user.avatarImage))
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: width, height: height, alignment: .topLeading)

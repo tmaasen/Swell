@@ -8,18 +8,18 @@
 
 import SwiftUI
 import Firebase
+import JGProgressHUD_SwiftUI
 
 struct MoodLog: View {
+    var docRef: String
     @State private var selectedMood: String = ""
     @State private var comments: String = ""
     @State private var logCompleted: Bool = false
-    var docRef: String
+    @EnvironmentObject var hudCoordinator: JGProgressHUDCoordinator
     @EnvironmentObject var moodViewModel: FoodAndWaterViewModel
     
     var body: some View {
         VStack {
-            NavigationLink(destination: Home(), isActive: $logCompleted) {}
-            
             Text("How are you feeling?")
                 .font(.system(size: 40))
                 .bold()
@@ -56,13 +56,12 @@ struct MoodLog: View {
             .padding(.horizontal)
             .frame(maxWidth: .infinity, maxHeight: 260)
             
+            NavigationLink(destination: Home(), isActive: $logCompleted) {}
             Button(action: {
                 hideKeyboard()
+                toggleLoadingIndicator()
                 moodViewModel.logMood(docRef: docRef, pMood: selectedMood, pComments: comments, completion: {
                     print("mood logged")
-//                    moodViewModel.getAllHistoryByDate(date: Date())
-                })
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
                     logCompleted = true
                 })
             }, label: {
@@ -72,13 +71,20 @@ struct MoodLog: View {
                     .padding()
             })
             .disabled(selectedMood.isEmpty)
-            
-            if logCompleted {
-                LottieAnimation(filename: "checkmark", loopMode: .playOnce, width: 400, height: 400)
-            }
         }
         .onTapGesture {
             hideKeyboard()
+        }
+    }
+    func toggleLoadingIndicator() {
+        hudCoordinator.showHUD {
+            let hud = JGProgressHUD()
+            hud.backgroundColor = UIColor(white: 0, alpha: 0.4)
+            hud.shadow = JGProgressHUDShadow(color: .black, offset: .zero, radius: 4, opacity: 0.9)
+            hud.vibrancyEnabled = true
+            hud.textLabel.text = "Loading"
+            hud.dismiss(afterDelay: 2.0)
+            return hud
         }
     }
 }

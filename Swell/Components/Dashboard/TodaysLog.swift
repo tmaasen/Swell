@@ -9,7 +9,6 @@ import SwiftUI
 
 struct TodaysLog: View {
     @EnvironmentObject var foodViewModel: FoodAndWaterViewModel
-    @Binding var isLoadingFromHome: Bool
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -101,6 +100,6 @@ struct TodaysLogCard: View {
 
 struct TodaysLog_Previews: PreviewProvider {
     static var previews: some View {
-        TodaysLog(isLoadingFromHome: .constant(false))
+        TodaysLog()
     }
 }
