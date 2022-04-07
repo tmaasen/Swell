@@ -9,7 +9,7 @@ import SwiftUI
 
 struct TodaysLog: View {
     @EnvironmentObject var foodViewModel: FoodAndWaterViewModel
-    @State private var isLoading = false
+    @State private var isLoading = true
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -41,7 +41,6 @@ struct TodaysLog: View {
         }
         .onChange(of: foodViewModel.isLoadingHistory, perform: { newValue in
             isLoading = foodViewModel.isLoadingHistory
-            print(isLoading)
         })
     }
 }

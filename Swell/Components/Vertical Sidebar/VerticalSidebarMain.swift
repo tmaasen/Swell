@@ -19,7 +19,7 @@ struct VerticalSidebarMain: View {
                 HStack {
                     VerticalSidebarHeader(isShowingSidebar: $isShowingSidebar)
                         .frame(height: 140)
-                }
+                } 
                 Spacer()
                 // Nav Options
                 ForEach(VerticalSidebar.allCases, id: \.self) { option in

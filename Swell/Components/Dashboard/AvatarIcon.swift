@@ -35,7 +35,6 @@ struct AvatarIcon: View {
         .sheet(isPresented: $showPhotoPickerSheet, content: {
             PhotoPicker()
         })
-        .padding(.top, 60)
     }
 }
 

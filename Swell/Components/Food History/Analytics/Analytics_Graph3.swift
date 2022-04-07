@@ -28,6 +28,13 @@ struct Analytics_Graph3: View {
     
     var body: some View {
         VStack(alignment: .leading) {
+            VStack(alignment: .leading) {
+                Text("Foods Containing \(g3Label.capitalizingFirstLetter())")
+                    .font(.title2)
+                    .bold()
+            }
+            .padding(.horizontal)
+            
             HStack {
                 Text("When I eat foods containing ")
                     .font(.system(size: 16))
@@ -64,8 +71,6 @@ struct Analytics_Graph3: View {
                 //filterTag==0 ? "By Week" : "All Time",
                 //title: "All Moods", legend: "All Time", form: ChartForm.extraLarge, valueSpecifier: "%.0f")
                 CardView {
-                    ChartLabel("Foods Containing...", type: .subTitle, format: "")
-//                    ChartLabel(g3Label, type: .legend)
                     BarChart()
                 }
                 .data(

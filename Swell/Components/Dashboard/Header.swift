@@ -19,7 +19,11 @@ struct Header: View {
                     withAnimation(.spring()) {
                         isShowingSidebar.toggle()
                     }
-                }, label: {AvatarIcon(isShowingSidebar: $isShowingSidebar, showPhotoPickerSheet: .constant(false), width: 40, height: 40)}).buttonStyle(PlainButtonStyle())
+                }, label: {
+                    AvatarIcon(isShowingSidebar: $isShowingSidebar, showPhotoPickerSheet: .constant(false), width: 40, height: 40)
+                })
+                .buttonStyle(PlainButtonStyle())
+                .padding(.top, 60)
                 //Greeting Message
                 Text(user.greeting)
                     .font(.custom("Ubuntu-Bold", size: 40))

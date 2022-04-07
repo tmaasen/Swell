@@ -31,16 +31,21 @@ struct Analytics_Graph1: View {
     
     var body: some View {
         VStack(alignment: .leading) {
+            VStack(alignment: .leading) {
+                Text("All Moods")
+                    .font(.title2)
+                    .bold()
+            }
+            .padding(.horizontal)
+            
             VStack(alignment: .center) {
                 Label("Refresh", systemImage: "arrow.clockwise")
                     .onTapGesture { getData() }
                     .padding(.horizontal)
             }
+            
             ZStack(alignment: .center) {
-                //filterTag==0 ? "By Week" : "All Time",
-                //title: "All Moods", legend: "All Time", form: ChartForm.extraLarge, valueSpecifier: "%.0f")
                 CardView {
-                    ChartLabel("All Moods", type: .subTitle, format: "")
                     BarChart()
                 }
                 .data(

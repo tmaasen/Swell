@@ -28,6 +28,13 @@ struct Analytics_Graph2: View {
     
     var body: some View {
         VStack(alignment: .leading) {
+            VStack(alignment: .leading) {
+                Text("Foods High In \(g2Label.capitalizingFirstLetter())")
+                    .font(.title2)
+                    .bold()
+            }
+            .padding(.horizontal)
+            
             HStack {
                 Text("When I eat foods high in ")
                     .font(.system(size: 16))
@@ -60,8 +67,6 @@ struct Analytics_Graph2: View {
                 //filterTag==0 ? "By Week" : "All Time",
                 //title: "All Moods", legend: "All Time", form: ChartForm.extraLarge, valueSpecifier: "%.0f")
                 CardView {
-                    ChartLabel("Foods High In...", type: .subTitle, format: "")
-//                    ChartLabel(g2Label, type: .legend)
                     BarChart()
                 }
                 .data(
