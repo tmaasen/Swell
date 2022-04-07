@@ -22,6 +22,7 @@ class UserViewModel: ObservableObject {
     @Published var user = User()
     var hasPersistedSignedIn = UserDefaults.standard.bool(forKey: "isLoggedIn")
     @Published var greeting: String = ""
+    private let cache = NSCache<NSString, UIImage>()
     @Published var avatarImage: UIImage = UIImage(systemName: "person.circle.fill")!
     @Published var gradient: Gradient = Gradient(stops: [
                                                     .init(color: Color.morningLinear1, location: 0),
@@ -115,16 +116,28 @@ class UserViewModel: ObservableObject {
     
     func getAvatarImage(completion: @escaping (UIImage) -> () = {_ in }) {
         let ref = Storage.storage().reference().child(Auth.auth().currentUser?.uid ?? "")
-        // Download in memory with a maximum allowed size of 1MB (1 * 1024 * 1024 bytes)
-        ref.getData(maxSize: 1 * 1024 * 1024) { data, error in
-          if let error = error {
-            print("Error retrieving image: \(error.localizedDescription)")
-            completion(UIImage())
+        // First check if image is in cache. If so, grab it
+        if let image = cache.object(forKey: "profilePic") {
+            print("Using cache for profile picture")
+            completion(image)
             return
-          } else {
-            let image = UIImage(data: data!)
-            completion(image!)
-          }
+        } else {
+            // Else, download it from Firebase Storage
+            ref.getData(maxSize: 1 * 1024 * 1024) { data, error in
+              if let error = error {
+                print("Error retrieving image: \(error.localizedDescription)")
+                completion(UIImage())
+                return
+              } else {
+                let image = UIImage(data: data!)
+                // Set the image to cache
+                DispatchQueue.main.async {
+                    self.cache.setObject(image!, forKey: "profilePic")
+                    print("set cache for user's profile pic")
+                }
+                completion(image!)
+              }
+            }
         }
     }
     
@@ -138,12 +151,6 @@ class UserViewModel: ObservableObject {
                 print("Error putting image in storage: \(error.localizedDescription)")
                 return
             }
-//            ref.downloadURL { url, err in
-//                if let error = error {
-//                    print("Error retrieving image from storage: \(error.localizedDescription)")
-//                    return
-//                }
-//            }
         }
     }
     

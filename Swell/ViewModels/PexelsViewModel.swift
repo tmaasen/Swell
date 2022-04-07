@@ -10,11 +10,14 @@ import Foundation
 class PexelsViewModel: ObservableObject {
     let API_URL:URL! = URL(string: "https://api.pexels.com/v1/search?query=landscape&page=1&per_page=20&size=small&orientation=landscape")
     @Published var pexel = Photo()
+    @Published var isLoadingPexel: Bool = false
     private let cache = NSCache<NSString, Pexel>()
     
     init() {
+        self.isLoadingPexel = true
         getPexel() { pexels in
             self.pexel = (pexels?.photos?.randomElement())!
+            self.isLoadingPexel = false
         }
     }
     
@@ -26,7 +29,7 @@ class PexelsViewModel: ObservableObject {
             completion(image)
             return
         }
-        
+         
         var urlRequest = URLRequest(url: API_URL)
         // Setting HTTP Headers
         urlRequest.httpMethod = "GET"

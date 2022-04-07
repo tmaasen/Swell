@@ -9,13 +9,21 @@ import SwiftUI
 
 struct TodaysLog: View {
     @EnvironmentObject var foodViewModel: FoodAndWaterViewModel
+    @State private var isLoading = false
     
     var body: some View {
         VStack(alignment: .leading) {
             Text("Today's Log")
                 .font(.custom("Ubuntu-Bold", size: 30))
                 .foregroundColor(.white)
-            if !foodViewModel.foodHistory.isEmpty && !foodViewModel.isLoadingHistory {
+            if isLoading {
+                HStack(spacing: 20) {
+                    LoadingShimmer(width: 200, height: 150)
+                    LoadingShimmer(width: 200, height: 150)
+                    LoadingShimmer(width: 200, height: 150)
+                }
+            }
+            if !isLoading && !foodViewModel.foodHistory.isEmpty {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 20) {
                         ForEach(MealTypes.allCases, id: \.self) { meal in
@@ -29,14 +37,12 @@ struct TodaysLog: View {
                         }
                     }
                 }
-            } else if foodViewModel.isLoadingHistory {
-                HStack(spacing: 20) {
-                    LoadingShimmer(width: 200, height: 150)
-                    LoadingShimmer(width: 200, height: 150)
-                    LoadingShimmer(width: 200, height: 150)
-                }
             }
         }
+        .onChange(of: foodViewModel.isLoadingHistory, perform: { newValue in
+            isLoading = foodViewModel.isLoadingHistory
+            print(isLoading)
+        })
     }
 }
 

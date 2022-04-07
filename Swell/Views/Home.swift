@@ -57,9 +57,6 @@ struct Home: View {
         .onAppear {
             isShowingSidebar = false
             authViewModel.getAllUserInfo()
-            foodViewModel.getAllHistoryByDate(date: Date(), completion: {
-                print("done")
-            })
         }
         .gesture(DragGesture()
                     .onEnded {

@@ -32,16 +32,18 @@ struct ContentView: View {
             NavigationView {
                 if hasLaunchedBefore == false {
                     Onboarding()
-                } else {
-                    if hasPersistedSignedIn || authViewModel.state == .signedIn {
-                        if isFromNotif {
-                            MoodLog(docRef: docRef)
-                                .onAppear() { isFromNotif = false }
-                        } else {
+                }
+                else {
+                    if isFromNotification {
+                        MoodLog(docRef: docRef)
+                    }
+                    else {
+                        if hasPersistedSignedIn || authViewModel.state == .signedIn {
                             Home()
                         }
-                    } else {
-                        Login()
+                        else {
+                            Login()
+                        }
                     }
                 }
             }
@@ -68,7 +70,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, ObservableObject {
     }
 }
 
-var isFromNotif: Bool = false
+var isFromNotification: Bool = false
 var docRef: String = ""
 
 // MARK: - UNUserNotificationCenterDelegate
@@ -117,7 +119,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     case "OVERATE":
         foodViewModel.logMood(docRef: docRef, pMood: "I Overate", pComments: "")
     default:
-        isFromNotif = true
+        isFromNotification = true
     }
     // 2 
     completionHandler()

@@ -10,7 +10,7 @@ import SDWebImageSwiftUI
 
 struct PexelImage: View {
     @StateObject var pexelsViewModel = PexelsViewModel()
-    @State private var isLoading: Bool = true
+    @State private var isLoading: Bool = false
     
     var body: some View {
         VStack {
@@ -27,12 +27,9 @@ struct PexelImage: View {
                     .overlay(TextOverlay(), alignment: .bottomLeading)
             }
         }
-        .onAppear {
-            pexelsViewModel.getPexel(completion: { pexels in
-                pexelsViewModel.pexel = (pexels?.photos?.randomElement())!
-                isLoading = false
-            })
-        }
+        .onChange(of: pexelsViewModel.isLoadingPexel, perform: { newValue in
+            isLoading = pexelsViewModel.isLoadingPexel
+        })
     }
 }
 

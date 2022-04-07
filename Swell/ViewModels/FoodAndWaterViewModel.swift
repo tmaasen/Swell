@@ -15,6 +15,11 @@ class FoodAndWaterViewModel: FoodDataCentralViewModel {
     @Published var isLoadingHistory: Bool = false
     @Published var selectedLogDate: Date = Date()
     var loggedOunces = [Double]()
+    
+    override init() {
+        super.init()
+        self.getAllHistoryByDate(date: Date(), completion: {})
+    }
 
     func getFood(date: Date = Timestamp(date: Date()).dateValue(), completion: @escaping () -> () = {}) {
         formatter.dateFormat = "EEEE MMM dd, yyyy"
@@ -27,7 +32,6 @@ class FoodAndWaterViewModel: FoodDataCentralViewModel {
                 completion()
                 return
             }
-            self.isLoadingHistory = true
             var foodIds = [String]()
             var foodNames = [String]()
             var mealTypes = [String]()
@@ -54,12 +58,10 @@ class FoodAndWaterViewModel: FoodDataCentralViewModel {
             }
 
             if foodIds.isEmpty {
-                self.isLoadingHistory = false
                 completion()
             } else {
                 self.getFoodsById(foodIds, mealTypes, servingSizes, moods, comments, docIds, foodNames, completion: {
                     completion()
-                    self.isLoadingHistory = false
                 })
             }
         }
@@ -103,10 +105,6 @@ class FoodAndWaterViewModel: FoodDataCentralViewModel {
             if let error = error {
                 print("Error in logFood method: \(error.localizedDescription)")
             }
-//            else {
-                // wish I could just append the food to my foodHistory array, but the data types and json structure don't match up in the API search and get methods
-//                self.getAllHistoryByDate(date: Date())
-//            }
         })
         
         NotificationManager.instance.scheduleNotification(mealType: pMeal, foodTitle: pFoodToLog.foodDescription, docRef: docRef.documentID)
@@ -209,8 +207,10 @@ class FoodAndWaterViewModel: FoodDataCentralViewModel {
         self.foodHistory.removeAll()
         self.waters.waterOuncesToday = 0
         self.waters.waterLoggedToday = 0
+        self.isLoadingHistory = true
         self.getFood(date: date, completion: {
             print("got food")
+            self.isLoadingHistory = false
             self.getWater(date: date, completion: {
                 print("got water")
                 completion()
