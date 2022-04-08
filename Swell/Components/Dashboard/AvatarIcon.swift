@@ -24,7 +24,7 @@ struct AvatarIcon: View {
                     .clipShape(Circle())
                     .foregroundColor(isShowingSidebar ? .black : .white)
             } else {
-                Image(uiImage: (user.avatarImage))
+                Image(uiImage: user.avatarImage)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: width, height: height, alignment: .topLeading)

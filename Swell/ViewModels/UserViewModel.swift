@@ -11,18 +11,15 @@ import GoogleSignIn
 import BackgroundTasks
 
 // Basically an interface
-protocol iUserViewModelProtocol {
-    func getUser()
-    func updateUser()
-} 
+protocol iUserViewModelProtocol { }
 
 class UserViewModel: ObservableObject {
     private var db = Firestore.firestore()
     static var isEveningGradient = false
-    @Published var user = User()
     var hasPersistedSignedIn = UserDefaults.standard.bool(forKey: "isLoggedIn")
-    @Published var greeting: String = ""
     private let cache = NSCache<NSString, UIImage>()
+    @Published var user = User()
+    @Published var greeting: String = ""
     @Published var avatarImage: UIImage = UIImage(systemName: "person.circle.fill")!
     @Published var gradient: Gradient = Gradient(stops: [
                                                     .init(color: Color.morningLinear1, location: 0),
@@ -33,6 +30,9 @@ class UserViewModel: ObservableObject {
         if hasPersistedSignedIn {
             self.getAllUserInfo()
         }
+        self.getAvatarImage(completion: { image in
+            self.avatarImage = image
+        })
     }
     
     // gets all user information, but not the greeting message
@@ -85,7 +85,9 @@ class UserViewModel: ObservableObject {
             if let err = err {
                 print("Error in updateUser method: \(err.localizedDescription)")
             } else {
-                self.getUser()
+                self.getUser(completion: { user in
+                    self.setGreeting(name: user.fname)
+                })
             }
         }
     }
@@ -130,6 +132,7 @@ class UserViewModel: ObservableObject {
                 return
               } else {
                 let image = UIImage(data: data!)
+                self.avatarImage = image!
                 // Set the image to cache
                 DispatchQueue.main.async {
                     self.cache.setObject(image!, forKey: "profilePic")
@@ -141,12 +144,15 @@ class UserViewModel: ObservableObject {
         }
     }
     
-    func setAvatarImage(pImage: UIImage) {
+    func setAvatarImage(pImage: UIImage) {        
         guard let uid = Auth.auth().currentUser?.uid else {return}
         let storage = Storage.storage()
         let ref = storage.reference(withPath: uid)
+        let metadata = StorageMetadata()
+        metadata.contentType = "image/jpg"
+        
         guard let imageData = pImage.jpegData(compressionQuality: 0.3) else {return}
-        ref.putData(imageData, metadata: nil) { metaData, error in
+        ref.putData(imageData, metadata: metadata) { metaData, error in
             if let error = error {
                 print("Error putting image in storage: \(error.localizedDescription)")
                 return
@@ -199,9 +205,6 @@ class UserViewModel: ObservableObject {
     func getAllUserInfo() {
         self.setGradient()
         self.getUser(completion: { currentUser in
-            self.getAvatarImage(completion: { image in
-                self.avatarImage = image
-            })
             self.setGreeting(name: GIDSignIn.sharedInstance.currentUser?.profile?.givenName ?? currentUser.fname)
             return
         })
@@ -220,6 +223,7 @@ class UserViewModel: ObservableObject {
             }
         }
     }
+    
     func deleteAvatarImage(pUser: String) {
         let ref = Storage.storage().reference().child(Auth.auth().currentUser?.uid ?? "")
 

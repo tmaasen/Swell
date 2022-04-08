@@ -23,7 +23,8 @@ struct VerticalSidebarHeader: View {
             Text(Auth.auth().currentUser?.email ?? "johndoe@test.com")
                 .font(.custom("Ubuntu-Italic", size: 14))
                 .foregroundColor(.gray)
-        }.padding()
+        }
+        .padding()
     }
 }
 
