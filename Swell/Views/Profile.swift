@@ -178,7 +178,7 @@ struct Profile: View {
                                 }, label: {
                                     HStack {
                                         Text("Edit")
-                                        Image(systemName: "square.and.pencil").foregroundColor(.accentColor).font(.title2)
+                                        Image(systemName: "square.and.pencil").foregroundColor(.accentColor).font(.title3)
                                     }
                                 })
         )

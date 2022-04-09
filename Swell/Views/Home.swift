@@ -56,7 +56,6 @@ struct Home: View {
         }
         .onAppear {
             isShowingSidebar = false
-//            authViewModel.getAllUserInfo()
         }
         .gesture(DragGesture()
                     .onEnded {
