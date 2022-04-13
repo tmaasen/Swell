@@ -84,8 +84,7 @@ struct Profile: View {
                     TextField("", text: $age)
                         .withProfileStyles()
                         .keyboardType(.numberPad)
-                        .disabled(true)
-                        .opacity(0.6)
+                        .disabled(isFormDisabled)
                 }
                 VStack(alignment: .leading) {
                     Text("Height (inches)")

@@ -66,10 +66,6 @@ struct YouTubePlayer: UIViewRepresentable {
             })
         }
     }
-    
-//    func makeUIView(context: Context) -> WKWebView {
-//        return webview
-//    }
 
     func makeCoordinator() -> Coordinator {
         Coordinator(self)
@@ -83,14 +79,8 @@ struct YouTubePlayer: UIViewRepresentable {
         webview.load(URLRequest(url: youtubeURL))
         return webview
     }
-
-//    func updateUIView(_ uiView: WKWebView, context: Context) {
-//    }
     
     func updateUIView(_ uiView: WKWebView, context: Context) {
-//        guard let youtubeURL = URL(string: "https://www.youtube.com/embed/\(videoId)") else {return}
-//        uiView.scrollView.isScrollEnabled = false
-//        uiView.load(URLRequest(url: youtubeURL))
     }
 }
 

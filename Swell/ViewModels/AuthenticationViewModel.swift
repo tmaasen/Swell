@@ -28,17 +28,6 @@ class AuthenticationViewModel: UserViewModel {
             }
         }
     }
-//    override init() {
-//        super.init()
-//        if hasPersistedSignedIn {
-//            if GIDSignIn.sharedInstance.hasPreviousSignIn() {
-//                GIDSignIn.sharedInstance.restorePreviousSignIn {
-//                    [unowned self] user, error in
-//                    authenticateUser(for: user, with: error)
-//                }
-//            }
-//        }
-//    }
     
     // sign in with email and password
     func signInWithEmail(email: String, password: String, completion: @escaping () -> () = {}) {
@@ -152,6 +141,7 @@ class AuthenticationViewModel: UserViewModel {
             self.state = .signedOut
             print(self.state)
             UserDefaults.standard.set(false, forKey: "isLoggedIn")
+            self.avatarCache.removeObject(forKey: "profilePic")
             self.user = User()
             self.greeting = ""
         } catch {

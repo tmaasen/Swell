@@ -8,11 +8,14 @@
 import SwiftUI
 
 struct MyMeals: View {
+    @State private var addMeal: Bool = false
     @State private var selectedPickerIndex: Int = 0
     var pickerOptions = ["Favorites", "Created"]
     
     var body: some View {
         VStack {
+            NavigationLink(destination: AddMeal(), isActive: $addMeal) {}
+            
             Picker("", selection: $selectedPickerIndex) {
                 ForEach(0..<pickerOptions.count) {
                     Text(self.pickerOptions[$0])
@@ -32,7 +35,15 @@ struct MyMeals: View {
                     // comments / instructions (TextArea)
             }
                         
-        }.navigationTitle("MyMeals")
+        }
+        .navigationTitle("MyMeals")
+        .navigationBarItems(trailing:
+                                Button(action: {
+                                    addMeal = true
+                                }, label: {
+                                    Image(systemName: "plus")
+                                })
+        )
     }
 }
 

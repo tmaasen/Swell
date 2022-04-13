@@ -37,7 +37,7 @@ struct MealLog: View {
                 LottieAnimation(filename: "loading", loopMode: .loop, width: 50, height: 50)
             }
             
-            if selectedPickerIndex != 0 {
+            if selectedPickerIndex == 0 {
                 // Search
                 if foodViewModel.foodSearchDictionary.totalHits != nil && !isLoading {
                     if foodViewModel.foodSearchDictionary.totalHits == 0 {
@@ -59,10 +59,10 @@ struct MealLog: View {
                             }
                         }
                     }
-                } else {
-                    // MyMeals
-                    Text("MyMeals")
                 }
+            } else {
+                // MyMeals
+                Text("MyMeals")
             }
             Spacer()
         }

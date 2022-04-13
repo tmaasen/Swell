@@ -17,7 +17,8 @@ class UserViewModel: ObservableObject {
     private var db = Firestore.firestore()
     static var isEveningGradient = false
     var hasPersistedSignedIn = UserDefaults.standard.bool(forKey: "isLoggedIn")
-    private let cache = NSCache<NSString, UIImage>()
+    let avatarCache = NSCache<NSString, UIImage>()
+    @Published var hasProfilePic: Bool = false
     @Published var user = User()
     @Published var greeting: String = ""
     @Published var avatarImage: UIImage = UIImage(systemName: "person.circle.fill")!
@@ -119,8 +120,9 @@ class UserViewModel: ObservableObject {
     func getAvatarImage(completion: @escaping (UIImage) -> () = {_ in }) {
         let ref = Storage.storage().reference().child(Auth.auth().currentUser?.uid ?? "")
         // First check if image is in cache. If so, grab it
-        if let image = cache.object(forKey: "profilePic") {
+        if let image = self.avatarCache.object(forKey: "profilePic") {
             print("Using cache for profile picture")
+            self.hasProfilePic = true
             completion(image)
             return
         } else {
@@ -128,14 +130,15 @@ class UserViewModel: ObservableObject {
             ref.getData(maxSize: 1 * 1024 * 1024) { data, error in
               if let error = error {
                 print("Error retrieving image: \(error.localizedDescription)")
-                completion(UIImage())
+                self.hasProfilePic = false
                 return
               } else {
                 let image = UIImage(data: data!)
+                self.hasProfilePic = true
                 self.avatarImage = image!
                 // Set the image to cache
                 DispatchQueue.main.async {
-                    self.cache.setObject(image!, forKey: "profilePic")
+                    self.avatarCache.setObject(image!, forKey: "profilePic")
                     print("set cache for user's profile pic")
                 }
                 completion(image!)
@@ -204,6 +207,9 @@ class UserViewModel: ObservableObject {
     
     func getAllUserInfo() {
         self.setGradient()
+        self.getAvatarImage(completion: { image in
+            self.avatarImage = image
+        })
         self.getUser(completion: { currentUser in
             self.setGreeting(name: GIDSignIn.sharedInstance.currentUser?.profile?.givenName ?? currentUser.fname)
             return
