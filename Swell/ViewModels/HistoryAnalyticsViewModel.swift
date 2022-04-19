@@ -25,24 +25,10 @@ class HistoryAnalyticsViewModel: ObservableObject {
                 print("Error in getGraph1Data method: \(error.localizedDescription)")
             } else {
                 self.totalDataPoints = Double(querySnapshot?.count ?? 0)
-                self.happyMoods = 0
-                self.neutralMoods = 0
-                self.sickMoods = 0
-                self.overateMoods = 0
-                // sort them by mood
-                for document in querySnapshot!.documents {
-                    let mood = document.get("mood") as! String
-                    switch mood {
-                    case Mood.happy.text:
-                        self.happyMoods+=1
-                    case Mood.neutral.text:
-                        self.neutralMoods+=1
-                    case Mood.sick.text:
-                        self.sickMoods+=1
-                    default:
-                        self.overateMoods+=1
-                    }
-                }
+                self.happyMoods = Double(querySnapshot!.documents.filter { $0.get("mood") as! String == "Happy" }.count)
+                self.neutralMoods = Double(querySnapshot!.documents.filter { $0.get("mood") as! String == "Neutral" }.count)
+                self.sickMoods = Double(querySnapshot!.documents.filter { $0.get("mood") as! String == "Sick" }.count)
+                self.overateMoods = Double(querySnapshot!.documents.filter { $0.get("mood") as! String == "I Overate" }.count)
                 completion([self.totalDataPoints, self.happyMoods, self.neutralMoods, self.sickMoods, self.overateMoods])
             }
         })
@@ -58,24 +44,10 @@ class HistoryAnalyticsViewModel: ObservableObject {
                 print("Error in getGraph2Data method: \(error.localizedDescription)")
             } else {
                 self.totalDataPoints = Double(querySnapshot?.count ?? 0)
-                self.happyMoods = 0
-                self.neutralMoods = 0
-                self.sickMoods = 0
-                self.overateMoods = 0
-                // sort them by mood
-                for document in querySnapshot!.documents {
-                    let mood = document.get("mood") as! String
-                    switch mood {
-                    case Mood.happy.text:
-                        self.happyMoods+=1
-                    case Mood.neutral.text:
-                        self.neutralMoods+=1
-                    case Mood.sick.text:
-                        self.sickMoods+=1
-                    default:
-                        self.overateMoods+=1
-                    }
-                }
+                self.happyMoods = Double(querySnapshot!.documents.filter { $0.get("mood") as! String == "Happy" }.count)
+                self.neutralMoods = Double(querySnapshot!.documents.filter { $0.get("mood") as! String == "Neutral" }.count)
+                self.sickMoods = Double(querySnapshot!.documents.filter { $0.get("mood") as! String == "Sick" }.count)
+                self.overateMoods = Double(querySnapshot!.documents.filter { $0.get("mood") as! String == "I Overate" }.count)
                 completion([self.totalDataPoints, self.happyMoods, self.neutralMoods, self.sickMoods, self.overateMoods])
             }
         })
@@ -91,24 +63,10 @@ class HistoryAnalyticsViewModel: ObservableObject {
                 print("Error in getGraph3Data method: \(error.localizedDescription)")
             } else {
                 self.totalDataPoints = Double(querySnapshot?.count ?? 0)
-                self.happyMoods = 0
-                self.neutralMoods = 0
-                self.sickMoods = 0
-                self.overateMoods = 0
-                // sort them by mood
-                for document in querySnapshot!.documents {
-                    let mood = document.get("mood") as! String
-                    switch mood {
-                    case Mood.happy.text:
-                        self.happyMoods+=1
-                    case Mood.neutral.text:
-                        self.neutralMoods+=1
-                    case Mood.sick.text:
-                        self.sickMoods+=1
-                    default:
-                        self.overateMoods+=1
-                    }
-                }
+                self.happyMoods = Double(querySnapshot!.documents.filter { $0.get("mood") as! String == "Happy" }.count)
+                self.neutralMoods = Double(querySnapshot!.documents.filter { $0.get("mood") as! String == "Neutral" }.count)
+                self.sickMoods = Double(querySnapshot!.documents.filter { $0.get("mood") as! String == "Sick" }.count)
+                self.overateMoods = Double(querySnapshot!.documents.filter { $0.get("mood") as! String == "I Overate" }.count)
                 completion([self.totalDataPoints, self.happyMoods, self.neutralMoods, self.sickMoods, self.overateMoods])
             }
         })

@@ -75,6 +75,7 @@ struct TodaysLogCard: View {
                             Text(food.mood == "" ? "Log Mood" : food.mood!)
                                 .foregroundColor(.black)
                                 .font(.custom("Ubuntu", size: 10))
+                                .disabled(food.mood != "")
                         )
                 }
             }

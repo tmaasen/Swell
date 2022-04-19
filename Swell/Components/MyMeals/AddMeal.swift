@@ -10,65 +10,68 @@ import SwiftUI
 struct AddMeal: View {
     @State private var name = ""
     @State private var ingredients = [""]
-    @State private var nutrients = [""]
+    @State private var nutrients: [String : String] = [:]
     @State private var instructions = ""
     @State private var includes = [""]
     // do something to sanitize input before sending it off to firestore
+    let dict = ["key1": "value1", "key2": "value2"]
     
     var body: some View {
-        ScrollView {
-            Form {
-                TextField("Food Name", text: $name)
-                    .padding()
-                
-                Section(header: Text("Ingredients")) {
-                    ForEach(0..<ingredients.count, id: \.self){ ingredient in
-                        HStack(spacing: 5){
-                            TextField("New Ingredient", text: $ingredients[ingredient])
-                        }
-                    }
-                    Button("Add Ingredient"){
-                        ingredients.append("")
+        Form {
+            TextField("Meal Name", text: $name)
+            
+            Section(header: Text("Ingredients")) {
+                ForEach(0..<ingredients.count, id: \.self){ ingredient in
+                    HStack(spacing: 5){
+                        TextField("Ingredient", text: $ingredients[ingredient])
                     }
                 }
-                .padding()
-                
-                Section(header: Text("Nutrition Facts")) {
-                    ForEach(0..<nutrients.count, id: \.self){ nutrient in
-                        HStack(spacing: 5){
-                            TextField("New Nutrient", text: $nutrients[nutrient])
-                        }
-                    }
-                    Button("Add Nutrient"){
-                        nutrients.append("")
+                Button("Add Ingredient"){
+                    ingredients.append("")
+                }
+            }
+            
+            Section(header: Text("Nutrition Facts")) {
+                ForEach(nutrients.sorted(by: >), id: \.key){ key, value in
+                    HStack(spacing: 5){
+                        TextField("Nutrient", text: $nutrients[key].toUnwrapped(defaultValue: ""))
+                        Divider()
+                        TextField("Value", text: $nutrients[value].toUnwrapped(defaultValue: ""))
                     }
                 }
-                .padding()
-                
-                Section(header: Text("Instructions / Comments")) {
+                Button("Add Nutrient"){
+//                    nutrients.append("")
+                    nutrients[""] = ""
+                }
+            }
+            
+//            List {
+//                ForEach(nutrients.sorted(by: >), id: \.key) { key, value in
+//                    Section(header: Text(key)) {
+//                        Text(value)
+//                    }
+//                }
+//            }
+            
+            Section(header: Text("Instructions / Comments")) {
+                VStack(alignment: .leading) {
                     TextEditor(text: $instructions)
                         .foregroundColor(.secondary)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 20)
-                                .stroke(Color.gray, lineWidth: 3)
-                        )
-//                    VStack(alignment: .leading) {
-//                        Text("Comments")
-//                            .italic()
-//                        TextEditor(text: $comments)
-//                            .foregroundColor(.secondary)
-//                            .overlay(
-//                                RoundedRectangle(cornerRadius: 20)
-//                                    .stroke(Color.gray, lineWidth: 3)
-//                            )
-//                    }
-//                    .padding(.horizontal)
-//                    .frame(maxWidth: .infinity, maxHeight: 260)
                 }
-                .padding()
+                .frame(maxWidth: .infinity, maxHeight: 400)
+            }
+                        
+            HStack(alignment: .bottom) {
+                Button(action: {
+                    hideKeyboard()
+                }) {
+                    Text("Save")
+                        .withButtonStyles()
+                }
             }
         }
-    }
+        .navigationTitle("New Meal")
+    } 
 }
 
 struct AddMeal_Previews: PreviewProvider {
