@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct FoodResultSheet: View {
+struct FoodResultSheet: View { 
     var food: Food
     @State private var logCompleted: Bool = false
     @State private var liked: Bool = false
@@ -15,6 +15,7 @@ struct FoodResultSheet: View {
     @Binding var meal: String
     @Binding var showFoodInfoSheet: Bool
     @Binding var contains: [String]
+    @EnvironmentObject var userViewModel: MyMealsViewModel
     @EnvironmentObject var foodViewModel: FoodAndWaterViewModel
     @Environment(\.presentationMode) var presentationMode
     @Environment(\.colorScheme) var colorScheme
@@ -41,7 +42,11 @@ struct FoodResultSheet: View {
                             let impactMed = UIImpactFeedbackGenerator(style: .medium)
                             impactMed.impactOccurred()
                             liked.toggle()
-                            // add to MyMeals
+                            if liked == true {
+                                userViewModel.addMeal(pFdcId: food.fdcID)
+                            } else {
+                                userViewModel.removeMeal(pFdcId: food.fdcID)
+                            }
                         }
                 }
                 .padding(.top, 70)
@@ -51,6 +56,9 @@ struct FoodResultSheet: View {
             .background(Rectangle().foregroundColor(Color("FoodSheet_Purple")))
             .clipShape(CustomShape(corner: .bottomLeft, radii: 55))
             .edgesIgnoringSafeArea(.top)
+            .toast(message: "\(liked ? "Added \(food.foodDescription.capitalizingFirstLetter()) to" : "Removed \(food.foodDescription.capitalizingFirstLetter()) from") MyMeals",
+                         isShowing: $liked,
+                         duration: Toast.short)
             ScrollView {
                 VStack(alignment: .leading, spacing: 15) {
                     HStack {

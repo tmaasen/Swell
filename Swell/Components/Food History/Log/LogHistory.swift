@@ -16,7 +16,7 @@ struct LogHistory: View {
         ScrollView {
             // Food and Water Data
             VStack(alignment: .leading) {
-//                if !foodViewModel.foodHistory.isEmpty {
+                if !foodViewModel.foodHistory.isEmpty {
                     ForEach(MealTypes.allCases, id: \.self) { meal in
                         if foodViewModel.foodHistory.first(where: {$0.mealType == meal.text}) != nil {
                             Text(meal.text)
@@ -29,7 +29,7 @@ struct LogHistory: View {
                             }
                         }
                     }
-//                }
+                }
                 if foodViewModel.waters.waterOuncesToday != 0 {
                     Text("Water")
                         .font(.custom("Ubuntu-BoldItalic", size: 20))
@@ -61,10 +61,6 @@ struct LogHistory: View {
                     })
             }
         }
-// Problem child
-//        .onAppear() {
-//            selectedDate = foodViewModel.selectedLogDate
-//        }
     }
 }
 

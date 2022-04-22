@@ -11,11 +11,12 @@ struct MyMeals: View {
     @State private var addMeal: Bool = false
     @State private var selectedPickerIndex: Int = 0
     @Environment(\.colorScheme) var colorScheme
-    var pickerOptions = ["Favorites", "Created"]
+//    var pickerOptions = ["Favorites", "Created"]
     
     var body: some View {
         VStack {
             NavigationLink(destination: AddMeal(), isActive: $addMeal) {}
+            
             Spacer()
             Image("NoData")
                 .resizable()

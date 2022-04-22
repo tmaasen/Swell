@@ -8,7 +8,15 @@
 import Foundation
 import SwiftUI
 
-struct FoodRetriever: Codable, Identifiable {
+struct FoodRetriever: Codable, Identifiable, Comparable {
+    static func < (lhs: FoodRetriever, rhs: FoodRetriever) -> Bool {
+        return true
+    }
+    
+    static func == (lhs: FoodRetriever, rhs: FoodRetriever) -> Bool {
+        return lhs.fdcID == rhs.fdcID
+    }
+    
     var id = UUID()
     var docId: String?
     var foodName: String?

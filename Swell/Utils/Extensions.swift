@@ -15,6 +15,12 @@ extension Binding {
     }
 }
 
+extension Array where Element: Comparable {
+    func containsSameElements(as other: [Element]) -> Bool {
+        return self.count == other.count && self.sorted() == other.sorted()
+    }
+}
+
 public extension Color {
     static let swellOrange = Color("swellOrange")
     static let morningLinear1 = Color("MorningLinear1")

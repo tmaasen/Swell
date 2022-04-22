@@ -10,6 +10,7 @@ import SwiftUI
 struct TodaysLog: View {
     @EnvironmentObject var foodViewModel: FoodAndWaterViewModel
     @State private var isLoading = true
+    @State private var tempFoodHistory: [FoodRetriever] = []
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -39,9 +40,15 @@ struct TodaysLog: View {
                 }
             }
         }
-        .onChange(of: foodViewModel.isLoadingHistory, perform: { newValue in
-            isLoading = foodViewModel.isLoadingHistory
-        })
+        .onAppear() {
+            if foodViewModel.foodHistory.containsSameElements(as: tempFoodHistory) {
+                isLoading = true
+                foodViewModel.getAllHistoryByDate(date: Date(), completion: {
+                    tempFoodHistory = foodViewModel.foodHistory
+                    isLoading = false
+                })
+            }
+        }
     }
 }
 

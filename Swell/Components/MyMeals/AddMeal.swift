@@ -10,11 +10,12 @@ import SwiftUI
 struct AddMeal: View {
     @State private var name = ""
     @State private var ingredients = [""]
-    @State private var nutrients: [String : String] = [:]
+    @State private var ingredientValues: [Int : String] = [:]
+    @State private var nutrientNames = [""]
+    @State private var nutrientValues: [String : Int] = [:]
     @State private var instructions = ""
     @State private var includes = [""]
     // do something to sanitize input before sending it off to firestore
-    let dict = ["key1": "value1", "key2": "value2"]
     
     var body: some View {
         Form {
@@ -32,26 +33,23 @@ struct AddMeal: View {
             }
             
             Section(header: Text("Nutrition Facts")) {
-                ForEach(nutrients.sorted(by: >), id: \.key){ key, value in
+//                ForEach(nutrientValues.sorted(by: >), id: \.key){ key, value in
+//                    HStack(spacing: 5){
+//                        TextField("Nutrient", text: $nutrients[key].toUnwrapped(defaultValue: ""))
+//                        Divider()
+//                        TextField("Value", text: $nutrients[value].toUnwrapped(defaultValue: ""))
+//                    }
+//                }
+                ForEach(0...nutrientNames.count-1, id: \.self) { nutrient in
                     HStack(spacing: 5){
-                        TextField("Nutrient", text: $nutrients[key].toUnwrapped(defaultValue: ""))
+                        TextField("Nutrient", text: $nutrientNames[nutrient])
                         Divider()
-                        TextField("Value", text: $nutrients[value].toUnwrapped(defaultValue: ""))
                     }
                 }
                 Button("Add Nutrient"){
-//                    nutrients.append("")
-                    nutrients[""] = ""
+                    nutrientNames.append("")
                 }
             }
-            
-//            List {
-//                ForEach(nutrients.sorted(by: >), id: \.key) { key, value in
-//                    Section(header: Text(key)) {
-//                        Text(value)
-//                    }
-//                }
-//            }
             
             Section(header: Text("Instructions / Comments")) {
                 VStack(alignment: .leading) {
@@ -61,16 +59,19 @@ struct AddMeal: View {
                 .frame(maxWidth: .infinity, maxHeight: 400)
             }
                         
-            HStack(alignment: .bottom) {
+//            HStack(alignment: .bottom) {
                 Button(action: {
                     hideKeyboard()
                 }) {
                     Text("Save")
                         .withButtonStyles()
                 }
-            }
+//            }
         }
         .navigationTitle("New Meal")
+        .onAppear() {
+            print("Nutrient names: \(nutrientNames)")
+        }
     } 
 }
 

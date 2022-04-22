@@ -12,8 +12,6 @@ class FoodAndWaterViewModel: FoodDataCentralViewModel {
     // Retrieving Water History
     @Published var waters = FoodRetriever()
     @Published var isNewDay: Bool = false
-    @Published var isLoadingHistory: Bool = false
-    @Published var selectedLogDate: Date = Date()
     var loggedOunces = [Double]()
     
     override init() {
@@ -203,17 +201,16 @@ class FoodAndWaterViewModel: FoodDataCentralViewModel {
     }
     
     func getAllHistoryByDate(date: Date = Timestamp(date: Date()).dateValue(), completion: @escaping () -> () = {}) {
-        self.selectedLogDate = date
+        // PROBLEM CHILDREN
         self.foodHistory.removeAll()
+        // END PROBLEM CHILDREN
         self.waters.waterOuncesToday = 0
         self.waters.waterLoggedToday = 0
-        self.isLoadingHistory = true
+        
         self.getFood(date: date, completion: {
-            print("got food")
-            self.isLoadingHistory = false
             self.getWater(date: date, completion: {
-                print("got water")
                 completion()
+                return
             })
         })
     }
