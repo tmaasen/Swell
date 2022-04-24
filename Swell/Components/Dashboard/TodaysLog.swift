@@ -10,7 +10,7 @@ import SwiftUI
 struct TodaysLog: View {
     @EnvironmentObject var foodViewModel: FoodAndWaterViewModel
     @State private var isLoading = true
-    @State private var tempFoodHistory: [FoodRetriever] = []
+    @State private var tempTodaysLog: [FoodRetriever] = []
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -24,12 +24,12 @@ struct TodaysLog: View {
                     LoadingShimmer(width: 200, height: 150)
                 }
             }
-            if !isLoading && !foodViewModel.foodHistory.isEmpty {
+            if !isLoading && !foodViewModel.todaysLog.isEmpty {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 20) {
                         ForEach(MealTypes.allCases, id: \.self) { meal in
-                            if foodViewModel.foodHistory.first(where: {$0.mealType == meal.text}) != nil {
-                                ForEach(foodViewModel.foodHistory, id: \.self.id) { food in
+                            if foodViewModel.todaysLog.first(where: {$0.mealType == meal.text}) != nil {
+                                ForEach(foodViewModel.todaysLog, id: \.self.id) { food in
                                     if food.mealType == meal.text {
                                         TodaysLogCard(food: food)
                                     }
@@ -41,10 +41,10 @@ struct TodaysLog: View {
             }
         }
         .onAppear() {
-            if foodViewModel.foodHistory.containsSameElements(as: tempFoodHistory) {
+            if !foodViewModel.todaysLog.containsSameElements(as: tempTodaysLog) {
                 isLoading = true
                 foodViewModel.getAllHistoryByDate(date: Date(), completion: {
-                    tempFoodHistory = foodViewModel.foodHistory
+                    tempTodaysLog = foodViewModel.todaysLog
                     isLoading = false
                 })
             }

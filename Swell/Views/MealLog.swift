@@ -14,6 +14,7 @@ struct MealLog: View {
     @State private var searching = false
     @State private var isLoading = false
     @EnvironmentObject var foodViewModel: FoodAndWaterViewModel
+    @EnvironmentObject var myMealsViewModel: MyMealsViewModel
     @Environment(\.presentationMode) var presentationMode
     @Environment(\.colorScheme) var colorScheme
     @State private var selectedPickerIndex: Int = 0
@@ -61,15 +62,14 @@ struct MealLog: View {
                     }
                 }
             } else {
-                // MyMeals
-                Text("MyMeals")
+                ForEach(myMealsViewModel.myMeals, id: \.self) { myMeal in
+                    Text(myMeal.name ?? "")
+                }
             }
+            
             Spacer()
         }
         .navigationTitle(mealType)
-//        .onTapGesture {
-//            hideKeyboard()
-//        }
         .onDisappear() {
             foodViewModel.foodSearchDictionary.totalHits = nil
             foodViewModel.foodSearchResults.removeAll()

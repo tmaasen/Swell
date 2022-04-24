@@ -24,8 +24,8 @@ struct FoodRetriever: Codable, Identifiable, Comparable {
     var quantity: Int?
     var mood: String?
     var comments: String?
-    var waterOuncesToday: Double?
-    var waterLoggedToday: Int?
+    var waterOuncesToday: Double? = 0
+    var waterLoggedToday: Int? = 0
     var discontinuedDate: String?
     var foodComponents: [JSONAny]?
     var foodAttributes: [FoodAttribute]?

@@ -21,6 +21,7 @@ class FoodDataCentralViewModel: ObservableObject {
     @Published var searchResultsNumber: Int?
     var foodSearchDictionary = FoodDataCentral()
     // Retrieving Food History
+    @Published var todaysLog = [FoodRetriever()]
     @Published var foodHistory = [FoodRetriever]()
     
     /**
@@ -74,7 +75,7 @@ class FoodDataCentralViewModel: ObservableObject {
      - Parameter fdcIDs: An array of the food IDs whose data you'd like to retrieve.
      - Returns: An array of the food data for the given food IDs.
      */
-    public func getFoodsById(_ fdcIDs: [String], _ mealTypes: [String], _ servingSizes: [Int], _ moods: [String], _ comments: [String], _ docIds: [String], _ foodNames: [String], completion: @escaping () -> () = {}) {
+    public func getFoodsById(_ foodArrayToSet: [FoodRetriever],_ fdcIDs: [String], _ mealTypes: [String], _ servingSizes: [Int], _ moods: [String], _ comments: [String], _ docIds: [String], _ foodNames: [String], completion: @escaping ([FoodRetriever]) -> ()) {
         var queryItems: [URLQueryItem] = []
         queryItems.append(URLQueryItem(name: "nutrients", value: "328,418,601,401,203,209,212,213,268,287,291,303,307,318,573,406,415,204,205,211,262,269,301,306"))
 //        queryItems.append(URLQueryItem(name: "nutrients", value: "203,204,205"))
@@ -91,20 +92,20 @@ class FoodDataCentralViewModel: ObservableObject {
             .eraseToAnyPublisher()
             .sink(receiveValue: { food in
                 DispatchQueue.main.async {
-                    self.foodHistory = food
-                    if !self.foodHistory.isEmpty {
+                    var foodArray = foodArrayToSet
+                    foodArray = food
+                    if !foodArray.isEmpty {
                         for i in 0...fdcIDs.count-1 {
-                            self.foodHistory[i].foodName = foodNames[i]
-                            self.foodHistory[i].mealType = mealTypes[i]
-                            self.foodHistory[i].quantity = servingSizes[i]
-                            self.foodHistory[i].mood = moods[i]
-                            self.foodHistory[i].comments = comments[i]
-                            self.foodHistory[i].docId = docIds[i]
+                            foodArray[i].foodName = foodNames[i]
+                            foodArray[i].mealType = mealTypes[i]
+                            foodArray[i].quantity = servingSizes[i]
+                            foodArray[i].mood = moods[i]
+                            foodArray[i].comments = comments[i]
+                            foodArray[i].docId = docIds[i]
                         }
-                        print("food history count: \(self.foodHistory.count)")
-                        completion()
+                        completion(foodArray)
                     } else {
-                        completion()
+                        completion([FoodRetriever]())
                         return
                     }
                 }

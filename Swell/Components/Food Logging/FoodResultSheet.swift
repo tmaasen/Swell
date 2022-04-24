@@ -11,11 +11,12 @@ struct FoodResultSheet: View {
     var food: Food
     @State private var logCompleted: Bool = false
     @State private var liked: Bool = false
+    @State private var toast: Bool = false
     @State private var quantity: Int = 1
     @Binding var meal: String
     @Binding var showFoodInfoSheet: Bool
     @Binding var contains: [String]
-    @EnvironmentObject var userViewModel: MyMealsViewModel
+    @EnvironmentObject var myMealsViewModel: MyMealsViewModel
     @EnvironmentObject var foodViewModel: FoodAndWaterViewModel
     @Environment(\.presentationMode) var presentationMode
     @Environment(\.colorScheme) var colorScheme
@@ -39,14 +40,12 @@ struct FoodResultSheet: View {
                         .animation(.spring(response: 0.4, dampingFraction: 0.6))
                         .padding(.trailing, 20)
                         .onTapGesture {
-                            let impactMed = UIImpactFeedbackGenerator(style: .medium)
-                            impactMed.impactOccurred()
+                            // triggers a small haptic vibration
+                            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                             liked.toggle()
-                            if liked == true {
-                                userViewModel.addMeal(pFdcId: food.fdcID)
-                            } else {
-                                userViewModel.removeMeal(pFdcId: food.fdcID)
-                            }
+                            toast = liked
+                            liked == true ? myMealsViewModel.addToMyMeals(pFood: food) :
+                            myMealsViewModel.removeFromMyMeals(pFoodName: food.foodDescription)
                         }
                 }
                 .padding(.top, 70)
@@ -56,8 +55,8 @@ struct FoodResultSheet: View {
             .background(Rectangle().foregroundColor(Color("FoodSheet_Purple")))
             .clipShape(CustomShape(corner: .bottomLeft, radii: 55))
             .edgesIgnoringSafeArea(.top)
-            .toast(message: "\(liked ? "Added \(food.foodDescription.capitalizingFirstLetter()) to" : "Removed \(food.foodDescription.capitalizingFirstLetter()) from") MyMeals",
-                         isShowing: $liked,
+            .toast(message: "Added \(food.foodDescription.capitalizingFirstLetter()) to MyMeals",
+                         isShowing: $toast,
                          duration: Toast.short)
             ScrollView {
                 VStack(alignment: .leading, spacing: 15) {
@@ -65,9 +64,7 @@ struct FoodResultSheet: View {
                         Text("\(food.foodDescription.capitalizingFirstLetter())")
                             .font(.custom("Ubuntu-Bold", size: 30))
                         Spacer()
-                        NavigationLink(
-                            destination: Home(),
-                            isActive: $logCompleted,
+                        NavigationLink(destination: Home(), isActive: $logCompleted,
                             label: {
                                 Button(action: {
                                     foodViewModel.logFood(pFoodToLog: food, pQuantity: Int(quantity), pMeal: meal, pContains: contains)
@@ -84,6 +81,7 @@ struct FoodResultSheet: View {
                             })
                     }
                     .padding(.bottom, 5)
+                    
                     HStack {
                         VStack {
                             Text("Servings:")
@@ -101,10 +99,10 @@ struct FoodResultSheet: View {
                         .font(.custom("Ubuntu", size: 16))
                     Text(food.brandOwner ?? food.brandName ?? "")
                         .font(.custom("Ubuntu", size: 16))
-                    Section(header:
-                                Text("Nutrition Facts")
-                                .bold()
-                                .font(.custom("Ubuntu", size: 18))) {
+                    
+                    Section(header: Text("Nutrition Facts")
+                                        .bold()
+                                        .font(.custom("Ubuntu", size: 18))) {
                         ForEach(food.foodNutrients, id: \.self) { nutrient in
                             if nutrient.value ?? 0.0 > 0.0 {
                                 HStack {
@@ -126,6 +124,11 @@ struct FoodResultSheet: View {
                 }
             }
             .padding()
+        }
+        .onAppear() {
+            myMealsViewModel.isLiked(pFood: food.foodDescription, completion: { value in
+                liked = value
+            })
         }
         .onDisappear() {
             presentationMode.wrappedValue.dismiss()

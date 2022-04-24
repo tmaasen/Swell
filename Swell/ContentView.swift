@@ -14,6 +14,7 @@ struct ContentView: View {
     @State private var blockTouches: Bool = false
     @EnvironmentObject var authViewModel: AuthenticationViewModel
     @EnvironmentObject var foodViewModel: FoodAndWaterViewModel
+    @EnvironmentObject var myMealsViewModel: MyMealsViewModel
     var hasPersistedSignedIn = UserDefaults.standard.bool(forKey: "isLoggedIn")
     var hasLaunchedBefore = UserDefaults.standard.bool(forKey: "hasLaunchedBefore")
     
@@ -56,6 +57,7 @@ struct ContentView_Previews: PreviewProvider {
         ContentView()
             .environmentObject(AuthenticationViewModel())
             .environmentObject(FoodAndWaterViewModel())
+            .environmentObject(MyMealsViewModel())
             .environmentObject(AppDelegate())
     }
 }

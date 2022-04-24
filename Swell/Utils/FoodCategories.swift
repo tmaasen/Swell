@@ -8,6 +8,7 @@
 import Foundation
 
 class FoodCategories {
+    static var aggregatedCategories = ["Alcohol", "Baby", "Baking", "Beef", "Beverages", "Bread", "Breakfast", "Butter", "Cheese", "Chewing Gum & Mints", "Chips", "Coffee", "Condiments, Dressings, & Oils", "Cookies & Biscuits", "Dairy", "Earthy and Foreign", "Fish", "Fries", "Fruit", "Herbs and Spices", "Mexican", "Miscellaneous", "Noodles", "Nuts & Seeds", "Pizza", "Popcorn", "Pork", "Poultry & Eggs", "Salad", "Sandwich", "Soups, Sauces, and Gravies", "Supplements", "Sushi", "Sweets", "Vegetables", "Yogurt and Ice Cream"]
     static var categoryDict: [String: [String]] =
         [
             "Alcohol": ["Alchol","Alcoholic Beverages", "Beer"],
@@ -25,11 +26,11 @@ class FoodCategories {
             "Cheese": ["Cheese", "Cheese/Cheese Substitutes", "Processed Cheese & Cheese Novelties"],
             "Chewing Gum & Mints": ["Chewing Gum & Mints"],
             "Chips": ["Chips, Pretzels & Snacks", "Crackers & Biscotti", "Dips & Salsa", "Chips/Crisps/Snack Mixes - Natural/Extruded (Shelf Stable)"],
-            "Coffee": ["Coffee", "Coffee/Tea/Substitutes"],
+            "Coffee": ["Coffee", "Coffee/Tea/Substitutes", "Other Drinks"],
             "Condiments, Dressings, & Oils": ["Fats & Oils", "Condiments, Oils & Dressing", "Dressings/Dips (Shelf Stable)", "Honey", "Jam, Jelly & Fruit Spreads", "Ketchup, Mustard, BBQ & Cheese Sauce", "Oils Edible", "Vinegars/Cooking Wines", "Sauces/Spreads/Dips/Condiments", "Other Condiments", "Vegetable & Cooking Oils"],
             "Dairy": ["Dairy/Egg Based Products / Meals", "Milk", "Milk Additives", "Milk/Milk Substitutes", "Dairy and Egg Products"],
             "Salad": ["Deli Salads", "Salad Dressing & Mayonnaise"],
-            "Beverages": ["Drinks", "Drinks Flavoured - Ready to Drink", "Beverages", "Sport Drinks", "Iced & Bottle Tea", "Tea Bags", "Non Alcoholic Beverages  Not Ready to Drink", "Non Alcoholic Beverages  Ready to Drink", "Non Alcoholic Beverages ‚Äì Not Ready to Drink", "Non Alcoholic Beverages ‚Äì Ready to Drink", "Other Drinks", "Powdered Drinks", "Soda"],
+            "Beverages": ["Drinks", "Drinks Flavoured - Ready to Drink", "Beverages", "Sport Drinks", "Iced & Bottle Tea", "Tea Bags", "Non Alcoholic Beverages  Not Ready to Drink", "Non Alcoholic Beverages  Ready to Drink", "Non Alcoholic Beverages ‚Äì Not Ready to Drink", "Non Alcoholic Beverages ‚Äì Ready to Drink", "Powdered Drinks", "Soda"],
             "Poultry & Eggs": ["Egg Based Products / Meals - Not Ready to Eat (Frozen)", "Eggs & Egg Substitutes", "Poultry Products", "Frozen Poultry, Chicken & Turkey", "Poultry, Chicken & Turkey"],
             "Miscellaneous": ["Meals, Entrees, and Side Dishes", "Entrees, Sides & Small Meals", "Sausages and Luncheon Meals", "Frozen Appetizers & Hors D'oeuvres", "Food/Beverage/Tobacco Variety Packs", "Cooked & Prepared", "Frozen Dinners & Entrees", "Frozen Prepared Sides", "Lunch Snacks & Combinations", "Prepared/Preserved Foods Variety Packs", "Fast Foods", "Restaurant Foods", "Miscellanious", "Ready-Made Combination Meals", "Grain Based Products / Meals", "Grain Based Products / Meals - Not Ready to Eat - Savoury (Shelf Stable)", "Grains", "Flavored Rice Dishes", "Rice", "Flour - Cereal/Pulse (Shelf Stable)", "Flours & Corn Meal", "Grains/Flour"],
             "Fries": ["French Fries, Potatoes & Onion Rings"],

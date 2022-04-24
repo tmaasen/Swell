@@ -56,9 +56,16 @@ class FoodAndWaterViewModel: FoodDataCentralViewModel {
             }
 
             if foodIds.isEmpty {
+                self.foodHistory = [FoodRetriever]()
                 completion()
             } else {
-                self.getFoodsById(foodIds, mealTypes, servingSizes, moods, comments, docIds, foodNames, completion: {
+                self.getFoodsById(pDate == self.formatter.string(from: Date()) ? self.todaysLog : self.foodHistory, foodIds, mealTypes, servingSizes, moods, comments, docIds, foodNames, completion: { foodArray in
+                    if pDate == self.formatter.string(from: Date()) {
+                        self.todaysLog = foodArray
+                        self.foodHistory = foodArray
+                    } else {
+                        self.foodHistory = foodArray
+                    }
                     completion()
                 })
             }
@@ -96,7 +103,8 @@ class FoodAndWaterViewModel: FoodDataCentralViewModel {
             "highIn": highNutrients,
             "contains": pContains,
             "date": formatter.string(from: Timestamp(date: Date()).dateValue()),
-            "mood": ""
+            "mood": "",
+            "inMyMeals": false
         ]
         
         docRef = db.collection("users").document(Auth.auth().currentUser?.uid ?? "test").collection("food").addDocument(data: docData, completion: { error in
@@ -129,8 +137,8 @@ class FoodAndWaterViewModel: FoodDataCentralViewModel {
                 if let documentSnapshot = documentSnapshot, !documentSnapshot.exists {
                     if pDate == today {
                         self.isNewDay = true
-                        completion()
                     }
+                    completion()
                 } else if let documentSnapshot = documentSnapshot, documentSnapshot.exists {
                     self.isNewDay = false
                     self.waters.waterLoggedToday = documentSnapshot.get("waters logged") as? Int
@@ -200,15 +208,11 @@ class FoodAndWaterViewModel: FoodDataCentralViewModel {
             }
     }
     
-    func getAllHistoryByDate(date: Date = Timestamp(date: Date()).dateValue(), completion: @escaping () -> () = {}) {
-        // PROBLEM CHILDREN
-        self.foodHistory.removeAll()
-        // END PROBLEM CHILDREN
-        self.waters.waterOuncesToday = 0
-        self.waters.waterLoggedToday = 0
-        
+    func getAllHistoryByDate(date: Date = Timestamp(date: Date()).dateValue(), completion: @escaping () -> () = {}) {     
         self.getFood(date: date, completion: {
+            print("Hit getFood completion")
             self.getWater(date: date, completion: {
+                print("Hit getWater completion")
                 completion()
                 return
             })
