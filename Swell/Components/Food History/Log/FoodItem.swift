@@ -34,8 +34,6 @@ struct FoodItem: View {
                         .font(.system(size: 12))
                     Text("\(item.foodDescription?.capitalizingFirstLetter() ?? "")")
                         .font(.custom("Ubuntu-Bold", size: 12))
-//                    Text("Servings: \(item.servingSize ?? 0)")
-//                        .font(.custom("Ubuntu", size: 12))
                 }
                 Spacer()
                 // Comments

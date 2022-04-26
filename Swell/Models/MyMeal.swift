@@ -23,11 +23,12 @@ struct MyMeal: Identifiable, Comparable, Hashable {
     var id = UUID()
     // For FDC
     var foodId: String?
+    var foodInfo: FoodRetriever?
     // For FDC & custom foods
     var date: String?
     var name: String?
-    var isLiked: Bool = true
     var isCustomMeal: Bool?
+    var foodCategory: String?
     // For custom foods
     var ingredientNames: [String]?
     var ingredientValues: [String]?

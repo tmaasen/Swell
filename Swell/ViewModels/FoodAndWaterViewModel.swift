@@ -210,9 +210,7 @@ class FoodAndWaterViewModel: FoodDataCentralViewModel {
     
     func getAllHistoryByDate(date: Date = Timestamp(date: Date()).dateValue(), completion: @escaping () -> () = {}) {     
         self.getFood(date: date, completion: {
-            print("Hit getFood completion")
             self.getWater(date: date, completion: {
-                print("Hit getWater completion")
                 completion()
                 return
             })

@@ -11,8 +11,8 @@ struct FoodHistorySheet: View {
     var foodRetriever: FoodRetriever
     @Environment(\.presentationMode) var presentationMode
     @Binding var showFoodDataSheet: Bool
+    @State private var toast: Bool = false
     @State private var liked: Bool = false
-//    var lottieFoodAnimations = ["Fast Foods", "Chewing Gum & Mints", "Pizza", "Cookies & Biscuits", "Frozen Dinners & Entrees", "Powdered Drinks", "Soda", "Seasoning Mixes, Salts, Marinades & Tenderizers", "Breads & Buns", "Pre-Packaged Fruit & Vegetables"]
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -33,15 +33,16 @@ struct FoodHistorySheet: View {
                         .animation(.spring(response: 0.4, dampingFraction: 0.6))
                         .padding(.trailing, 20)
                         .onTapGesture {
-                            let impactMed = UIImpactFeedbackGenerator(style: .medium)
-                            impactMed.impactOccurred()
+                            // triggers a small haptic vibration
+                            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                             liked.toggle()
-                            // add to MyMeals
+                            toast = liked
+//                            liked == true ? myMealsViewModel.addToMyMeals(pFood: food) :
+//                            myMealsViewModel.removeFromMyMeals(pFoodName: food.foodDescription)
                         }
                 }
                 .padding(.top, 70)
                 .zIndex(1.0)
-//                lottieFoodAnimations.contains(foodRetriever.brandedFoodCategory ?? "") ? foodRetriever.brandedFoodCategory ?? "" : "Pre-Packaged Fruit & Vegetables"
                 LottieAnimation(filename: FoodCategories.categoryDict.first(where: {$0.value.contains(foodRetriever.brandedFoodCategory ?? "")})!.key, loopMode: .loop, width: .infinity, height: .infinity)
             }
             .background(Rectangle().foregroundColor(Color.yellow))
@@ -53,7 +54,7 @@ struct FoodHistorySheet: View {
                         Text("\(foodRetriever.foodDescription?.capitalizingFirstLetter() ?? "")")
                             .font(.custom("Ubuntu-Bold", size: 30))
                         Spacer()
-                        DeleteButton(docId: foodRetriever.docId ?? "", collection: "food")
+                        DeleteButton(docId: foodRetriever.docId ?? "", collection: "food", popUpText: "This will permanently remove this item from your history, as well as all mood data accociated with this item.")
                     }
                     .padding(.bottom, 5)
                     HStack {
