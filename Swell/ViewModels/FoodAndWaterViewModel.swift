@@ -73,34 +73,16 @@ class FoodAndWaterViewModel: FoodDataCentralViewModel {
     }
     
     /// Logs a food item's fdcid into Cloud Firestore
-    func logFood(pFoodToLog: Food, pQuantity: Int = 1, pMeal: String, pContains: [String] = []) {
+    func logFood(pFoodToLog: Food, pHighNutrients: [String], pQuantity: Int = 1, pMeal: String, pContains: [String] = []) {
         formatter.dateFormat = "EEEE MMM dd, yyyy"
-        var highNutrients = [String]()
-        
         var docRef: DocumentReference
-        
-        // if food is high in nutrient, log nutrient
-        // 20% DV or more of a nutrient per serving is considered high (fda)
-        for nutrient in pFoodToLog.foodNutrients {
-            if nutrient.value ?? 0 > 20 {
-                if nutrient.nutrientName! == "Protein" {
-                    highNutrients.append("Protein")
-                }
-                if nutrient.nutrientName! == "Sugars, total including NLEA" {
-                    highNutrients.append("Sugar")
-                }
-                if nutrient.nutrientName! == "Carbohydrate, by difference" {
-                    highNutrients.append("Carbohydrates")
-                }
-            }
-        }
         
         let docData: [String: Any] = [
             "foodId": pFoodToLog.fdcID,
             "foodName": pFoodToLog.foodDescription,
             "quantity": pQuantity,
             "meal": pMeal,
-            "highIn": highNutrients,
+            "highIn": pHighNutrients,
             "contains": pContains,
             "date": formatter.string(from: Timestamp(date: Date()).dateValue()),
             "mood": "",

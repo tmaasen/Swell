@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct FdcFavoritesListItem: View {
-    var food: FoodRetriever
+    var foodRetriever: FoodRetriever
     var foodCategory: String
     var foodName: String
     @State var showFoodInfoSheet: Bool = false
@@ -42,8 +42,8 @@ struct FdcFavoritesListItem: View {
                             .font(.custom("Ubuntu", size: 12))
                     }
                 }
-                if (food.brandOwner != nil) || (food.brandName != nil) {
-                    Text(food.brandOwner ?? food.brandName ?? "")
+                if (foodRetriever.brandOwner != nil) || (foodRetriever.brandName != nil) {
+                    Text(foodRetriever.brandOwner ?? foodRetriever.brandName ?? "")
                         .foregroundColor(Color("FoodListItem_DarkGray"))
                         .font(.custom("Ubuntu", size: 12))
                 }
@@ -61,10 +61,10 @@ struct FdcFavoritesListItem: View {
             showFoodInfoSheet = true
         }
         .sheet(isPresented: $showFoodInfoSheet) {
-            FoodHistorySheet(foodRetriever: food, showFoodDataSheet: $showFoodInfoSheet)
+            FoodResultSheet(food: Food(fdcID: 0, foodDescription: "", lowercaseDescription: "", score: 0, foodNutrients: [FoodNutrient]()), foodRetriever: foodRetriever, meal: .constant(""), showFoodInfoSheet: $showFoodInfoSheet, contains: $contains)
         }
         .onAppear() {
-            checkSpecialFoodNutrients(food: food)
+            checkSpecialFoodNutrients(food: foodRetriever)
         }
     }
     func checkSpecialFoodNutrients(food: FoodRetriever) {

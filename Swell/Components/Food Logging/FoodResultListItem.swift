@@ -60,7 +60,7 @@ struct FoodResultListItem: View {
             showFoodInfoSheet = true
         }
         .sheet(isPresented: $showFoodInfoSheet) {
-            FoodResultSheet(food: food, meal: $meal, showFoodInfoSheet: $showFoodInfoSheet, contains: $contains)
+            FoodResultSheet(food: food, foodRetriever: FoodRetriever(), meal: $meal, showFoodInfoSheet: $showFoodInfoSheet, contains: $contains)
         }
         .onAppear() {
             checkSpecialFoodNutrients(food: food)

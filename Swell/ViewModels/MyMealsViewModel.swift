@@ -29,6 +29,8 @@ class MyMealsViewModel: ObservableObject {
                 completion()
                 return
             }
+            print("myMeals collection changed!")
+            
             self.myMeals.removeAll()
             var myMeal = MyMeal()
             var foodIds = [String]()
@@ -53,7 +55,7 @@ class MyMealsViewModel: ObservableObject {
                 
                 self.myMeals.append(myMeal)
             }
-            print(self.myMeals.count)
+            
             if foodIds.isEmpty {
                 completion()
             } else {
@@ -74,36 +76,20 @@ class MyMealsViewModel: ObservableObject {
         completion(false)
     }
     
-    func addToMyMeals(pFood: Food, completion: @escaping () -> () = {}) {
+    func addToMyMeals(pFoodId: Int, pFoodName: String, pFoodCategory: String, pHighNutrients: [String], completion: @escaping () -> () = {}) {
         formatter.dateFormat = "EEEE MMM dd, yyyy"
-        var highNutrients = [String]()
-        // if food is high in nutrient, log nutrient
-        // 20% DV or more of a nutrient per serving is considered high (fda)
-        for nutrient in pFood.foodNutrients {
-            if nutrient.value ?? 0 > 20 {
-                if nutrient.nutrientName! == "Protein" {
-                    highNutrients.append("Protein")
-                }
-                if nutrient.nutrientName! == "Sugars, total including NLEA" {
-                    highNutrients.append("Sugar")
-                }
-                if nutrient.nutrientName! == "Carbohydrate, by difference" {
-                    highNutrients.append("Carbohydrates")
-                }
-            }
-        }
         
         let docData: [String: Any] = [
-            "foodId": pFood.fdcID,
-            "name": pFood.foodDescription,
-            "highIn": highNutrients,
+            "foodId": pFoodId,
+            "name": pFoodName,
+            "highIn": pHighNutrients,
             "isCustomMeal": false,
-            "category": pFood.foodCategory!,
+            "category": pFoodCategory,
             "date": formatter.string(from: Timestamp(date: Date()).dateValue()),
         ]
         
         db.collection("users").document(Auth.auth().currentUser?.uid ?? "user").collection("myMeals")
-            .document(pFood.foodDescription).setData(docData, completion: { error in
+            .document(pFoodName).setData(docData, completion: { error in
             if let error = error {
                 print("Error in addToMyMeals method: \(error.localizedDescription)")
                 completion()
@@ -146,7 +132,7 @@ class MyMealsViewModel: ObservableObject {
         })
     }
     
-    public func getFoodsFromFDC(_ fdcIDs: [String], completion: @escaping () -> () = {}) {
+    func getFoodsFromFDC(_ fdcIDs: [String], completion: @escaping () -> () = {}) {
         var queryItems: [URLQueryItem] = []
         queryItems.append(URLQueryItem(name: "nutrients", value: "328,418,601,401,203,209,212,213,268,287,291,303,307,318,573,406,415,204,205,211,262,269,301,306"))
         queryItems.append(contentsOf: fdcIDs.map { URLQueryItem(name: "fdcIds", value: $0) })
@@ -165,9 +151,6 @@ class MyMealsViewModel: ObservableObject {
                     if !food.isEmpty {
                         for i in 0...fdcIDs.count-1 {
                             self.myMeals[i].foodInfo = food[i]
-                            
-                            
-                            print(self.myMeals[i].foodInfo!)
                         }
                         completion()
                     }
