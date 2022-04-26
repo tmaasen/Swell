@@ -40,9 +40,6 @@ struct AvatarIcon: View {
         .sheet(isPresented: $showPhotoPickerSheet, content: {
             PhotoPicker()
         })
-        .onAppear() {
-            print(isShowingSidebar)
-        }
     }
 }
 

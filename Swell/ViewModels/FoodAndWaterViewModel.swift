@@ -73,13 +73,13 @@ class FoodAndWaterViewModel: FoodDataCentralViewModel {
     }
     
     /// Logs a food item's fdcid into Cloud Firestore
-    func logFood(pFoodToLog: Food, pHighNutrients: [String], pQuantity: Int = 1, pMeal: String, pContains: [String] = []) {
+    func logFood(pFoodId: Int, pFoodName: String, pHighNutrients: [String], pQuantity: Int = 1, pMeal: String, pContains: [String] = []) {
         formatter.dateFormat = "EEEE MMM dd, yyyy"
         var docRef: DocumentReference
         
         let docData: [String: Any] = [
-            "foodId": pFoodToLog.fdcID,
-            "foodName": pFoodToLog.foodDescription,
+            "foodId": pFoodId,
+            "foodName": pFoodName,
             "quantity": pQuantity,
             "meal": pMeal,
             "highIn": pHighNutrients,
@@ -95,7 +95,7 @@ class FoodAndWaterViewModel: FoodDataCentralViewModel {
             }
         })
         
-        NotificationManager.instance.scheduleNotification(mealType: pMeal, foodTitle: pFoodToLog.foodDescription, docRef: docRef.documentID)
+        NotificationManager.instance.scheduleNotification(mealType: pMeal, foodTitle: pFoodName, docRef: docRef.documentID)
     }
     
     /**

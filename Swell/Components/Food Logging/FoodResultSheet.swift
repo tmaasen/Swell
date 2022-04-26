@@ -83,7 +83,12 @@ struct FoodResultSheet: View {
                         NavigationLink(destination: Home(), isActive: $logCompleted,
                             label: {
                                 Button(action: {
-//                                    foodViewModel.logFood(pFoodToLog: food, pHighNutrients: getHighNutrients(pFoodNutrients: food.foodNutrients), pQuantity: Int(quantity), pMeal: meal, pContains: contains)
+                                    if food.foodDescription == "" {
+                                        // add meal type
+                                        foodViewModel.logFood(pFoodId: foodRetriever.fdcID ?? 0, pFoodName: foodRetriever.foodDescription ?? "", pHighNutrients: getHighNutrients(pFoodNutrients: [FoodNutrient](), pFoodRetrieverNutrients: foodRetriever.foodNutrients ?? [FoodResultNutrient]()), pQuantity: Int(quantity), pMeal: meal, pContains: contains)
+                                    } else {
+                                        foodViewModel.logFood(pFoodId: food.fdcID, pFoodName: food.foodDescription, pHighNutrients: getHighNutrients(pFoodNutrients: food.foodNutrients, pFoodRetrieverNutrients: [FoodResultNutrient]()), pQuantity: Int(quantity), pMeal: meal, pContains: contains)
+                                    }
                                     logCompleted = true
                                     DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
                                         presentationMode.wrappedValue.dismiss()
@@ -106,10 +111,8 @@ struct FoodResultSheet: View {
                         Spacer()
                         Stepper("\(quantity)", value: $quantity, in: 1...60, step: 1)
                             .font(.custom("Ubuntu", size: 16))
-//                        if (food.servingSize != nil) {
-                            Text("(\((foodRetriever.servingSize ?? food.servingSize ?? 1 * Double(quantity)), specifier: "%.2f")\(foodRetriever.servingSizeUnit ?? food.servingSizeUnit ?? ""))")
-                                .font(.custom("Ubuntu", size: 14))
-//                        }
+                        Text("(\((foodRetriever.servingSize ?? food.servingSize ?? 1 * Double(quantity)), specifier: "%.2f")\(foodRetriever.servingSizeUnit ?? food.servingSizeUnit ?? ""))")
+                            .font(.custom("Ubuntu", size: 14))
                     }
                     Text("Category: \(foodRetriever.brandedFoodCategory ?? food.foodCategory ?? "")")
                         .font(.custom("Ubuntu", size: 16))
@@ -147,11 +150,9 @@ struct FoodResultSheet: View {
                             }
                         }
                     }
-//                if (foodRetriever.ingredients ?? food.ingredients != nil) {
-                        Text("Ingredients: \(foodRetriever.ingredients ?? food.ingredients ?? "")")
-                            .font(.custom("Ubuntu", size: 16))
-                            .lineSpacing(5)
-//                    }
+                    Text("Ingredients: \(foodRetriever.ingredients ?? food.ingredients ?? "")")
+                        .font(.custom("Ubuntu", size: 16))
+                        .lineSpacing(5)
                 }
             }
             .padding()
