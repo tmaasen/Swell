@@ -62,8 +62,14 @@ struct MealLog: View {
                     }
                 }
             } else {
-                ForEach(myMealsViewModel.myMeals, id: \.self) { myMeal in
-                    Text(myMeal.name ?? "")
+                ScrollView {
+                    ForEach(myMealsViewModel.myMeals, id: \.self) { myMeal in
+                        if myMeal.isCustomMeal! {
+                            CustomMealsListItem(myMeal: myMeal)
+                        } else {
+                            FdcFavoritesListItem(foodRetriever: myMeal.foodInfo ?? FoodRetriever(), foodCategory: myMeal.foodCategory ?? "food", foodName: myMeal.name ?? "", meal: $mealType)
+                        }
+                    }
                 }
             }
             

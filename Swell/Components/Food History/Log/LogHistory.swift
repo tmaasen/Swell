@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct LogHistory: View {
-    @EnvironmentObject var foodViewModel: FoodAndWaterViewModel
+    @EnvironmentObject var myMealsViewModel: MyMealsViewModel
+    @StateObject var historyLogViewModel = HistoryLogViewModel()
     @State private var selectedDate = Date()
     @State private var isLoading: Bool = false
     
@@ -21,7 +22,7 @@ struct LogHistory: View {
                 } else {
                     // NO DATA
                     VStack(alignment: .center) {
-                        if foodViewModel.foodHistory.isEmpty && foodViewModel.waters.waterOuncesToday == 0 {
+                        if historyLogViewModel.foodHistory.isEmpty && historyLogViewModel.waters.waterOuncesToday == 0 {
                             Image("NoData")
                                 .resizable()
                                 .scaledToFit()
@@ -31,25 +32,30 @@ struct LogHistory: View {
                         }
                     }
                     // DATA
-                    if !foodViewModel.foodHistory.isEmpty {
+                    if !historyLogViewModel.foodHistory.isEmpty {
                         ForEach(MealTypes.allCases, id: \.self) { meal in
-                            if foodViewModel.foodHistory.first(where: {$0.mealType == meal.text}) != nil {
+                            if historyLogViewModel.foodHistory.first(where: {$0.mealType == meal.text}) != nil {
                                 Text(meal.text)
                                     .font(.custom("Ubuntu-BoldItalic", size: 20))
                                     .padding()
                             }
-                            ForEach(foodViewModel.foodHistory, id: \.self.id) { item in
+                            ForEach(historyLogViewModel.foodHistory, id: \.self.id) { item in
                                 if item.mealType == meal.text && item.mealType != "Water" {
                                     FoodItem(item: item)
                                 }
                             }
+                            ForEach(myMealsViewModel.myMeals, id: \.self) { item in
+                                if item.mealType == meal.text {
+                                    FoodItem(item: item.foodInfo ?? FoodRetriever())
+                                }
+                            }
                         }
                     }
-                    if foodViewModel.waters.waterOuncesToday ?? 0 > 0 {
+                    if historyLogViewModel.waters.waterOuncesToday ?? 0 > 0 {
                         Text("Water")
                             .font(.custom("Ubuntu-BoldItalic", size: 20))
                             .padding(.horizontal)
-                        WaterItem()
+                        WaterItem(waterOunces: historyLogViewModel.waters.waterOuncesToday ?? 0)
                     }
                 }
             }
@@ -58,12 +64,23 @@ struct LogHistory: View {
                     DatePicker("📅", selection: $selectedDate, in: ...Date(), displayedComponents: .date)
                         .onChange(of: selectedDate, perform: { _ in
                             isLoading = true
-                            foodViewModel.getAllHistoryByDate(date: selectedDate, completion: {
+                            historyLogViewModel.foodHistory.removeAll()
+                            historyLogViewModel.waters.waterOuncesToday = 0
+                            historyLogViewModel.waters.waterLoggedToday = 0
+                            historyLogViewModel.getAllHistoryByDate(date: selectedDate, completion: {
                                 isLoading = false
                             })
                         })
                 }
             }
+        }
+        .onAppear() {
+            historyLogViewModel.getAllHistoryByDate(date: Date(), completion: {
+                print("items: \(historyLogViewModel.foodHistory.count)")
+            })
+            myMealsViewModel.getMyMeals(completion: {
+                print("myMeals: \(myMealsViewModel.myMeals.count)")
+            })
         }
     }
 }

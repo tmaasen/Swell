@@ -74,16 +74,20 @@ struct WaterLog: View {
             }
         }
         .onAppear() {
-            foodViewModel.getWater(completion: {
-                if foodViewModel.isNewDay == true {
-                    ounces = 8
-                    watersLogged = 0
-                    waterLogDict.keys.forEach { waterLogDict[$0] = false }
-                } else {
-                    let waters = foodViewModel.waters.waterLoggedToday ?? 0
-                    for i in 0...waters {
-                        waterLogDict[i] = true
+            foodViewModel.getWater(completion: { didCompleteSuccessfully in
+                if didCompleteSuccessfully {
+                    if foodViewModel.isNewDay == true {
+                        ounces = 8
+                        watersLogged = 0
+                        waterLogDict.keys.forEach { waterLogDict[$0] = false }
+                    } else {
+                        let waters = foodViewModel.waters.waterLoggedToday ?? 0
+                        for i in 0...waters {
+                            waterLogDict[i] = true
+                        }
                     }
+                } else {
+                    // handle error
                 }
             })
         }

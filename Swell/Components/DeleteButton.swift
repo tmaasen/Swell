@@ -16,7 +16,6 @@ struct DeleteButton: View {
     
     var body: some View {
         HStack {
-            Spacer()
             Button(action: {
                 showDeleteActionSheet = true
             }, label: {

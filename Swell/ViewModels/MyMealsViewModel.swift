@@ -29,7 +29,6 @@ class MyMealsViewModel: ObservableObject {
                 completion()
                 return
             }
-            print("myMeals collection changed!")
             
             self.myMeals.removeAll()
             var myMeal = MyMeal()
@@ -40,6 +39,7 @@ class MyMealsViewModel: ObservableObject {
                 myMeal.isCustomMeal = document.get("isCustomMeal") as? Bool
                 myMeal.date = document.get("date") as? String
                 myMeal.foodCategory = document.get("category") as? String
+                myMeal.mealType = document.get("meal") as? String
                 
                 if document.get("isCustomMeal") as? Bool == true {
                     myMeal.ingredientNames = document.get("ingredientNames") as? [String]
@@ -74,6 +74,34 @@ class MyMealsViewModel: ObservableObject {
                 }
             }
         completion(false)
+    }
+    
+    func logCustomMeal(pFoodId: Int, pFoodName: String, pHighNutrients: [String], pQuantity: Int = 1, pMeal: String, pContains: [String] = [], completion: @escaping (Bool) -> ()) {
+        
+        formatter.dateFormat = "EEEE MMM dd, yyyy"
+        var docRef: DocumentReference
+        
+        let docData: [String: Any] = [
+            "foodId": pFoodId,
+            "foodName": pFoodName,
+            "quantity": pQuantity,
+            "meal": pMeal,
+            "highIn": pHighNutrients,
+            "contains": pContains,
+            "date": formatter.string(from: Timestamp(date: Date()).dateValue()),
+            "mood": "",
+            "inMyMeals": true
+        ]
+        
+        docRef = db.collection("users").document(Auth.auth().currentUser?.uid ?? "test").collection("food").addDocument(data: docData, completion: { error in
+            if let error = error {
+                print("Error in logCustomMeal method: \(error.localizedDescription)")
+                completion(false)
+            }
+        })
+        
+        NotificationManager.instance.scheduleNotification(mealType: pMeal, foodTitle: pFoodName, docRef: docRef.documentID)
+        completion(true)
     }
     
     func addToMyMeals(pFoodId: Int, pFoodName: String, pFoodCategory: String, pHighNutrients: [String], completion: @escaping () -> () = {}) {

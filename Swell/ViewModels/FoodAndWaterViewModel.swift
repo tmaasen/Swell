@@ -19,7 +19,7 @@ class FoodAndWaterViewModel: FoodDataCentralViewModel {
         self.getAllHistoryByDate(date: Date(), completion: {})
     }
 
-    func getFood(date: Date = Timestamp(date: Date()).dateValue(), completion: @escaping () -> () = {}) {
+    func getFood(date: Date = Timestamp(date: Date()).dateValue(), completion: @escaping (Bool) -> ()) {
         formatter.dateFormat = "EEEE MMM dd, yyyy"
         let pDate = formatter.string(from: date)
         let docRef = db.collection("users").document(Auth.auth().currentUser?.uid ?? "user").collection("food").whereField("date", isEqualTo: pDate)
@@ -27,7 +27,7 @@ class FoodAndWaterViewModel: FoodDataCentralViewModel {
         docRef.addSnapshotListener { (querySnapshot, error) in
             guard error == nil else {
                 print("Error in getFoodIds method:", error?.localizedDescription ?? "")
-                completion()
+                completion(false)
                 return
             }
             var foodIds = [String]()
@@ -57,7 +57,7 @@ class FoodAndWaterViewModel: FoodDataCentralViewModel {
 
             if foodIds.isEmpty {
                 self.foodHistory = [FoodRetriever]()
-                completion()
+                completion(true)
             } else {
                 self.getFoodsById(pDate == self.formatter.string(from: Date()) ? self.todaysLog : self.foodHistory, foodIds, mealTypes, servingSizes, moods, comments, docIds, foodNames, completion: { foodArray in
                     if pDate == self.formatter.string(from: Date()) {
@@ -66,7 +66,7 @@ class FoodAndWaterViewModel: FoodDataCentralViewModel {
                     } else {
                         self.foodHistory = foodArray
                     }
-                    completion()
+                    completion(true)
                 })
             }
         }
@@ -102,7 +102,7 @@ class FoodAndWaterViewModel: FoodDataCentralViewModel {
      Gets the water logged and total ounces drank from a user daily.
      Also runs a check to see if it is a new day. If so, the water logger resets itself.
      */
-    func getWater(date: Date = Timestamp(date: Date()).dateValue(), completion: @escaping () -> () = {}) {
+    func getWater(date: Date = Timestamp(date: Date()).dateValue(), completion: @escaping (Bool) -> ()) {
         formatter.dateFormat = "EEEE MMM dd, yyyy"
         let pDate = formatter.string(from: date)
         let today = formatter.string(from: Date())
@@ -114,19 +114,20 @@ class FoodAndWaterViewModel: FoodDataCentralViewModel {
             .addSnapshotListener { (documentSnapshot, error) in
                 guard error == nil else {
                     print("Error in getWater method:", error?.localizedDescription ?? "")
+                    completion(false)
                     return
                 }
                 if let documentSnapshot = documentSnapshot, !documentSnapshot.exists {
                     if pDate == today {
                         self.isNewDay = true
                     }
-                    completion()
+                    completion(true)
                 } else if let documentSnapshot = documentSnapshot, documentSnapshot.exists {
                     self.isNewDay = false
                     self.waters.waterLoggedToday = documentSnapshot.get("waters logged") as? Int
                     self.waters.waterOuncesToday = documentSnapshot.get("total ounces") as? Double
                     self.waters.docId = documentSnapshot.documentID
-                    completion()
+                    completion(true)
                 }
             }
     }
@@ -190,12 +191,15 @@ class FoodAndWaterViewModel: FoodDataCentralViewModel {
             }
     }
     
-    func getAllHistoryByDate(date: Date = Timestamp(date: Date()).dateValue(), completion: @escaping () -> () = {}) {     
-        self.getFood(date: date, completion: {
-            self.getWater(date: date, completion: {
-                completion()
-                return
-            })
+    func getAllHistoryByDate(date: Date = Timestamp(date: Date()).dateValue(), completion: @escaping () -> () = {}) {
+        self.getFood(date: date, completion: { didCompleteSuccessfully in
+            if didCompleteSuccessfully {
+                self.getWater(date: date, completion: { didCompleteSuccessfully in
+                    if didCompleteSuccessfully {
+                        completion()
+                    }
+                })
+            }
         })
     }
     

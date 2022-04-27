@@ -35,7 +35,7 @@ struct MyMeals: View {
                         }
                     } else {
                         if !(myMeal.isCustomMeal!) {
-                            FdcFavoritesListItem(foodRetriever: myMeal.foodInfo ?? FoodRetriever(), foodCategory: myMeal.foodCategory!, foodName: myMeal.name!)
+                            FdcFavoritesListItem(foodRetriever: myMeal.foodInfo ?? FoodRetriever(), foodCategory: myMeal.foodCategory!, foodName: myMeal.name!, meal: .constant(""))
                         }
                     }
                 }

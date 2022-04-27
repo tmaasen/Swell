@@ -58,13 +58,11 @@ class FoodDataCentralViewModel: ObservableObject {
                     if self.foodSearchResults.isEmpty {
                         self.error = "No results. Please try again."
                         completion()
-                        return
                     }
                 }
             } catch {
                 print("JSONSerialization error:", error)
                 completion()
-                return
             }
         }
         .resume()
@@ -76,6 +74,7 @@ class FoodDataCentralViewModel: ObservableObject {
      - Returns: An array of the food data for the given food IDs.
      */
     public func getFoodsById(_ foodArrayToSet: [FoodRetriever],_ fdcIDs: [String], _ mealTypes: [String], _ servingSizes: [Int], _ moods: [String], _ comments: [String], _ docIds: [String], _ foodNames: [String], completion: @escaping ([FoodRetriever]) -> ()) {
+        
         var queryItems: [URLQueryItem] = []
         queryItems.append(URLQueryItem(name: "nutrients", value: "328,418,601,401,203,209,212,213,268,287,291,303,307,318,573,406,415,204,205,211,262,269,301,306"))
 //        queryItems.append(URLQueryItem(name: "nutrients", value: "203,204,205"))
@@ -106,7 +105,6 @@ class FoodDataCentralViewModel: ObservableObject {
                         completion(foodArray)
                     } else {
                         completion([FoodRetriever]())
-                        return
                     }
                 }
             })

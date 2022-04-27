@@ -8,14 +8,15 @@
 import SwiftUI
 
 struct WaterItem: View {
-    @EnvironmentObject var foodViewModel: FoodAndWaterViewModel
+//    @EnvironmentObject var foodViewModel: FoodAndWaterViewModel
+    var waterOunces: Double
     
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
                 LottieAnimation(filename: "water", loopMode: .playOnce, width: 50, height: 60, animationSpeed: 2.5)
                 VStack(spacing: 5) {
-                    Text("You drank \(foodViewModel.waters.waterOuncesToday ?? 0, specifier: "%.1f") fluid ounces of water")
+                    Text("You drank \(waterOunces, specifier: "%.1f") fluid ounces of water")
                         .font(.custom("Ubuntu", size: 16))
                 }
             }
@@ -30,6 +31,6 @@ struct WaterItem: View {
 
 struct HistoryWaterItem_Previews: PreviewProvider {
     static var previews: some View {
-        WaterItem()
+        WaterItem(waterOunces: 0)
     }
 }

@@ -17,6 +17,7 @@ struct FdcFavoritesListItem: View {
     @State private var containsCaffeine: Bool = false
     @State private var isWholeGrain: Bool = false
     @State var contains = [String]()
+    @Binding var meal: String
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
@@ -61,7 +62,7 @@ struct FdcFavoritesListItem: View {
             showFoodInfoSheet = true
         }
         .sheet(isPresented: $showFoodInfoSheet) {
-            FoodResultSheet(food: Food(fdcID: 0, foodDescription: "", lowercaseDescription: "", score: 0, foodNutrients: [FoodNutrient]()), foodRetriever: foodRetriever, meal: .constant(""), showFoodInfoSheet: $showFoodInfoSheet, contains: $contains)
+            FoodResultSheet(food: Food(fdcID: 0, foodDescription: "", lowercaseDescription: "", score: 0, foodNutrients: [FoodNutrient]()), foodRetriever: foodRetriever, meal: $meal, showFoodInfoSheet: $showFoodInfoSheet, contains: $contains)
         }
         .onAppear() {
             checkSpecialFoodNutrients(food: foodRetriever)

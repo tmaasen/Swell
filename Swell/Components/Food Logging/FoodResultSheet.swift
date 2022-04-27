@@ -15,6 +15,7 @@ struct FoodResultSheet: View {
     @State private var toast: Bool = false
     @State private var quantity: Int = 1
     @Binding var meal: String
+    @State private var selectedMeal: String = "Breakfast"
     @Binding var showFoodInfoSheet: Bool
     @Binding var contains: [String]
     @EnvironmentObject var myMealsViewModel: MyMealsViewModel
@@ -84,8 +85,7 @@ struct FoodResultSheet: View {
                             label: {
                                 Button(action: {
                                     if food.foodDescription == "" {
-                                        // add meal type
-                                        foodViewModel.logFood(pFoodId: foodRetriever.fdcID ?? 0, pFoodName: foodRetriever.foodDescription ?? "", pHighNutrients: getHighNutrients(pFoodNutrients: [FoodNutrient](), pFoodRetrieverNutrients: foodRetriever.foodNutrients ?? [FoodResultNutrient]()), pQuantity: Int(quantity), pMeal: meal, pContains: contains)
+                                        foodViewModel.logFood(pFoodId: foodRetriever.fdcID ?? 0, pFoodName: foodRetriever.foodDescription ?? "", pHighNutrients: getHighNutrients(pFoodNutrients: [FoodNutrient](), pFoodRetrieverNutrients: foodRetriever.foodNutrients ?? [FoodResultNutrient]()), pQuantity: Int(quantity), pMeal: selectedMeal, pContains: contains)
                                     } else {
                                         foodViewModel.logFood(pFoodId: food.fdcID, pFoodName: food.foodDescription, pHighNutrients: getHighNutrients(pFoodNutrients: food.foodNutrients, pFoodRetrieverNutrients: [FoodResultNutrient]()), pQuantity: Int(quantity), pMeal: meal, pContains: contains)
                                     }
@@ -102,7 +102,10 @@ struct FoodResultSheet: View {
                             })
                     }
                     .padding(.bottom, 5)
-                    
+                    // When a meal type is not specified
+                    if meal == "" {
+                        MealTypePicker(selectedMeal: $selectedMeal)
+                    }
                     HStack {
                         VStack {
                             Text("Servings:")
@@ -111,7 +114,7 @@ struct FoodResultSheet: View {
                         Spacer()
                         Stepper("\(quantity)", value: $quantity, in: 1...60, step: 1)
                             .font(.custom("Ubuntu", size: 16))
-                        Text("(\((foodRetriever.servingSize ?? food.servingSize ?? 1 * Double(quantity)), specifier: "%.2f")\(foodRetriever.servingSizeUnit ?? food.servingSizeUnit ?? ""))")
+                        Text("(\(((foodRetriever.servingSize ?? food.servingSize ?? 1) * Double(quantity)), specifier: "%.2f")\(foodRetriever.servingSizeUnit ?? food.servingSizeUnit ?? ""))")
                             .font(.custom("Ubuntu", size: 14))
                     }
                     Text("Category: \(foodRetriever.brandedFoodCategory ?? food.foodCategory ?? "")")
@@ -210,16 +213,5 @@ struct FoodResultSheet: View {
 struct FoodResultSheet_Previews: PreviewProvider {
     static var previews: some View {
         FoodResultSheet(food: Food(id: UUID(), fdcID: 123456, foodDescription: "McDonald's Cheeseburger", lowercaseDescription: "mcdonalds cheeseburger", score: 500.00, foodNutrients: [FoodNutrient()]), foodRetriever: FoodRetriever(), meal: .constant("Snack"), showFoodInfoSheet: .constant(false), contains: .constant(["Gluten"]))
-    }
-}
-
-struct CustomShape: Shape {
-    var corner: UIRectCorner
-    var radii: CGFloat
-    
-    func path(in rect: CGRect) -> Path {
-        let path = UIBezierPath(roundedRect: rect, byRoundingCorners: corner, cornerRadii: CGSize(width: radii, height: radii))
-        
-        return Path(path.cgPath)
     }
 }

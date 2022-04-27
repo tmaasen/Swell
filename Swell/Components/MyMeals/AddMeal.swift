@@ -37,7 +37,7 @@ struct AddMeal: View {
             }
             
             Section(header: Text("Ingredients")) {
-                ForEach(0..<ingredientNames.count, id: \.self){ ingredient in
+                ForEach(0..<ingredientNames.count, id: \.self) { ingredient in
                     HStack(spacing: 5){
                         TextField("Ingredient", text: $ingredientNames[ingredient])
                         Divider()
