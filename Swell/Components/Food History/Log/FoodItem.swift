@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct FoodItem: View {
-    var item: FoodRetriever
+    var fdcFoodHistory: FoodRetriever
+    var customFoodHistory: MyMeal
     @State private var showFoodDataSheet = false
     
     var body: some View {
@@ -16,8 +17,8 @@ struct FoodItem: View {
             HStack(alignment: .center) {
                 // Mood
                 VStack(alignment: .center) {
-                    if getMoodEmoji(pMood: item.mood ?? "") != "" {
-                        Text("\(getMoodEmoji(pMood: item.mood ?? ""))")
+                    if getMoodEmoji(pMood: fdcFoodHistory.mood ?? customFoodHistory.mood ?? "") != "" {
+                        Text("\(getMoodEmoji(pMood: fdcFoodHistory.mood ?? ""))")
                             .font(.system(size: 45))
                     } else {
                         Circle()
@@ -32,7 +33,7 @@ struct FoodItem: View {
                         .italic()
                         .foregroundColor(.gray)
                         .font(.system(size: 12))
-                    Text("\(item.foodDescription?.capitalizingFirstLetter() ?? "")")
+                    Text("\(fdcFoodHistory.foodDescription?.capitalizingFirstLetter() ?? customFoodHistory.name ?? "")")
                         .font(.custom("Ubuntu-Bold", size: 12))
                 }
                 Spacer()
@@ -42,8 +43,13 @@ struct FoodItem: View {
                         .italic()
                         .foregroundColor(.gray)
                         .font(.system(size: 12))
-                    Text("\(item.comments != "" ? item.comments! : "No comments.")")
-                        .font(.custom("Ubuntu", size: 14))
+                    if fdcFoodHistory == FoodRetriever() {
+                        Text("\(customFoodHistory.comments != "" ? customFoodHistory.comments ?? "" : "No comments.")")
+                            .font(.custom("Ubuntu", size: 14))
+                    } else {
+                        Text("\(fdcFoodHistory.comments != "" ? fdcFoodHistory.comments ?? "" : "No comments.")")
+                            .font(.custom("Ubuntu", size: 14))
+                    }
                 }
                 Spacer()
                 // Info icon
@@ -55,7 +61,11 @@ struct FoodItem: View {
                             showFoodDataSheet.toggle()
                         }
                         .fullScreenCover(isPresented: $showFoodDataSheet) {
-                            FoodHistorySheet(foodRetriever: item, showFoodDataSheet: $showFoodDataSheet)
+                            if fdcFoodHistory == FoodRetriever() {
+                                CustomMealsSheet(myMeal: customFoodHistory, contains: .constant([""]))
+                            } else {
+                                FoodHistorySheet(foodRetriever: fdcFoodHistory, showFoodDataSheet: $showFoodDataSheet)
+                            }
                         }
                 }
             }
@@ -77,6 +87,6 @@ struct FoodItem: View {
 
 struct HistoryFoodItem_Previews: PreviewProvider {
     static var previews: some View {
-        FoodItem(item: FoodRetriever(id: UUID(), mealType: "Breakfast", mood: "Happy", comments: "Today was good!", fdcID: 111111, foodDescription: "Cheese Omelet"))
+        FoodItem(fdcFoodHistory: FoodRetriever(id: UUID(), mealType: "Breakfast", mood: "Happy", comments: "Today was good!", fdcID: 111111, foodDescription: "Cheese Omelet"), customFoodHistory: MyMeal())
     }
 }

@@ -47,9 +47,8 @@ struct CustomMealsSheet: View {
                         
                         Button(action: {
                             myMealsViewModel.logCustomMeal(pFoodId: Int(myMeal.foodId ?? "") ?? 0, pFoodName: myMeal.name ?? "", pHighNutrients: getHighNutrients(pFoodNutrients: myMeal.foodInfo?.foodNutrients ?? [FoodResultNutrient]()), pQuantity: quantity, pMeal: selectedMeal, pContains: contains, completion: { didCompleteSuccessfully in
-                                print(didCompleteSuccessfully)
+                                logCompleted = true
                             })
-                            logCompleted = true
                             DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
                                 presentationMode.wrappedValue.dismiss()
                             })

@@ -8,9 +8,10 @@
 import SwiftUI
 
 struct TodaysLog: View {
-    @EnvironmentObject var foodViewModel: FoodAndWaterViewModel
+    @StateObject var historyLogViewModel = HistoryLogViewModel()
     @State private var isLoading = true
-    @State private var tempTodaysLog: [FoodRetriever] = []
+    @State private var tempTodaysLog = [TodaysLogItem]()
+    @State private var todaysLog = [TodaysLogItem]()
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -24,12 +25,12 @@ struct TodaysLog: View {
                     LoadingShimmer(width: 200, height: 150)
                 }
             }
-            if !isLoading && !foodViewModel.todaysLog.isEmpty {
+            if !isLoading {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 20) {
                         ForEach(MealTypes.allCases, id: \.self) { meal in
-                            if foodViewModel.todaysLog.first(where: {$0.mealType == meal.text}) != nil {
-                                ForEach(foodViewModel.todaysLog, id: \.self.id) { food in
+                            if todaysLog.first(where: {$0.mealType == meal.text}) != nil {
+                                ForEach(todaysLog, id: \.self.id) { food in
                                     if food.mealType == meal.text {
                                         TodaysLogCard(food: food)
                                     }
@@ -41,19 +42,36 @@ struct TodaysLog: View {
             }
         }
         .onAppear() {
-            if !foodViewModel.todaysLog.containsSameElements(as: tempTodaysLog) {
-                isLoading = true
-                foodViewModel.getAllHistoryByDate(date: Date(), completion: {
-                    tempTodaysLog = foodViewModel.todaysLog
-                    isLoading = false
+//            if !todaysLog.containsSameElements(as: tempTodaysLog) {
+            isLoading = true
+            todaysLog.removeAll()
+            historyLogViewModel.getAllHistoryByDate(date: Date(), completion: { foodArray, myCustomMeals in
+                for i in 0...foodArray.count-1 {
+                    var todaysLogItem = TodaysLogItem()
+                    todaysLogItem.foodName = foodArray[i].foodDescription
+                    todaysLogItem.mealType = foodArray[i].mealType
+                    todaysLogItem.mood = foodArray[i].mood
+                    todaysLogItem.docId = foodArray[i].docId
+                    todaysLog.append(todaysLogItem)
+                }
+                for i in 0...myCustomMeals.count-1 {
+                    var todaysLogItem = TodaysLogItem()
+                    todaysLogItem.foodName = myCustomMeals[i].name
+                    todaysLogItem.mealType = myCustomMeals[i].mealType
+                    todaysLogItem.mood = myCustomMeals[i].mood
+                    todaysLogItem.docId = myCustomMeals[i].docId
+                    todaysLog.append(todaysLogItem)
+                }
+                print(todaysLog.count)
+                isLoading = false
                 })
-            }
+//            }
         }
     }
 }
 
 struct TodaysLogCard: View {
-    var food: FoodRetriever
+    var food: TodaysLogItem
     @State private var showMoodLog: Bool = false
     
     var body: some View {
@@ -62,7 +80,7 @@ struct TodaysLogCard: View {
                 destination: MoodLog(docRef: food.docId ?? ""),
                 isActive: self.$showMoodLog) {}            
             VStack(alignment: .leading) {
-                Text("\(food.foodDescription?.capitalizingFirstLetter() ?? "")")
+                Text("\(food.foodName?.capitalizingFirstLetter() ?? "")")
                     .font(.custom("Ubuntu-Bold", size: 16))
                     .foregroundColor(.black)
                     .fixedSize(horizontal: false, vertical: true)

@@ -77,7 +77,6 @@ class FoodDataCentralViewModel: ObservableObject {
         
         var queryItems: [URLQueryItem] = []
         queryItems.append(URLQueryItem(name: "nutrients", value: "328,418,601,401,203,209,212,213,268,287,291,303,307,318,573,406,415,204,205,211,262,269,301,306"))
-//        queryItems.append(URLQueryItem(name: "nutrients", value: "203,204,205"))
         queryItems.append(contentsOf: fdcIDs.map { URLQueryItem(name: "fdcIds", value: $0) })
         
         let url = generateURL(path: "fdc/v1/foods", queryItems: queryItems)

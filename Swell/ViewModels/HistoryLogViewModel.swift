@@ -8,69 +8,26 @@
 import Foundation
 import Firebase
 
-import Combine
-
-/// API Request using the Combine framework's dataTaskPublisher
-//        self.cancellable = URLSession.shared.dataTaskPublisher(for: request)
-//            .map { $0.data }
-//            .decode(type: [FoodRetriever].self, decoder: JSONDecoder())
-//            .replaceError(with: [])
-//            .eraseToAnyPublisher()
-//            .sink(receiveValue: { food in
-//                DispatchQueue.main.async {
-//                    var foodArray = foodArrayToSet
-//                    foodArray = food
-//                    if !foodArray.isEmpty {
-//                        for i in 0...fdcIDs.count-1 {
-//                            foodArray[i].foodName = foodNames[i]
-//                            foodArray[i].mealType = mealTypes[i]
-//                            foodArray[i].quantity = servingSizes[i]
-//                            foodArray[i].mood = moods[i]
-//                            foodArray[i].comments = comments[i]
-//                            foodArray[i].docId = docIds[i]
-//                        }
-//                        completion(foodArray)
-//                    } else {
-//                        completion([FoodRetriever]())
-//                        return
-//                    }
-//                }
-//            })
 
 class HistoryLogViewModel: ObservableObject {
     // return success and failure bools
     let db = Firestore.firestore()
-    var cancellable: AnyCancellable?
     let formatter = DateFormatter()
     let apiKey = Bundle.main.infoDictionary?["USDA_API_KEY"] as? String ?? "food key not found"
     
-    @Published var foodHistory = [FoodRetriever]()
-    @Published var todaysLog = [FoodRetriever]()
     @Published var waters = FoodRetriever()
     @Published var isNewDay: Bool = false
     var loggedOunces = [Double]()
     
-    func getAllHistoryByDate(date: Date = Timestamp(date: Date()).dateValue(), completion: @escaping () -> () = {}) {
-        self.getFood(date: date, completion: { didCompleteSuccessfully in
-            if didCompleteSuccessfully {
-                self.getWater(date: date, completion: { didCompleteSuccessfully in
-                    if didCompleteSuccessfully {
-                        completion()
-                    }
-                })
-            }
-        })
-    }
-    
-    func getFood(date: Date = Timestamp(date: Date()).dateValue(), completion: @escaping (Bool) -> ()) {
+    func getAllFdcFoodHistoryByDate(date: Date = Timestamp(date: Date()).dateValue(), completion: @escaping ([FoodRetriever]) -> ()) {
         formatter.dateFormat = "EEEE MMM dd, yyyy"
         let pDate = formatter.string(from: date)
         let docRef = db.collection("users").document(Auth.auth().currentUser?.uid ?? "user").collection("food").whereField("date", isEqualTo: pDate)
         
-        docRef.addSnapshotListener { (querySnapshot, error) in
+        docRef.getDocuments { (querySnapshot, error) in
             guard error == nil else {
                 print("Error in getFoodIds method:", error?.localizedDescription ?? "")
-                completion(false)
+                completion([FoodRetriever]())
                 return
             }
             var foodIds = [String]()
@@ -82,37 +39,87 @@ class HistoryLogViewModel: ObservableObject {
             var docIds = [String]()
             
             for document in querySnapshot!.documents {
-                let fdcId: Int = document.get("foodId") as! Int
-                let foodName: String = document.get("foodName") as! String
-                let mealType: String = document.get("meal") as! String
-                let servingSize: Int = document.get("quantity") as! Int
-                let mood: String = document.get("mood") as? String ?? ""
-                let comment: String = document.get("comments") as? String ?? ""
-                let toString = String(fdcId)
-                foodNames.append(foodName)
-                foodIds.append(toString)
-                mealTypes.append(mealType)
-                servingSizes.append(servingSize)
-                moods.append(mood)
-                comments.append(comment)
-                docIds.append(document.documentID)
+                if document.get("foodId") as! Int != 0 {
+                    let fdcId: Int = document.get("foodId") as! Int
+                    let foodName: String = document.get("foodName") as! String
+                    let mealType: String = document.get("meal") as! String
+                    let servingSize: Int = document.get("quantity") as! Int
+                    let mood: String = document.get("mood") as? String ?? ""
+                    let comment: String = document.get("comments") as? String ?? ""
+                    let toString = String(fdcId)
+                    foodNames.append(foodName)
+                    foodIds.append(toString)
+                    mealTypes.append(mealType)
+                    servingSizes.append(servingSize)
+                    moods.append(mood)
+                    comments.append(comment)
+                    docIds.append(document.documentID)
+                }
             }
 
             if foodIds.isEmpty {
-                self.foodHistory = [FoodRetriever]()
-                completion(true)
+                completion([FoodRetriever]())
             } else {
-                self.getFoodsById(pDate == self.formatter.string(from: Date()) ? self.todaysLog : self.foodHistory, foodIds, mealTypes, servingSizes, moods, comments, docIds, foodNames, completion: { foodArray in
-                    if pDate == self.formatter.string(from: Date()) {
-                        self.todaysLog = foodArray
-                        self.foodHistory = foodArray
-                    } else {
-                        self.foodHistory = foodArray
-                    }
-                    completion(true)
+                print("getting foods by id for todays log")
+                self.getFoodsById(foodIds, mealTypes, servingSizes, moods, comments, docIds, foodNames, completion: { foodArray in
+                    completion(foodArray)
                 })
             }
         }
+    }
+    
+    func getAllCustomFoodHistoryByDate(date: Date = Timestamp(date: Date()).dateValue(), completion: @escaping ([MyMeal]) -> ()) {
+        formatter.dateFormat = "EEEE MMM dd, yyyy"
+        let pDate = formatter.string(from: date)
+        
+        let docRef = db.collection("users").document(Auth.auth().currentUser?.uid ?? "user").collection("food").whereField("date", isEqualTo: pDate)
+        var foodToPutInCompletion = [MyMeal]()
+        
+        docRef.getDocuments { (querySnapshot, error) in
+            guard error == nil else {
+                print("Error in getAllCustomFoodHistoryByDate method:", error?.localizedDescription ?? "")
+                completion(foodToPutInCompletion)
+                return
+            }
+            var myMeal = MyMeal()
+            
+            for document in querySnapshot!.documents {
+                if document.get("foodId") as? Int == 0 {
+                    myMeal.name = document.get("foodName") as? String
+                    myMeal.isCustomMeal = true
+                    myMeal.date = document.get("date") as? String
+                    myMeal.mood = document.get("mood") as? String
+                    myMeal.quantity = document.get("quantity") as? Int
+                    myMeal.highIn = document.get("highIn") as? [String]
+                    myMeal.contains = document.get("contains") as? [String]
+    //                myMeal.foodCategory = document.get("category") as? String
+                    myMeal.mealType = document.get("meal") as? String
+    //                myMeal.ingredientNames = document.get("ingredientNames") as? [String]
+    //                myMeal.ingredientValues = document.get("ingredientValues") as? [String]
+    //                myMeal.nutrientNames = document.get("nutrientNames") as? [String]
+    //                myMeal.nutrientValues = document.get("nutrientValues") as? [String]
+    //                myMeal.instructions = document.get("instructions") as? String
+                    
+                    foodToPutInCompletion.append(myMeal)
+                }
+            }
+            completion(foodToPutInCompletion)
+        }
+    }
+    
+    func getAllHistoryByDate(date: Date = Timestamp(date: Date()).dateValue(), completion: @escaping ([FoodRetriever], [MyMeal]) -> ()) {
+        self.getAllFdcFoodHistoryByDate(date: date, completion: { fdcFoods in
+            print("got fdc food history")
+            self.getAllCustomFoodHistoryByDate(date: date, completion: { myCustomMeals in
+                print("got custom food history")
+                self.getWater(date: date, completion: { didCompleteSuccessfully in
+                    print("got water")
+                    if didCompleteSuccessfully {
+                        completion(fdcFoods, myCustomMeals)
+                    }
+                })
+            })
+        })
     }
     
     /**
@@ -154,7 +161,7 @@ class HistoryLogViewModel: ObservableObject {
      - Parameter fdcIDs: An array of the food IDs whose data you'd like to retrieve.
      - Returns: An array of the food data for the given food IDs.
      */
-    public func getFoodsById(_ foodArrayToSet: [FoodRetriever],_ fdcIDs: [String], _ mealTypes: [String], _ servingSizes: [Int], _ moods: [String], _ comments: [String], _ docIds: [String], _ foodNames: [String], completion: @escaping ([FoodRetriever]) -> ()) {
+    public func getFoodsById(_ fdcIDs: [String], _ mealTypes: [String], _ servingSizes: [Int], _ moods: [String], _ comments: [String], _ docIds: [String], _ foodNames: [String], completion: @escaping ([FoodRetriever]) -> ()) {
         
         var queryItems: [URLQueryItem] = []
         queryItems.append(URLQueryItem(name: "nutrients", value: "328,418,601,401,203,209,212,213,268,287,291,303,307,318,573,406,415,204,205,211,262,269,301,306"))
@@ -166,18 +173,18 @@ class HistoryLogViewModel: ObservableObject {
         
         URLSession.shared.dataTask(with: request) { data, response, error in
             do {
-                self.foodHistory = try JSONDecoder().decode([FoodRetriever].self, from: data ?? Data())
+                var foodArray = try JSONDecoder().decode([FoodRetriever].self, from: data ?? Data())
                 DispatchQueue.main.async {
-                    if !self.foodHistory.isEmpty {
+                    if !foodArray.isEmpty {
                         for i in 0...fdcIDs.count-1 {
-                            self.foodHistory[i].foodName = foodNames[i]
-                            self.foodHistory[i].mealType = mealTypes[i]
-                            self.foodHistory[i].quantity = servingSizes[i]
-                            self.foodHistory[i].mood = moods[i]
-                            self.foodHistory[i].comments = comments[i]
-                            self.foodHistory[i].docId = docIds[i]
+                            foodArray[i].foodName = foodNames[i]
+                            foodArray[i].mealType = mealTypes[i]
+                            foodArray[i].quantity = servingSizes[i]
+                            foodArray[i].mood = moods[i]
+                            foodArray[i].comments = comments[i]
+                            foodArray[i].docId = docIds[i]
                         }
-                        completion(self.foodHistory)
+                        completion(foodArray)
                     }
                 }
             } catch {

@@ -8,10 +8,11 @@
 import SwiftUI
 
 struct LogHistory: View {
-    @EnvironmentObject var myMealsViewModel: MyMealsViewModel
     @StateObject var historyLogViewModel = HistoryLogViewModel()
     @State private var selectedDate = Date()
     @State private var isLoading: Bool = false
+    @State private var fdcFoodHistory = [FoodRetriever]()
+    @State private var customFoodHistory = [MyMeal]()
     
     var body: some View {
         ScrollView {
@@ -22,7 +23,7 @@ struct LogHistory: View {
                 } else {
                     // NO DATA
                     VStack(alignment: .center) {
-                        if historyLogViewModel.foodHistory.isEmpty && historyLogViewModel.waters.waterOuncesToday == 0 {
+                        if fdcFoodHistory.isEmpty && customFoodHistory.isEmpty && historyLogViewModel.waters.waterOuncesToday == 0 {
                             Image("NoData")
                                 .resizable()
                                 .scaledToFit()
@@ -32,21 +33,23 @@ struct LogHistory: View {
                         }
                     }
                     // DATA
-                    if !historyLogViewModel.foodHistory.isEmpty {
+                    if !fdcFoodHistory.isEmpty || !customFoodHistory.isEmpty {
                         ForEach(MealTypes.allCases, id: \.self) { meal in
-                            if historyLogViewModel.foodHistory.first(where: {$0.mealType == meal.text}) != nil {
+                            if fdcFoodHistory.first(where: {$0.mealType == meal.text}) != nil && customFoodHistory.first(where: {$0.mealType == meal.text}) != nil {
                                 Text(meal.text)
                                     .font(.custom("Ubuntu-BoldItalic", size: 20))
                                     .padding()
                             }
-                            ForEach(historyLogViewModel.foodHistory, id: \.self.id) { item in
+                            // for FDC items and myMeals that are from FDC
+                            ForEach(fdcFoodHistory, id: \.self.id) { item in
                                 if item.mealType == meal.text && item.mealType != "Water" {
-                                    FoodItem(item: item)
+                                    FoodItem(fdcFoodHistory: item, customFoodHistory: MyMeal())
                                 }
                             }
-                            ForEach(myMealsViewModel.myMeals, id: \.self) { item in
+                            // for custom meals
+                            ForEach(customFoodHistory, id: \.self) { item in
                                 if item.mealType == meal.text {
-                                    FoodItem(item: item.foodInfo ?? FoodRetriever())
+                                    FoodItem(fdcFoodHistory: FoodRetriever(), customFoodHistory: item)
                                 }
                             }
                         }
@@ -64,22 +67,28 @@ struct LogHistory: View {
                     DatePicker("📅", selection: $selectedDate, in: ...Date(), displayedComponents: .date)
                         .onChange(of: selectedDate, perform: { _ in
                             isLoading = true
-                            historyLogViewModel.foodHistory.removeAll()
+                            fdcFoodHistory.removeAll()
+                            customFoodHistory.removeAll()
                             historyLogViewModel.waters.waterOuncesToday = 0
                             historyLogViewModel.waters.waterLoggedToday = 0
-                            historyLogViewModel.getAllHistoryByDate(date: selectedDate, completion: {
-                                isLoading = false
+                            historyLogViewModel.getAllHistoryByDate(date: Date(), completion: { foodArray, myCustomMeals in
+                                fdcFoodHistory = foodArray
+                                customFoodHistory = myCustomMeals
+                                print("Food: \(foodArray.count)")
+                                print("Custom Food: \(myCustomMeals.count)")
                             })
+                            isLoading = false
                         })
                 }
             }
         }
         .onAppear() {
-            historyLogViewModel.getAllHistoryByDate(date: Date(), completion: {
-                print("items: \(historyLogViewModel.foodHistory.count)")
-            })
-            myMealsViewModel.getMyMeals(completion: {
-                print("myMeals: \(myMealsViewModel.myMeals.count)")
+            print("getting food history")
+            historyLogViewModel.getAllHistoryByDate(date: Date(), completion: { foodArray, myCustomMeals in
+                fdcFoodHistory = foodArray
+                customFoodHistory = myCustomMeals
+                print("Food: \(foodArray.count)")
+                print("Custom Food: \(myCustomMeals.count)")
             })
         }
     }

@@ -30,6 +30,13 @@ struct MyMeal: Identifiable, Comparable, Hashable {
     var isCustomMeal: Bool?
     var foodCategory: String?
     var mealType: String?
+    var docId: String?
+    // when retrieving foods
+    var mood: String?
+    var comments: String?
+    var quantity: Int?
+    var highIn: [String]?
+    var contains: [String]?
     // For custom foods
     var ingredientNames: [String]?
     var ingredientValues: [String]?

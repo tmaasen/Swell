@@ -17,30 +17,32 @@ class MyMealsViewModel: ObservableObject {
     @Published var myMeals = [MyMeal]()
     
     init() {
-        self.getMyMeals()
+        self.getMyMeals(completion: { foodArray in
+        })
     }
     
-    func getMyMeals(completion: @escaping () -> () = {}) {
+    func getMyMeals(completion: @escaping ([FoodRetriever]) -> ()) {
         let docRef = db.collection("users").document(Auth.auth().currentUser?.uid ?? "user").collection("myMeals")
-        
+        var foodToPutInCompletion = [FoodRetriever]()
+
         docRef.addSnapshotListener { (querySnapshot, error) in
             guard error == nil else {
                 print("Error in getFoodIds method:", error?.localizedDescription ?? "")
-                completion()
+                completion(foodToPutInCompletion)
                 return
             }
-            
+
             self.myMeals.removeAll()
             var myMeal = MyMeal()
             var foodIds = [String]()
-            
+
             for document in querySnapshot!.documents {
                 myMeal.name = document.get("name") as? String
                 myMeal.isCustomMeal = document.get("isCustomMeal") as? Bool
                 myMeal.date = document.get("date") as? String
                 myMeal.foodCategory = document.get("category") as? String
                 myMeal.mealType = document.get("meal") as? String
-                
+
                 if document.get("isCustomMeal") as? Bool == true {
                     myMeal.ingredientNames = document.get("ingredientNames") as? [String]
                     myMeal.ingredientValues = document.get("ingredientValues") as? [String]
@@ -52,15 +54,18 @@ class MyMealsViewModel: ObservableObject {
                     let toString = String(fdcId)
                     foodIds.append(toString)
                 }
-                
+
                 self.myMeals.append(myMeal)
             }
-            
+
             if foodIds.isEmpty {
-                completion()
+                print("no foods")
+                completion(foodToPutInCompletion)
             } else {
-                self.getFoodsFromFDC(foodIds, completion: { 
-                    completion()
+                print("getting foods from fdc")
+                self.getFoodsFromFDC(foodIds, completion: { foodArray in
+                    foodToPutInCompletion = foodArray
+                    completion(foodToPutInCompletion)
                 })
             }
         }
@@ -160,11 +165,11 @@ class MyMealsViewModel: ObservableObject {
         })
     }
     
-    func getFoodsFromFDC(_ fdcIDs: [String], completion: @escaping () -> () = {}) {
+    func getFoodsFromFDC(_ fdcIDs: [String], completion: @escaping ([FoodRetriever]) -> ()) {
         var queryItems: [URLQueryItem] = []
         queryItems.append(URLQueryItem(name: "nutrients", value: "328,418,601,401,203,209,212,213,268,287,291,303,307,318,573,406,415,204,205,211,262,269,301,306"))
         queryItems.append(contentsOf: fdcIDs.map { URLQueryItem(name: "fdcIds", value: $0) })
-        
+
         let url = generateURL(path: "fdc/v1/foods", queryItems: queryItems)
         var request = URLRequest(url: url!)
         request.httpMethod = "GET"
@@ -175,12 +180,14 @@ class MyMealsViewModel: ObservableObject {
             .replaceError(with: [])
             .eraseToAnyPublisher()
             .sink(receiveValue: { food in
+                let foodArray = food
+                completion(foodArray)
                 DispatchQueue.main.async {
                     if !food.isEmpty {
                         for i in 0...fdcIDs.count-1 {
                             self.myMeals[i].foodInfo = food[i]
                         }
-                        completion()
+                        completion(foodArray)
                     }
                 }
             })
