@@ -121,7 +121,6 @@ struct Profile: View {
                             height: Int(height) ?? 0,
                             weight: Int(weight) ?? 0
                         )
-//                        authViewModel.setAvatarImage(pImage: authViewModel.avatarImage)
                     }
                 }) {
                     Text("Save")

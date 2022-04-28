@@ -17,7 +17,7 @@ struct CustomTextField: UIViewRepresentable {
     @Binding var isLoading: Bool
     @Binding var searchText: String
     @Binding var searching: Bool
-    @EnvironmentObject var foodViewModel: FoodAndWaterViewModel
+    @EnvironmentObject var foodAndMoodViewModel: FoodAndMoodViewModel
     
     func makeUIView(context: Context) -> UITextField {
         let textField = UITextField(frame: .zero)
@@ -73,7 +73,7 @@ struct CustomTextField: UIViewRepresentable {
             // Search for the food
             if !parent.searchText.isEmpty {
                 parent.isLoading = true
-                parent.foodViewModel.search(searchTerms: parent.searchText, pageSize: 200, completion: {
+                parent.foodAndMoodViewModel.search(searchTerms: parent.searchText, pageSize: 200, completion: {
                     self.parent.isLoading = false
                 })
             }

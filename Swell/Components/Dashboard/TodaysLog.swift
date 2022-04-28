@@ -46,21 +46,25 @@ struct TodaysLog: View {
             isLoading = true
             todaysLog.removeAll()
             historyLogViewModel.getAllHistoryByDate(date: Date(), completion: { foodArray, myCustomMeals in
-                for i in 0...foodArray.count-1 {
-                    var todaysLogItem = TodaysLogItem()
-                    todaysLogItem.foodName = foodArray[i].foodDescription
-                    todaysLogItem.mealType = foodArray[i].mealType
-                    todaysLogItem.mood = foodArray[i].mood
-                    todaysLogItem.docId = foodArray[i].docId
-                    todaysLog.append(todaysLogItem)
+                if !foodArray.isEmpty {
+                    for i in 0...foodArray.count-1 {
+                        var todaysLogItem = TodaysLogItem()
+                        todaysLogItem.foodName = foodArray[i].foodDescription
+                        todaysLogItem.mealType = foodArray[i].mealType
+                        todaysLogItem.mood = foodArray[i].mood
+                        todaysLogItem.docId = foodArray[i].docId
+                        todaysLog.append(todaysLogItem)
+                    }
                 }
-                for i in 0...myCustomMeals.count-1 {
-                    var todaysLogItem = TodaysLogItem()
-                    todaysLogItem.foodName = myCustomMeals[i].name
-                    todaysLogItem.mealType = myCustomMeals[i].mealType
-                    todaysLogItem.mood = myCustomMeals[i].mood
-                    todaysLogItem.docId = myCustomMeals[i].docId
-                    todaysLog.append(todaysLogItem)
+                if !myCustomMeals.isEmpty {
+                    for i in 0...myCustomMeals.count-1 {
+                        var todaysLogItem = TodaysLogItem()
+                        todaysLogItem.foodName = myCustomMeals[i].name
+                        todaysLogItem.mealType = myCustomMeals[i].mealType
+                        todaysLogItem.mood = myCustomMeals[i].mood
+                        todaysLogItem.docId = myCustomMeals[i].docId
+                        todaysLog.append(todaysLogItem)
+                    }
                 }
                 print(todaysLog.count)
                 isLoading = false

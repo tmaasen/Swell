@@ -6,23 +6,15 @@
 //
 
 import Foundation
-import Firebase
 import Combine
 
 class FoodDataCentralViewModel: ObservableObject {
-
-    var db = Firestore.firestore()
-    @Published var error: String = ""
     let apiKey = Bundle.main.infoDictionary?["USDA_API_KEY"] as? String ?? "food key not found"
     var cancellable: AnyCancellable?
-    let formatter = DateFormatter()
     // Food Searching
     @Published var foodSearchResults = [Food]()
     @Published var searchResultsNumber: Int?
     var foodSearchDictionary = FoodDataCentral()
-    // Retrieving Food History
-    @Published var todaysLog = [FoodRetriever()]
-    @Published var foodHistory = [FoodRetriever]()
     
     /**
      Searches the USDA Food Database and returns matching results.
@@ -35,7 +27,7 @@ class FoodDataCentralViewModel: ObservableObject {
      - Parameter brandOwner: Optional. Filter based on brand. Only applies to Branded Foods.
      - Returns: Results in JSON format.
      */
-    public func search(searchTerms: String?, dataType: String? = nil, pageSize: Int? = nil, pageNumber: Int? = nil, brandOwner: String? = nil, completion: @escaping () -> () = {}) {
+    func search(searchTerms: String?, dataType: String? = nil, pageSize: Int? = nil, pageNumber: Int? = nil, brandOwner: String? = nil, completion: @escaping () -> () = {}) {
         var queryItems: [URLQueryItem] = []
         if let searchTerms = searchTerms { queryItems.append(URLQueryItem(name: "query", value: searchTerms)) }
         if let pageSize = pageSize { queryItems.append(URLQueryItem(name: "pageSize", value: String(pageSize))) }
@@ -52,13 +44,12 @@ class FoodDataCentralViewModel: ObservableObject {
             do {
                 self.foodSearchDictionary = try JSONDecoder().decode(FoodDataCentral.self, from: data ?? Data())
                 DispatchQueue.main.async {
+                    if self.foodSearchResults.isEmpty {
+                        completion()
+                    }
                     self.foodSearchResults = self.foodSearchDictionary.foods ?? []
                     self.searchResultsNumber = self.foodSearchDictionary.totalHits
                     completion()
-                    if self.foodSearchResults.isEmpty {
-                        self.error = "No results. Please try again."
-                        completion()
-                    }
                 }
             } catch {
                 print("JSONSerialization error:", error)
@@ -73,7 +64,7 @@ class FoodDataCentralViewModel: ObservableObject {
      - Parameter fdcIDs: An array of the food IDs whose data you'd like to retrieve.
      - Returns: An array of the food data for the given food IDs.
      */
-    public func getFoodsById(_ foodArrayToSet: [FoodRetriever],_ fdcIDs: [String], _ mealTypes: [String], _ servingSizes: [Int], _ moods: [String], _ comments: [String], _ docIds: [String], _ foodNames: [String], completion: @escaping ([FoodRetriever]) -> ()) {
+    func getFoodsById(_ foodArrayToSet: [FoodRetriever],_ fdcIDs: [String], _ mealTypes: [String], _ servingSizes: [Int], _ moods: [String], _ comments: [String], _ docIds: [String], _ foodNames: [String], completion: @escaping ([FoodRetriever]) -> ()) {
         
         var queryItems: [URLQueryItem] = []
         queryItems.append(URLQueryItem(name: "nutrients", value: "328,418,601,401,203,209,212,213,268,287,291,303,307,318,573,406,415,204,205,211,262,269,301,306"))
@@ -110,7 +101,7 @@ class FoodDataCentralViewModel: ObservableObject {
     }
     
     /// Generates a new URL with the given queryItems.
-    private func generateURL(path: String, queryItems: [URLQueryItem]) -> URL? {
+    func generateURL(path: String, queryItems: [URLQueryItem]) -> URL? {
         var url = URLComponents()
         url.scheme = "https"
         url.host = "api.nal.usda.gov"

@@ -11,7 +11,7 @@ struct WaterLog: View {
     @State private var label: String = "8 fl oz"
     @State private var ounces: Double = 8
     @State private var watersLogged: Int = 0
-    @EnvironmentObject var foodViewModel: FoodAndWaterViewModel
+    @StateObject var waterViewModel = WaterViewModel()
     @Environment(\.colorScheme) var colorScheme
     @State private var waterLogDict = [
         1: false,
@@ -36,7 +36,7 @@ struct WaterLog: View {
                                 .onTapGesture {
                                     watersLogged+=1
                                     waterLogDict[watersLogged] = true
-                                    foodViewModel.logWater(pSize: label, watersLoggedToday: watersLogged, ounces: ounces)
+                                    waterViewModel.logWater(pSize: label, watersLoggedToday: watersLogged, ounces: ounces)
                                 }
                         } else {
                             LottieAnimation(filename: "water", loopMode: .playOnce, width: 60, height: 70, animationSpeed: 2.5, play: true)
@@ -74,20 +74,18 @@ struct WaterLog: View {
             }
         }
         .onAppear() {
-            foodViewModel.getWater(completion: { didCompleteSuccessfully in
+            waterViewModel.getWater(completion: { didCompleteSuccessfully in
                 if didCompleteSuccessfully {
-                    if foodViewModel.isNewDay == true {
+                    if waterViewModel.isNewDay == true {
                         ounces = 8
                         watersLogged = 0
                         waterLogDict.keys.forEach { waterLogDict[$0] = false }
                     } else {
-                        let waters = foodViewModel.waters.waterLoggedToday ?? 0
+                        let waters = waterViewModel.waters.waterLoggedToday ?? 0
                         for i in 0...waters {
                             waterLogDict[i] = true
                         }
                     }
-                } else {
-                    // handle error
                 }
             })
         }

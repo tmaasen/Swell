@@ -96,7 +96,7 @@ struct FoodHistorySheet: View {
             .padding()
         }
         .onAppear() {
-            myMealsViewModel.isLiked(pFood: foodRetriever.foodDescription ?? "", completion: { value in
+            myMealsViewModel.isLiked(pFoodId: foodRetriever.fdcID ?? 1, completion: { value in
                 liked = value
             })
         }

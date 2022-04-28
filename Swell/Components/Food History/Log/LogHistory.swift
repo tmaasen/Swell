@@ -71,24 +71,21 @@ struct LogHistory: View {
                             customFoodHistory.removeAll()
                             historyLogViewModel.waters.waterOuncesToday = 0
                             historyLogViewModel.waters.waterLoggedToday = 0
-                            historyLogViewModel.getAllHistoryByDate(date: Date(), completion: { foodArray, myCustomMeals in
+                            historyLogViewModel.getAllHistoryByDate(date: selectedDate, completion: { foodArray, myCustomMeals in
                                 fdcFoodHistory = foodArray
                                 customFoodHistory = myCustomMeals
                                 print("Food: \(foodArray.count)")
                                 print("Custom Food: \(myCustomMeals.count)")
+                                isLoading = false
                             })
-                            isLoading = false
                         })
                 }
             }
         }
         .onAppear() {
-            print("getting food history")
             historyLogViewModel.getAllHistoryByDate(date: Date(), completion: { foodArray, myCustomMeals in
                 fdcFoodHistory = foodArray
                 customFoodHistory = myCustomMeals
-                print("Food: \(foodArray.count)")
-                print("Custom Food: \(myCustomMeals.count)")
             })
         }
     }

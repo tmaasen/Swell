@@ -13,7 +13,7 @@ struct ContentView: View {
     
     @State private var blockTouches: Bool = false
     @EnvironmentObject var authViewModel: AuthenticationViewModel
-    @EnvironmentObject var foodViewModel: FoodAndWaterViewModel
+    @EnvironmentObject var foodAndMoodViewModel: FoodAndMoodViewModel
     @EnvironmentObject var myMealsViewModel: MyMealsViewModel
     var hasPersistedSignedIn = UserDefaults.standard.bool(forKey: "isLoggedIn")
     var hasLaunchedBefore = UserDefaults.standard.bool(forKey: "hasLaunchedBefore")
@@ -56,7 +56,7 @@ struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
             .environmentObject(AuthenticationViewModel())
-            .environmentObject(FoodAndWaterViewModel())
+            .environmentObject(FoodAndMoodViewModel())
             .environmentObject(MyMealsViewModel())
             .environmentObject(AppDelegate())
     }
@@ -107,19 +107,19 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     didReceive response: UNNotificationResponse,
     withCompletionHandler completionHandler: @escaping () -> Void
   ) {
-    let foodViewModel = FoodAndWaterViewModel()
+    let foodAndMoodViewModel = FoodAndMoodViewModel()
     let userInfo = response.notification.request.content.userInfo
     docRef = userInfo["docRef"] as? String ?? ""
     // 1
     switch response.actionIdentifier {
     case "HAPPY":
-        foodViewModel.logMood(docRef: docRef, pMood: "Happy", pComments: "")
+        foodAndMoodViewModel.logMood(docRef: docRef, pMood: "Happy", pComments: "")
     case "NEUTRAL":
-        foodViewModel.logMood(docRef: docRef, pMood: "Neutral", pComments: "")
+        foodAndMoodViewModel.logMood(docRef: docRef, pMood: "Neutral", pComments: "")
     case "SICK":
-        foodViewModel.logMood(docRef: docRef, pMood: "Sick", pComments: "")
+        foodAndMoodViewModel.logMood(docRef: docRef, pMood: "Sick", pComments: "")
     case "OVERATE":
-        foodViewModel.logMood(docRef: docRef, pMood: "I Overate", pComments: "")
+        foodAndMoodViewModel.logMood(docRef: docRef, pMood: "I Overate", pComments: "")
     default:
         isFromNotification = true
     }

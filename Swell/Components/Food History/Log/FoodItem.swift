@@ -18,7 +18,7 @@ struct FoodItem: View {
                 // Mood
                 VStack(alignment: .center) {
                     if getMoodEmoji(pMood: fdcFoodHistory.mood ?? customFoodHistory.mood ?? "") != "" {
-                        Text("\(getMoodEmoji(pMood: fdcFoodHistory.mood ?? ""))")
+                        Text("\(getMoodEmoji(pMood: fdcFoodHistory.mood ?? customFoodHistory.mood ?? ""))")
                             .font(.system(size: 45))
                     } else {
                         Circle()
@@ -62,7 +62,7 @@ struct FoodItem: View {
                         }
                         .fullScreenCover(isPresented: $showFoodDataSheet) {
                             if fdcFoodHistory == FoodRetriever() {
-                                CustomMealsSheet(myMeal: customFoodHistory, contains: .constant([""]))
+                                CustomMealsSheet(myMeal: customFoodHistory, isFromHistory: true, contains: .constant([""]))
                             } else {
                                 FoodHistorySheet(foodRetriever: fdcFoodHistory, showFoodDataSheet: $showFoodDataSheet)
                             }
@@ -70,6 +70,7 @@ struct FoodItem: View {
                 }
             }
             .padding(.horizontal, 30)
+            
             Divider()
                 .frame(height: 1)
                 .background(Color("FoodListItem_LightGray"))

@@ -13,7 +13,6 @@ struct Home: View {
     @State private var isShowingSignOut: Bool = false
     @State private var showMoodLog: Bool = false
     @EnvironmentObject var authViewModel: AuthenticationViewModel
-    @EnvironmentObject var foodViewModel: FoodAndWaterViewModel
     @EnvironmentObject var hudCoordinator: JGProgressHUDCoordinator
     
     var body: some View {

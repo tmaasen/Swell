@@ -19,12 +19,16 @@ class HistoryLogViewModel: ObservableObject {
     @Published var isNewDay: Bool = false
     var loggedOunces = [Double]()
     
+    init() {
+        self.getAllHistoryByDate(completion: {a,b in})
+    }
+    
     func getAllFdcFoodHistoryByDate(date: Date = Timestamp(date: Date()).dateValue(), completion: @escaping ([FoodRetriever]) -> ()) {
         formatter.dateFormat = "EEEE MMM dd, yyyy"
         let pDate = formatter.string(from: date)
         let docRef = db.collection("users").document(Auth.auth().currentUser?.uid ?? "user").collection("food").whereField("date", isEqualTo: pDate)
         
-        docRef.getDocuments { (querySnapshot, error) in
+        docRef.addSnapshotListener { (querySnapshot, error) in
             guard error == nil else {
                 print("Error in getFoodIds method:", error?.localizedDescription ?? "")
                 completion([FoodRetriever]())
@@ -74,14 +78,14 @@ class HistoryLogViewModel: ObservableObject {
         
         let docRef = db.collection("users").document(Auth.auth().currentUser?.uid ?? "user").collection("food").whereField("date", isEqualTo: pDate)
         var foodToPutInCompletion = [MyMeal]()
+        var myMeal = MyMeal()
         
-        docRef.getDocuments { (querySnapshot, error) in
+        docRef.addSnapshotListener { (querySnapshot, error) in
             guard error == nil else {
                 print("Error in getAllCustomFoodHistoryByDate method:", error?.localizedDescription ?? "")
                 completion(foodToPutInCompletion)
                 return
             }
-            var myMeal = MyMeal()
             
             for document in querySnapshot!.documents {
                 if document.get("foodId") as? Int == 0 {
@@ -92,14 +96,17 @@ class HistoryLogViewModel: ObservableObject {
                     myMeal.quantity = document.get("quantity") as? Int
                     myMeal.highIn = document.get("highIn") as? [String]
                     myMeal.contains = document.get("contains") as? [String]
-    //                myMeal.foodCategory = document.get("category") as? String
+                    myMeal.comments = document.get("comments") as? String
                     myMeal.mealType = document.get("meal") as? String
-    //                myMeal.ingredientNames = document.get("ingredientNames") as? [String]
-    //                myMeal.ingredientValues = document.get("ingredientValues") as? [String]
-    //                myMeal.nutrientNames = document.get("nutrientNames") as? [String]
-    //                myMeal.nutrientValues = document.get("nutrientValues") as? [String]
-    //                myMeal.instructions = document.get("instructions") as? String
-                    
+                    myMeal.docId = document.documentID
+                    myMeal.foodCategory = document.get("category") as? String
+                    myMeal.ingredientNames = document.get("ingredientNames") as? [String]
+                    myMeal.ingredientValues = document.get("ingredientValues") as? [String]
+                    myMeal.nutrientNames = document.get("nutrientNames") as? [String]
+                    myMeal.nutrientValues = document.get("nutrientValues") as? [String]
+                    myMeal.instructions = document.get("instructions") as? String
+                    myMeal.includes = document.get("includes") as? String
+
                     foodToPutInCompletion.append(myMeal)
                 }
             }
@@ -109,16 +116,26 @@ class HistoryLogViewModel: ObservableObject {
     
     func getAllHistoryByDate(date: Date = Timestamp(date: Date()).dateValue(), completion: @escaping ([FoodRetriever], [MyMeal]) -> ()) {
         self.getAllFdcFoodHistoryByDate(date: date, completion: { fdcFoods in
-            print("got fdc food history")
             self.getAllCustomFoodHistoryByDate(date: date, completion: { myCustomMeals in
-                print("got custom food history")
                 self.getWater(date: date, completion: { didCompleteSuccessfully in
-                    print("got water")
                     if didCompleteSuccessfully {
                         completion(fdcFoods, myCustomMeals)
                     }
                 })
             })
+        })
+    }
+    
+    func deleteFromHistory(doc: String, collection: String, completion: @escaping () -> () = {}) {
+        db.collection("users").document(Auth.auth().currentUser?.uid ?? "user").collection(collection).document(doc).delete(completion: { error in
+            if let error = error {
+                print("Error in deleteFromHistory method: \(error.localizedDescription)")
+                completion()
+            } else {
+                self.getAllHistoryByDate(completion: {a,b in
+                    completion()
+                })
+            }
         })
     }
     

@@ -41,7 +41,7 @@ struct CustomMealsListItem: View {
             checkSpecialFoodNutrients(food: myMeal.foodInfo ?? FoodRetriever())
         }
         .sheet(isPresented: $showCustomMealsSheet) {
-            CustomMealsSheet(myMeal: myMeal, contains: $contains)
+            CustomMealsSheet(myMeal: myMeal, isFromHistory: false, contains: $contains)
         }
     }
     public func checkSpecialFoodNutrients(food: FoodRetriever) {

@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct WaterItem: View {
-//    @EnvironmentObject var foodViewModel: FoodAndWaterViewModel
     var waterOunces: Double
     
     var body: some View {

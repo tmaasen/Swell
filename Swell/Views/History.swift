@@ -10,7 +10,7 @@ import SwiftUI
 import Firebase
 
 struct History: View { 
-    @EnvironmentObject var foodViewModel: FoodAndWaterViewModel
+    @EnvironmentObject var foodAndMoodViewModel: FoodAndMoodViewModel
     @State private var selectedPickerIndex: Int = 0
     var pickerOptions = ["Food", "Mood"]
     

@@ -17,10 +17,11 @@ class MyMealsViewModel: ObservableObject {
     @Published var myMeals = [MyMeal]()
     
     init() {
-        self.getMyMeals(completion: { foodArray in
-        })
+        self.getMyMeals(completion: { foodArray in })
     }
     
+    // myMeals from FDC will be given in the completion handler
+    // Custom myMeals are appended to the Published variable myMeals
     func getMyMeals(completion: @escaping ([FoodRetriever]) -> ()) {
         let docRef = db.collection("users").document(Auth.auth().currentUser?.uid ?? "user").collection("myMeals")
         var foodToPutInCompletion = [FoodRetriever]()
@@ -54,7 +55,6 @@ class MyMealsViewModel: ObservableObject {
                     let toString = String(fdcId)
                     foodIds.append(toString)
                 }
-
                 self.myMeals.append(myMeal)
             }
 
@@ -71,31 +71,38 @@ class MyMealsViewModel: ObservableObject {
         }
     }
 
-    func isLiked(pFood: String, completion: @escaping (Bool) -> ()) {
+    func isLiked(pFoodId: Int, completion: @escaping (Bool) -> ()) {
         db.collection("users").document(Auth.auth().currentUser?.uid ?? "user").collection("myMeals")
-            .document(pFood).getDocument { (document, error) in
-                if let document = document, document.exists {
+            .whereField("foodId", isEqualTo: pFoodId)
+            .getDocuments { (documentSnapshot, error) in
+                if let documentSnapshot = documentSnapshot, !documentSnapshot.isEmpty {
                     completion(true)
                 }
             }
         completion(false)
     }
     
-    func logCustomMeal(pFoodId: Int, pFoodName: String, pHighNutrients: [String], pQuantity: Int = 1, pMeal: String, pContains: [String] = [], completion: @escaping (Bool) -> ()) {
+    func logCustomMeal(pFood: MyMeal, pHighNutrients: [String], pQuantity: Int = 1, pMealType: String, pContains: [String] = [], completion: @escaping (Bool) -> ()) {
         
         formatter.dateFormat = "EEEE MMM dd, yyyy"
         var docRef: DocumentReference
         
         let docData: [String: Any] = [
-            "foodId": pFoodId,
-            "foodName": pFoodName,
+            "foodId": pFood.foodId ?? 0,
+            "foodName": pFood.name!,
             "quantity": pQuantity,
-            "meal": pMeal,
+            "meal": pMealType,
             "highIn": pHighNutrients,
             "contains": pContains,
             "date": formatter.string(from: Timestamp(date: Date()).dateValue()),
             "mood": "",
-            "inMyMeals": true
+            "inMyMeals": true,
+            "category": pFood.foodCategory!,
+            "ingredientNames": pFood.ingredientNames!,
+            "ingredientValues": pFood.ingredientValues!,
+            "nutrientNames": pFood.nutrientNames!,
+            "nutrientValues": pFood.nutrientValues!,
+            "instructions": pFood.instructions!,
         ]
         
         docRef = db.collection("users").document(Auth.auth().currentUser?.uid ?? "test").collection("food").addDocument(data: docData, completion: { error in
@@ -105,7 +112,7 @@ class MyMealsViewModel: ObservableObject {
             }
         })
         
-        NotificationManager.instance.scheduleNotification(mealType: pMeal, foodTitle: pFoodName, docRef: docRef.documentID)
+        NotificationManager.instance.scheduleNotification(mealType: pMealType, foodTitle: pFood.name!, docRef: docRef.documentID)
         completion(true)
     }
     
@@ -193,7 +200,7 @@ class MyMealsViewModel: ObservableObject {
             })
     }
     
-    private func generateURL(path: String, queryItems: [URLQueryItem]) -> URL? {
+    func generateURL(path: String, queryItems: [URLQueryItem]) -> URL? {
         var url = URLComponents()
         url.scheme = "https"
         url.host = "api.nal.usda.gov"

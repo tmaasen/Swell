@@ -9,7 +9,8 @@ import SwiftUI
 
 struct DeleteButton: View {
     @State private var showDeleteActionSheet = false
-    @EnvironmentObject var foodViewModel: FoodAndWaterViewModel
+    @StateObject var historyLogViewModel = HistoryLogViewModel()
+    @Environment(\.presentationMode) var presentationMode
     var docId: String
     var collection: String
     var popUpText: String
@@ -32,7 +33,9 @@ struct DeleteButton: View {
                     title: Text(popUpText),
                     buttons: [
                         .destructive(Text("Delete")) {
-                            foodViewModel.deleteFromHistory(doc: docId, collection: collection, completion: {})
+                            historyLogViewModel.deleteFromHistory(doc: docId, collection: collection, completion: {
+                                presentationMode.wrappedValue.dismiss()
+                            })
                         },
                         .cancel()
                     ]

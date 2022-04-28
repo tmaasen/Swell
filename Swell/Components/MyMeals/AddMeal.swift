@@ -20,9 +20,18 @@ struct AddMeal: View {
     @EnvironmentObject var myMealsViewModel: MyMealsViewModel
     @Environment(\.presentationMode) var presentationMode
     
+    var disableForm: Bool {
+        if name.isEmpty || ingredientNames.isEmpty || ingredientValues.isEmpty {
+            return true
+        }
+        return false
+    }
+    
     // do something to sanitize input before sending it off to firestore
     var body: some View {
         Form {
+            Text("Please enter the meal name and at least 1 ingredient to save your new meal.")
+                .padding()
             Section(header: Text("Meal")) {
                 TextField("Meal Name", text: $name)
             }
@@ -85,6 +94,7 @@ struct AddMeal: View {
                     }) {
                         Text("Save")
                             .withButtonStyles()
+                            .disabled(disableForm)
                     }
                 }
             }

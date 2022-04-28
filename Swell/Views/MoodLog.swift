@@ -16,7 +16,7 @@ struct MoodLog: View {
     @State private var comments: String = ""
     @State private var logCompleted: Bool = false
     @EnvironmentObject var hudCoordinator: JGProgressHUDCoordinator
-    @EnvironmentObject var moodViewModel: FoodAndWaterViewModel
+    @EnvironmentObject var moodViewModel: FoodAndMoodViewModel
     
     var body: some View {
         VStack {

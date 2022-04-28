@@ -13,7 +13,7 @@ struct MealLog: View {
     @State private var searchText = ""
     @State private var searching = false
     @State private var isLoading = false
-    @EnvironmentObject var foodViewModel: FoodAndWaterViewModel
+    @EnvironmentObject var foodAndMoodViewModel: FoodAndMoodViewModel
     @EnvironmentObject var myMealsViewModel: MyMealsViewModel
     @Environment(\.presentationMode) var presentationMode
     @Environment(\.colorScheme) var colorScheme
@@ -40,8 +40,8 @@ struct MealLog: View {
             
             if selectedPickerIndex == 0 {
                 // Search
-                if foodViewModel.foodSearchDictionary.totalHits != nil && !isLoading {
-                    if foodViewModel.foodSearchDictionary.totalHits == 0 {
+                if foodAndMoodViewModel.foodSearchDictionary.totalHits != nil && !isLoading {
+                    if foodAndMoodViewModel.foodSearchDictionary.totalHits == 0 {
                         Image("NoData")
                             .resizable()
                             .scaledToFit()
@@ -50,10 +50,10 @@ struct MealLog: View {
                             .font(.system(size: 20))
                             .multilineTextAlignment(.center)
                     } else {
-                        Text("\(String(foodViewModel.searchResultsNumber ?? 0)) Results")
+                        Text("\(String(foodAndMoodViewModel.searchResultsNumber ?? 0)) Results")
                             .foregroundColor(colorScheme == .dark ? .white : .gray)
                         ScrollView {
-                            ForEach(foodViewModel.foodSearchResults, id: \.self.id) { foodItem in
+                            ForEach(foodAndMoodViewModel.foodSearchResults, id: \.self.id) { foodItem in
                                 LazyVStack {
                                     FoodResultListItem(food: foodItem, meal: $mealType)
                                 }
@@ -72,14 +72,13 @@ struct MealLog: View {
                     }
                 }
             }
-            
             Spacer()
         }
         .navigationTitle(mealType)
         .onDisappear() {
-            foodViewModel.foodSearchDictionary.totalHits = nil
-            foodViewModel.foodSearchResults.removeAll()
-            foodViewModel.searchResultsNumber = 0
+            foodAndMoodViewModel.foodSearchDictionary.totalHits = nil
+            foodAndMoodViewModel.foodSearchResults.removeAll()
+            foodAndMoodViewModel.searchResultsNumber = 0
         }
     }
 }

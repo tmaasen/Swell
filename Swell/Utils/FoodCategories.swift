@@ -8,7 +8,7 @@
 import Foundation
 
 class FoodCategories {
-    static var aggregatedCategories = ["Alcohol", "Baby", "Baking", "Beef", "Beverages", "Bread", "Breakfast", "Butter", "Cheese", "Chewing Gum & Mints", "Chips", "Coffee", "Condiments, Dressings, & Oils", "Cookies & Biscuits", "Dairy", "Earthy and Foreign", "Fish", "Fries", "Fruit", "Herbs and Spices", "Mexican", "Miscellaneous", "Noodles", "Nuts & Seeds", "Pizza", "Popcorn", "Pork", "Poultry & Eggs", "Salad", "Sandwich", "Soups, Sauces, and Gravies", "Supplements", "Sushi", "Sweets", "Vegetables", "Yogurt and Ice Cream"]
+    static var aggregatedCategories = ["Baby", "Baking", "Beef", "Beverages", "Bread", "Breakfast", "Butter", "Cheese", "Chewing Gum & Mints", "Chips", "Coffee", "Condiments, Dressings, & Oils", "Cookies & Biscuits", "Dairy", "Earthy and Foreign", "Fish", "Fries", "Fruit", "Herbs and Spices", "Mexican", "Miscellaneous", "Noodles", "Nuts & Seeds", "Pizza", "Popcorn", "Pork", "Poultry & Eggs", "Salad", "Sandwich", "Soups, Sauces, and Gravies", "Supplements", "Sushi", "Sweets", "Vegetables", "Yogurt and Ice Cream", "Alcohol"]
     static var categoryDict: [String: [String]] =
         [
             "Alcohol": ["Alchol","Alcoholic Beverages", "Beer"],

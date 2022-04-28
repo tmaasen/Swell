@@ -9,6 +9,7 @@ import SwiftUI
 
 struct CustomMealsSheet: View {
     var myMeal: MyMeal
+    var isFromHistory: Bool
     @State private var logCompleted: Bool = false
     @State private var selectedMeal: String = "Breakfast"
     @State private var quantity: Int = 1
@@ -25,7 +26,7 @@ struct CustomMealsSheet: View {
                     .onTapGesture { presentationMode.wrappedValue.dismiss() }
                 .padding(.top, 70)
                 .zIndex(1.0)
-                LottieAnimation(filename: FoodCategories.categoryDict.first(where: {$0.key.contains(myMeal.foodCategory!)})!.key, loopMode: .loop, width: .infinity, height: .infinity)
+                LottieAnimation(filename: FoodCategories.categoryDict.first(where: {$0.key.contains(myMeal.foodCategory ?? "")})?.key ?? "food", loopMode: .loop, width: .infinity, height: .infinity)
             }
             .background(Rectangle().foregroundColor(Color.yellow))
             .clipShape(CustomShape(corner: .bottomLeft, radii: 55))
@@ -37,38 +38,47 @@ struct CustomMealsSheet: View {
                         Text("\(myMeal.name ?? "")")
                             .font(.custom("Ubuntu-Bold", size: 30))
                         Spacer()
-                        DeleteButton(docId: myMeal.name ?? "", collection: "myMeals", popUpText: "This will permanently remove your custom meal from MyMeals. This action cannot be undone.")
+                        DeleteButton(docId: isFromHistory ? myMeal.docId ?? "" : myMeal.name ?? "", collection: isFromHistory ? "food" : "myMeals", popUpText: isFromHistory ? "This will permanently remove this item from your history, as well as all mood data accociated with this item." : "This will permanently remove your custom meal from MyMeals. This action cannot be undone.")
                     }
                     .padding(.bottom, 5)
                     
-                    HStack {
-                        // When a meal type is not specified
-                        MealTypePicker(selectedMeal: $selectedMeal)
-                        
-                        Button(action: {
-                            myMealsViewModel.logCustomMeal(pFoodId: Int(myMeal.foodId ?? "") ?? 0, pFoodName: myMeal.name ?? "", pHighNutrients: getHighNutrients(pFoodNutrients: myMeal.foodInfo?.foodNutrients ?? [FoodResultNutrient]()), pQuantity: quantity, pMeal: selectedMeal, pContains: contains, completion: { didCompleteSuccessfully in
-                                logCompleted = true
+                    if !isFromHistory {
+                        HStack {
+                            // When a meal type is not specified
+                            MealTypePicker(selectedMeal: $selectedMeal)
+                            
+                            Button(action: {
+                                myMealsViewModel.logCustomMeal(pFood: myMeal, pHighNutrients: getHighNutrients(pFoodNutrients: myMeal.foodInfo?.foodNutrients ?? [FoodResultNutrient]()), pQuantity: quantity, pMealType: selectedMeal, pContains: contains, completion: { didCompleteSuccessfully in
+                                    logCompleted = true
+                                })
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
+                                    presentationMode.wrappedValue.dismiss()
+                                })
+                            }, label: {
+                                Image(systemName: "checkmark.circle")
+                                    .foregroundColor(.green)
+                                    .font(.system(size: 40))
                             })
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
-                                presentationMode.wrappedValue.dismiss()
-                            })
-                        }, label: {
-                            Image(systemName: "checkmark.circle")
-                                .foregroundColor(.green)
-                                .font(.system(size: 40))
-                        })
+                        }
                     }
                     
                     HStack {
-                        VStack {
-                            Text("Servings:")
+                        if !isFromHistory {
+                            VStack {
+                                Text("Servings:")
+                                    .font(.custom("Ubuntu", size: 16))
+                            }
+                            Spacer()
+                            Stepper("\(quantity)", value: $quantity, in: 1...60, step: 1)
                                 .font(.custom("Ubuntu", size: 16))
+                            Text("(\((myMeal.foodInfo?.servingSize ?? 1 * Double(quantity)), specifier: "%.2f")\(myMeal.foodInfo?.servingSizeUnit ?? myMeal.foodInfo?.servingSizeUnit ?? ""))")
+                                .font(.custom("Ubuntu", size: 14))
+                        } else {
+                            VStack {
+                                Text("Servings: \(quantity)")
+                                    .font(.custom("Ubuntu", size: 16))
+                            }
                         }
-                        Spacer()
-                        Stepper("\(quantity)", value: $quantity, in: 1...60, step: 1)
-                            .font(.custom("Ubuntu", size: 16))
-                        Text("(\((myMeal.foodInfo?.servingSize ?? 1 * Double(quantity)), specifier: "%.2f")\(myMeal.foodInfo?.servingSizeUnit ?? myMeal.foodInfo?.servingSizeUnit ?? ""))")
-                            .font(.custom("Ubuntu", size: 14))
                     }
                     Text("Category: \(myMeal.foodCategory ?? "")")
                         .font(.custom("Ubuntu", size: 16))
@@ -119,6 +129,6 @@ struct CustomMealsSheet: View {
 
 struct CustomMealsSheet_Previews: PreviewProvider {
     static var previews: some View {
-        CustomMealsSheet(myMeal: MyMeal(), contains: .constant(["Gluten"]))
+        CustomMealsSheet(myMeal: MyMeal(), isFromHistory: true, contains: .constant(["Gluten"]))
     }
 }

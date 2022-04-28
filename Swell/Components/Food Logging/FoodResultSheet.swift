@@ -19,7 +19,7 @@ struct FoodResultSheet: View {
     @Binding var showFoodInfoSheet: Bool
     @Binding var contains: [String]
     @EnvironmentObject var myMealsViewModel: MyMealsViewModel
-    @EnvironmentObject var foodViewModel: FoodAndWaterViewModel
+    @EnvironmentObject var foodAndMoodViewModel: FoodAndMoodViewModel
     @Environment(\.presentationMode) var presentationMode
     @Environment(\.colorScheme) var colorScheme
     
@@ -85,9 +85,9 @@ struct FoodResultSheet: View {
                             label: {
                                 Button(action: {
                                     if food.foodDescription == "" {
-                                        foodViewModel.logFood(pFoodId: foodRetriever.fdcID ?? 0, pFoodName: foodRetriever.foodDescription ?? "", pHighNutrients: getHighNutrients(pFoodNutrients: [FoodNutrient](), pFoodRetrieverNutrients: foodRetriever.foodNutrients ?? [FoodResultNutrient]()), pQuantity: Int(quantity), pMeal: selectedMeal, pContains: contains)
+                                        foodAndMoodViewModel.logFood(pFoodId: foodRetriever.fdcID ?? 0, pFoodName: foodRetriever.foodDescription ?? "", pHighNutrients: getHighNutrients(pFoodNutrients: [FoodNutrient](), pFoodRetrieverNutrients: foodRetriever.foodNutrients ?? [FoodResultNutrient]()), pQuantity: Int(quantity), pMeal: selectedMeal, pContains: contains)
                                     } else {
-                                        foodViewModel.logFood(pFoodId: food.fdcID, pFoodName: food.foodDescription, pHighNutrients: getHighNutrients(pFoodNutrients: food.foodNutrients, pFoodRetrieverNutrients: [FoodResultNutrient]()), pQuantity: Int(quantity), pMeal: meal, pContains: contains)
+                                        foodAndMoodViewModel.logFood(pFoodId: food.fdcID, pFoodName: food.foodDescription, pHighNutrients: getHighNutrients(pFoodNutrients: food.foodNutrients, pFoodRetrieverNutrients: [FoodResultNutrient]()), pQuantity: Int(quantity), pMeal: meal, pContains: contains)
                                     }
                                     logCompleted = true
                                     DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
@@ -161,7 +161,7 @@ struct FoodResultSheet: View {
             .padding()
         }
         .onAppear() {
-            myMealsViewModel.isLiked(pFood: foodRetriever.foodDescription ?? food.foodDescription, completion: { value in
+            myMealsViewModel.isLiked(pFoodId: foodRetriever.fdcID ?? food.fdcID, completion: { value in
                 liked = value
             })
         }
