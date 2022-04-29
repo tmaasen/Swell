@@ -6,9 +6,9 @@
 //
 
 import SwiftUI
-import FirebaseAuth
 import JGProgressHUD_SwiftUI
 
+/// View that will authenticate a user who has an existing Swell account. Also has functionality for resetting a user's password or navigating to the Register view.
 struct Login: View {
     @State private var emailAddress: String = ""
     @State private var password: String = ""

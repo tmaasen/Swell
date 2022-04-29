@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import SwiftUI
 
 struct FoodRetriever: Codable, Identifiable, Comparable {
     static func < (lhs: FoodRetriever, rhs: FoodRetriever) -> Bool {

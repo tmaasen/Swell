@@ -7,11 +7,10 @@
 
 import SwiftUI
 
-// MARK: Custom TextField
 struct CustomTextField: UIViewRepresentable {
+    let tag: Int
     let keyboardType: UIKeyboardType
     let returnVal: UIReturnKeyType
-    let tag: Int
     @Binding var text: String
     @Binding var isfocusAble: [Bool]
     @Binding var isLoading: Bool
@@ -55,14 +54,7 @@ struct CustomTextField: UIViewRepresentable {
             textfield.becomeFirstResponder()
         }
         
-//        func textFieldShouldClear(_ textField: UITextField) -> Bool {
-//            parent.text = ""
-//            textField.text = ""
-//            return true
-//        }
-        
         func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-            
             if parent.tag == 0 {
                 parent.isfocusAble = [false, true]
                 parent.text = textField.text ?? ""

@@ -9,6 +9,7 @@ import SwiftUI
 import JGProgressHUD_SwiftUI
 import GoogleSignIn
 
+/// View that contains a form a new user fills out in order to create a new account. Or, the user can Sign In with Google and skip the form.
 struct Register: View {
     @State private var showInvalidAlert: Bool = false
     @State private var isAuthenticated: Bool = false

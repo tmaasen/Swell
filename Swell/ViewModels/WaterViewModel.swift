@@ -11,10 +11,11 @@ import Firebase
 class WaterViewModel: ObservableObject {
     var db = Firestore.firestore()
     let formatter = DateFormatter()
-    @Published var waters = FoodRetriever()
+//    @Published var waters = FoodRetriever()
     @Published var isNewDay: Bool = false
-    var loggedOunces = [Double]()
-    
+    @Published var waterLoggedToday = Int()
+    @Published var loggedOunces = Double()
+     
     /**
      Gets the water logged and total ounces drank from a user daily.
      Also runs a check to see if it is a new day. If so, the water logger resets itself.
@@ -41,9 +42,8 @@ class WaterViewModel: ObservableObject {
                     completion(true)
                 } else if let documentSnapshot = documentSnapshot, documentSnapshot.exists {
                     self.isNewDay = false
-                    self.waters.waterLoggedToday = documentSnapshot.get("waters logged") as? Int
-                    self.waters.waterOuncesToday = documentSnapshot.get("total ounces") as? Double
-                    self.waters.docId = documentSnapshot.documentID
+                    self.waterLoggedToday = documentSnapshot.get("waters logged") as? Int ?? 0
+                    self.loggedOunces = documentSnapshot.get("total ounces") as? Double ?? 0
                     completion(true)
                 }
             }
@@ -68,7 +68,7 @@ class WaterViewModel: ObservableObject {
                 if let error = error {
                     print("Error in logWater method: \(error.localizedDescription)")
                 } else {
-                    self.loggedOunces.append(ounces)
+                    self.loggedOunces += ounces
                 }
             })
         } else {
@@ -78,10 +78,10 @@ class WaterViewModel: ObservableObject {
                 .collection("water")
                 .document(formatter.string(from: Timestamp(date: Date()).dateValue()))
             // then update it
-            loggedOunces.append(ounces)
+            self.loggedOunces += ounces
             db.collection("users").document(Auth.auth().currentUser?.uid ?? "test").collection("water").document(docRef.documentID).updateData([
                 "waters logged": watersLoggedToday,
-                "total ounces": loggedOunces.reduce(0, +)
+                "total ounces": self.loggedOunces
             ]) { err in
                 if let err = err {
                     print("Error updating document: \(err)")

@@ -4,13 +4,14 @@
 //
 //  Created by Tanner Maasen on 1/20/22.
 //
+
 import SwiftUI
 
 struct VerticalSidebarMain: View {
     @Binding var isShowingSidebar: Bool
+    @State private var isShowingSignOut: Bool = false
     @Environment(\.colorScheme) var colorScheme
     @EnvironmentObject var authViewModel: AuthenticationViewModel
-    @State private var isShowingSignOut: Bool = false
     
     var body: some View {
         ZStack(alignment: .topLeading) {

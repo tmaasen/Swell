@@ -20,7 +20,7 @@ struct Header: View {
                         isShowingSidebar.toggle()
                     }
                 }, label: {
-                    AvatarIcon(isShowingSidebar: $isShowingSidebar, showPhotoPickerSheet: .constant(false), width: 40, height: 40)
+                    AvatarIcon(width: 40, height: 40, isShowingSidebar: $isShowingSidebar, showPhotoPickerSheet: .constant(false))
                 })
                 .buttonStyle(PlainButtonStyle())
                 .padding(.top, 60)

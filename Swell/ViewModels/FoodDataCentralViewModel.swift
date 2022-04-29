@@ -100,7 +100,13 @@ class FoodDataCentralViewModel: ObservableObject {
             })
     }
     
-    /// Generates a new URL with the given queryItems.
+    /**
+     Special credit goes to GitHub repo that I used as a resource for this!
+     Build a URL with all the necessary query parameters that will search the USDA Food Database.
+     - Parameter path: The URL path that will be used for the HTTP Request
+     - Parameter queryItems: This could be specific nutrient codes, search query, etc.
+     - Returns: A ready-to-go URL.
+     */
     func generateURL(path: String, queryItems: [URLQueryItem]) -> URL? {
         var url = URLComponents()
         url.scheme = "https"

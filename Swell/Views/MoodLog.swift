@@ -4,12 +4,12 @@
 //
 //  Created by Tanner Maasen on 3/6/22.
 //
-//  MoodLog is an in-app view for users who don't choose to log their mood from a notification. This view offers the ability to provide comments on his/her mood as well.
 
 import SwiftUI
 import Firebase
 import JGProgressHUD_SwiftUI
 
+///  MoodLog is an in-app view for users who don't choose to log their mood from a notification. This view offers the ability to provide comments on his/her mood as well.
 struct MoodLog: View {
     var docRef: String
     @State private var selectedMood: String = ""
@@ -61,7 +61,6 @@ struct MoodLog: View {
                 hideKeyboard()
                 toggleLoadingIndicator()
                 moodViewModel.logMood(docRef: docRef, pMood: selectedMood, pComments: comments, completion: {
-                    print("mood logged")
                     logCompleted = true
                 })
             }, label: {

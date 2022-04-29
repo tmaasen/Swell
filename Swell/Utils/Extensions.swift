@@ -5,21 +5,8 @@
 //  Created by Tanner Maasen on 1/16/22.
 //
 
-import Foundation
 import SwiftUI
 import UIKit
-
-extension Binding {
-     func toUnwrapped<T>(defaultValue: T) -> Binding<T> where Value == Optional<T>  {
-        Binding<T>(get: { self.wrappedValue ?? defaultValue }, set: { self.wrappedValue = $0 })
-    }
-}
-
-extension Array where Element: Comparable {
-    func containsSameElements(as other: [Element]) -> Bool {
-        return self.count == other.count && self.sorted() == other.sorted()
-    }
-}
 
 public extension Color {
     static let swellOrange = Color("swellOrange")
@@ -125,6 +112,7 @@ public extension UIAlertController {
     })
   }
 }
+
 // Has to be here for the Text and View extensions (TM 1/16/22)
 public struct TextAlert {
     public var title: String
@@ -184,17 +172,16 @@ public extension View {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
     #endif
-    
-    @ViewBuilder
-    func redacted(when condition: Bool, redactionType: RedactionType) -> some View {
-        if !condition {
-            unredacted()
-        } else {
-            redacted(reason: redactionType)
-        }
-    }
+}
 
-    func redacted(reason: RedactionType?) -> some View {
-        self.modifier(Redactable(type: reason))
+extension Binding {
+     func toUnwrapped<T>(defaultValue: T) -> Binding<T> where Value == Optional<T>  {
+        Binding<T>(get: { self.wrappedValue ?? defaultValue }, set: { self.wrappedValue = $0 })
+    }
+}
+
+extension Array where Element: Comparable {
+    func containsSameElements(as other: [Element]) -> Bool {
+        return self.count == other.count && self.sorted() == other.sorted()
     }
 }

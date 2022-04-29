@@ -8,14 +8,14 @@
 import SwiftUI
 
 struct CustomMealsListItem: View {
-    @EnvironmentObject var myMealsViewModel: MyMealsViewModel
+    var myMeal: MyMeal
     @State private var showCustomMealsSheet: Bool = false
     @State private var containsGluten: Bool = false
     @State private var containsLactose: Bool = false
     @State private var containsCaffeine: Bool = false
     @State private var isWholeGrain: Bool = false
-    @State var contains = [String]()
-    var myMeal: MyMeal
+    @State private var contains = [String]()
+    @EnvironmentObject var myMealsViewModel: MyMealsViewModel
     
     var body: some View {
         HStack {

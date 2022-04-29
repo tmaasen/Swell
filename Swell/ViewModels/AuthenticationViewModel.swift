@@ -29,7 +29,12 @@ class AuthenticationViewModel: UserViewModel {
         }
     }
     
-    // sign in with email and password
+    /**
+     Sign in with email and password with Firebase Authentication.
+     - Parameter email
+     - Parameter password
+     - Returns: Completion handler.
+     */
     func signInWithEmail(email: String, password: String, completion: @escaping () -> () = {}) {
         Auth.auth().signIn(withEmail: email, password: password) {result, error in
             if result != nil, error == nil {
@@ -47,6 +52,12 @@ class AuthenticationViewModel: UserViewModel {
         }
     }
     
+    /**
+     Sign up with email and password with Firebase Authentication. Also signs in the user once the account is created.
+     - Parameter email
+     - Parameter password
+     - Returns: Completion handler.
+     */
     func signUp(email: String, password: String, completion: @escaping () -> () = {}) {
         Auth.auth().createUser(withEmail: email, password: password) {result, error in
             if result != nil, error == nil {
@@ -64,7 +75,12 @@ class AuthenticationViewModel: UserViewModel {
         }
     }
     
-    // sign in with Google
+    /**
+     Sign in the user with Firebase Authentication via Sign In with Google. Requires a Google account. Also handles the restoration of a user's session.
+     - Parameter email
+     - Parameter password
+     - Returns: Completion handler.
+     */
     func signInWithGoogle(completion: @escaping () -> () = {}) {
         if GIDSignIn.sharedInstance.hasPreviousSignIn() {
             GIDSignIn.sharedInstance.restorePreviousSignIn {
@@ -88,7 +104,8 @@ class AuthenticationViewModel: UserViewModel {
             }
         }
     }
-    
+
+    /// Function that pairs with signInWithGoogle() and completes the authentication of a Google user.
     func authenticateUser(for user: GIDGoogleUser?, with error: Error?, completion: @escaping () -> () = {}) {
         if let error = error {
             print(error.localizedDescription)
@@ -117,6 +134,7 @@ class AuthenticationViewModel: UserViewModel {
         }
     }
     
+    /// Verifies email when a new account is created. NOT YET IMPLEMENTED.
     func verifyEmail() {
         Auth.auth().currentUser?.sendEmailVerification { (error) in
             if error != nil {
@@ -125,6 +143,7 @@ class AuthenticationViewModel: UserViewModel {
         }
     }
     
+    /// Sends user an email to reset their password.
     func resetPassword(email: String) {
         Auth.auth().sendPasswordReset(withEmail: email) { error in
             if error != nil {
@@ -133,7 +152,7 @@ class AuthenticationViewModel: UserViewModel {
         }
     }
     
-    // Function will work for all sign out methods
+    /// Function that will sign out the user for all authentication methods
     func signOut() {
         GIDSignIn.sharedInstance.signOut()
         do {
@@ -149,6 +168,7 @@ class AuthenticationViewModel: UserViewModel {
         }
     }
     
+    /// Delete the user's account. Will send the user back to the login screen when the enum state is set back to .signedOut
     func removeAccount() {
         self.softDeleteUser()
         

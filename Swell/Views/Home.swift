@@ -4,10 +4,11 @@
 //
 //  Created by Tanner Maasen on 1/12/22.
 //
+
 import SwiftUI
-import FirebaseAuth
 import JGProgressHUD_SwiftUI
 
+/// Main dashboard view and contains all the content the user sees when they first open Swell and have logged in.
 struct Home: View {
     @State private var isShowingSidebar: Bool = false
     @State private var isShowingSignOut: Bool = false

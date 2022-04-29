@@ -8,10 +8,10 @@
 import Foundation
 
 class PexelsViewModel: ObservableObject {
+    let cache = NSCache<NSString, Pexel>()
     let API_URL:URL! = URL(string: "https://api.pexels.com/v1/search?query=landscape&page=1&per_page=20&size=small&orientation=landscape")
     @Published var pexel = Photo()
     @Published var isLoadingPexel: Bool = false
-    private let cache = NSCache<NSString, Pexel>()
     
     init() {
         self.isLoadingPexel = true
@@ -25,9 +25,7 @@ class PexelsViewModel: ObservableObject {
         guard let apiKey = Bundle.main.infoDictionary?["PEXELS_API_KEY"] as? String else {return}
 
         if let image = cache.object(forKey: "image") {
-            print("Using cache")
             completion(image)
-            return
         }
          
         var urlRequest = URLRequest(url: API_URL)
@@ -36,7 +34,6 @@ class PexelsViewModel: ObservableObject {
         urlRequest.setValue("application/json", forHTTPHeaderField: "Accept")
         urlRequest.setValue(apiKey, forHTTPHeaderField: "Authorization")
         
-        print("Fetching image")
         URLSession.shared.dataTask(with: urlRequest) { data, response, error in
             do {
                 let pexels = try JSONDecoder().decode(Pexel.self, from: data ?? Data())
@@ -49,8 +46,8 @@ class PexelsViewModel: ObservableObject {
                 completion(nil)
                 return
             }
-        }.resume()
-        
+        }
+        .resume()
     }
     
 }

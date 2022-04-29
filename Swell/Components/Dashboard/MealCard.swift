@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct MealCards: View {
-    
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 30) {

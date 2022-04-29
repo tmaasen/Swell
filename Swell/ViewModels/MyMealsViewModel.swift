@@ -17,19 +17,22 @@ class MyMealsViewModel: ObservableObject {
     @Published var myMeals = [MyMeal]()
     
     init() {
-        self.getMyMeals(completion: { foodArray in })
+        self.getMyMeals(completion: {})
     }
     
-    // myMeals from FDC will be given in the completion handler
-    // Custom myMeals are appended to the Published variable myMeals
-    func getMyMeals(completion: @escaping ([FoodRetriever]) -> ()) {
+    /**
+     A snapshot listener function that gets all the user's MyMeals collection, both food items from FoodData Central and custom meals.
+     MyMeals from FDC will be given in the completion handler
+     Custom myMeals are appended to the Published variable myMeals
+     - Returns: Results in JSON format.
+     */
+    func getMyMeals(completion: @escaping () -> () = {}) {
         let docRef = db.collection("users").document(Auth.auth().currentUser?.uid ?? "user").collection("myMeals")
-        var foodToPutInCompletion = [FoodRetriever]()
 
         docRef.addSnapshotListener { (querySnapshot, error) in
             guard error == nil else {
                 print("Error in getFoodIds method:", error?.localizedDescription ?? "")
-                completion(foodToPutInCompletion)
+                completion()
                 return
             }
 
@@ -59,18 +62,20 @@ class MyMealsViewModel: ObservableObject {
             }
 
             if foodIds.isEmpty {
-                print("no foods")
-                completion(foodToPutInCompletion)
+                completion()
             } else {
-                print("getting foods from fdc")
-                self.getFoodsFromFDC(foodIds, completion: { foodArray in
-                    foodToPutInCompletion = foodArray
-                    completion(foodToPutInCompletion)
+                self.getFoodsFromFDC(foodIds, completion: {
+                    completion()
                 })
             }
         }
     }
 
+    /**
+     Runs a check to see if a given food item is in the user's MyMeals collection.
+     - Parameter pFoodId: Food id given by the FoodData Central database for this specific item to uniquely identify this item to see if it's liked by the user.
+     - Returns: Completion handler with a boolean value to let me know if the process completed successfully (true) or if there was an error (false).
+     */
     func isLiked(pFoodId: Int, completion: @escaping (Bool) -> ()) {
         db.collection("users").document(Auth.auth().currentUser?.uid ?? "user").collection("myMeals")
             .whereField("foodId", isEqualTo: pFoodId)
@@ -82,6 +87,15 @@ class MyMealsViewModel: ObservableObject {
         completion(false)
     }
     
+    /**
+     Log a custom meal.
+     - Parameter pFood: The given MyMeal object. Contains all of the information for an item of type MyMeal.
+     - Parameter pHighNutrients: List of nutrients that this food item is high in. This data comes from a function that ran in the view before this function is called.
+     - Parameter pQuantity: Amount of the item consumed by the user.
+     - Parameter pMealType: Breakfast, Lunch, Dinner, Snack.
+     - Parameter pContains: List of nutrients that are often related to intolerances (i.e., Dairy, Gluten, Caffeine) or Whole Grain which represent a very healthy nutrient. This data comes from a function that is ran in the view before this function is called.
+     - Returns: Completion handler with a boolean value to let me know if the process completed successfully (true) or if there was an error (false).
+     */
     func logCustomMeal(pFood: MyMeal, pHighNutrients: [String], pQuantity: Int = 1, pMealType: String, pContains: [String] = [], completion: @escaping (Bool) -> ()) {
         
         formatter.dateFormat = "EEEE MMM dd, yyyy"
@@ -116,6 +130,14 @@ class MyMealsViewModel: ObservableObject {
         completion(true)
     }
     
+    /**
+     Adds a food item from FoodDataCentral to the user's MyMeals collection.
+     - Parameter pFoodId: Food id given by the FoodData Central database for this specific item.
+     - Parameter pFoodName: Name of the food item.
+     - Parameter pFoodCategory: Name of the food category. This is mainly for the Lottie Animations that are attached to an aggregated food category.
+     - Parameter pHighNutrients: List of nutrients that this food item is high in. This data comes from a function that ran in the view before this function is called.
+     - Returns: Completion handler.
+     */
     func addToMyMeals(pFoodId: Int, pFoodName: String, pFoodCategory: String, pHighNutrients: [String], completion: @escaping () -> () = {}) {
         formatter.dateFormat = "EEEE MMM dd, yyyy"
         
@@ -138,6 +160,16 @@ class MyMealsViewModel: ObservableObject {
         })
     }
     
+    /**
+     Adds a user-created meal to MyMeals.
+     - Parameter pMealName: Name of the meal. Also the document title in Firebase Firestore.
+     - Parameter pFoodCategory: Name of the food category. This is mainly for the Lottie Animations that are attached to an aggregated food category.
+     - Parameter pIngredientNames: List of the ingredient names defined by the user.
+     - Parameter pIngredientValues: List of the ingredient values defined by the user.
+     - Parameter pNutrientNames: List of the nutrient names defined by the user.
+     - Parameter pNutrientValues: List of the nutrient values defined by the user.
+     - Returns: Completion handler.
+     */
     func addCustomMeal(pMealName: String, pFoodCategory: String,
                        pIngredientNames: [String], pIngredientValues: [String],
                        pNutrientNames: [String], pNutrientValues: [String],
@@ -165,6 +197,11 @@ class MyMealsViewModel: ObservableObject {
         })
     }
     
+    /**
+     Removes an item from a user's MyMeals collection. This is a hard-delete.
+     - Parameter pFoodName: The name of the food to remove. In the MyMeals collection in Firebase Firestore, the document name is the name of the meal.
+     - Returns: Completion handler.
+     */
     func removeFromMyMeals(pFoodName: String, completion: @escaping () -> () = {}) {
         self.myMeals.removeAll(where: {$0.name == pFoodName})
         db.collection("users").document(Auth.auth().currentUser?.uid ?? "user").collection("myMeals").document(pFoodName).delete(completion: {_ in
@@ -172,7 +209,19 @@ class MyMealsViewModel: ObservableObject {
         })
     }
     
-    func getFoodsFromFDC(_ fdcIDs: [String], completion: @escaping ([FoodRetriever]) -> ()) {
+    /**
+     Special credit goes to GitHub repo that I used as a resource for this!
+     Searches the USDA Food Database and returns matching results.
+     - Parameter searchTerms: What to search for. (Hot Cheetos, Vitamin Water, etc)
+     - Parameter dataType: Optional. Foundation, SR Legacy, Experimental
+     - Parameter pageSize: Optional. Defaults to 50 results per page.
+     - Parameter pageNumber: Optional. Page number to retrieve. The offset is pexpressed as (pageNumber * pageSize).
+     - Parameter sortBy: Optional. A field by which to sort.
+     - Parameter sortOrder: Optional. Ascending or descending.
+     - Parameter brandOwner: Optional. Filter based on brand. Only applies to Branded Foods.
+     - Returns: Results in JSON format.
+     */
+    func getFoodsFromFDC(_ fdcIDs: [String], completion: @escaping () -> () = {}) {
         var queryItems: [URLQueryItem] = []
         queryItems.append(URLQueryItem(name: "nutrients", value: "328,418,601,401,203,209,212,213,268,287,291,303,307,318,573,406,415,204,205,211,262,269,301,306"))
         queryItems.append(contentsOf: fdcIDs.map { URLQueryItem(name: "fdcIds", value: $0) })
@@ -187,19 +236,24 @@ class MyMealsViewModel: ObservableObject {
             .replaceError(with: [])
             .eraseToAnyPublisher()
             .sink(receiveValue: { food in
-                let foodArray = food
-                completion(foodArray)
                 DispatchQueue.main.async {
                     if !food.isEmpty {
                         for i in 0...fdcIDs.count-1 {
                             self.myMeals[i].foodInfo = food[i]
                         }
-                        completion(foodArray)
+                        completion()
                     }
                 }
             })
     }
     
+    /**
+     Special credit goes to GitHub repo that I used as a resource for this!
+     Build a URL with all the necessary query parameters that will search the USDA Food Database.
+     - Parameter path: The URL path that will be used for the HTTP Request
+     - Parameter queryItems: This could be specific nutrient codes, search query, etc.
+     - Returns: A ready-to-go URL.
+     */
     func generateURL(path: String, queryItems: [URLQueryItem]) -> URL? {
         var url = URLComponents()
         url.scheme = "https"

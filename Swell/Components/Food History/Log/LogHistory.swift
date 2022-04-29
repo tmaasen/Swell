@@ -8,11 +8,11 @@
 import SwiftUI
 
 struct LogHistory: View {
-    @StateObject var historyLogViewModel = HistoryLogViewModel()
     @State private var selectedDate = Date()
     @State private var isLoading: Bool = false
     @State private var fdcFoodHistory = [FoodRetriever]()
     @State private var customFoodHistory = [MyMeal]()
+    @StateObject var historyLogViewModel = HistoryLogViewModel()
     
     var body: some View {
         ScrollView {
@@ -74,8 +74,6 @@ struct LogHistory: View {
                             historyLogViewModel.getAllHistoryByDate(date: selectedDate, completion: { foodArray, myCustomMeals in
                                 fdcFoodHistory = foodArray
                                 customFoodHistory = myCustomMeals
-                                print("Food: \(foodArray.count)")
-                                print("Custom Food: \(myCustomMeals.count)")
                                 isLoading = false
                             })
                         })

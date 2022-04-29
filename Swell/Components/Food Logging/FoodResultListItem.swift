@@ -10,12 +10,12 @@ import SwiftUI
 struct FoodResultListItem: View {
     var food: Food
     @Binding var meal: String
-    @State var showFoodInfoSheet: Bool = false
+    @State private var showFoodInfoSheet: Bool = false
     @State private var containsGluten: Bool = false
     @State private var containsLactose: Bool = false
     @State private var containsCaffeine: Bool = false
     @State private var isWholeGrain: Bool = false
-    @State var contains = [String]()
+    @State private var contains = [String]()
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
@@ -66,7 +66,7 @@ struct FoodResultListItem: View {
             checkSpecialFoodNutrients(food: food)
         }
     }
-    public func checkSpecialFoodNutrients(food: Food) {
+    func checkSpecialFoodNutrients(food: Food) {
         if(food.ingredients != nil) {
             if ((food.ingredients?.uppercased().contains("GLUTEN")) != false ||
                     (food.ingredients?.uppercased().contains("BREAD")) != false ||

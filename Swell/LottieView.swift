@@ -7,7 +7,8 @@
 
 import SwiftUI
 import Lottie
-
+ 
+/// View that sets up the lottie files for Swell's animations.
 struct LottieView: UIViewRepresentable {
     typealias UIViewType = UIView
     var filename: String
@@ -37,7 +38,5 @@ struct LottieView: UIViewRepresentable {
         return view
     }
     
-    func updateUIView(_ uiView: UIView, context: UIViewRepresentableContext<LottieView>) {
-        
-    }
+    func updateUIView(_ uiView: UIView, context: UIViewRepresentableContext<LottieView>) {}
 }

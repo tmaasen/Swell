@@ -9,8 +9,8 @@ import SwiftUI
 import SDWebImageSwiftUI
 
 struct PexelImage: View {
-    @StateObject var pexelsViewModel = PexelsViewModel()
     @State private var isLoading: Bool = false
+    @StateObject var pexelsViewModel = PexelsViewModel()
     
     var body: some View {
         VStack {
@@ -52,59 +52,5 @@ struct TextOverlay: View {
 struct PexelImage_Previews: PreviewProvider {
     static var previews: some View {
         PexelImage()
-    }
-}
-
-
-public enum RedactionType {
-    case customPlaceholder
-    case scaled
-}
-
-struct Redactable: ViewModifier {
-    let type: RedactionType?
-
-    @ViewBuilder
-    func body(content: Content) -> some View {
-        switch type {
-        case .customPlaceholder:
-            content
-                .modifier(Placeholder())
-        case .scaled:
-            content
-                .modifier(Scaled())
-        case nil:
-            content
-        }
-    }
-}
-
-struct Placeholder: ViewModifier {
-
-    @State private var condition: Bool = false
-    func body(content: Content) -> some View {
-        content
-            .accessibility(label: Text("Placeholder"))
-            .redacted(reason: .placeholder)
-            .opacity(condition ? 0.0 : 1.0)
-            .animation(Animation
-                        .easeInOut(duration: 1)
-                        .repeatForever(autoreverses: true))
-            .onAppear { condition = true }
-    }
-}
-
-struct Scaled: ViewModifier {
-
-    @State private var condition: Bool = false
-    func body(content: Content) -> some View {
-        content
-            .accessibility(label: Text("Scaled"))
-            .redacted(reason: .placeholder)
-            .scaleEffect(condition ? 0.9 : 1.0)
-            .animation(Animation
-                        .easeInOut(duration: 1)
-                        .repeatForever(autoreverses: true))
-            .onAppear { condition = true }
     }
 }

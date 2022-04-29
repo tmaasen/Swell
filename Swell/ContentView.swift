@@ -11,7 +11,6 @@ import JGProgressHUD_SwiftUI
 
 struct ContentView: View {
     
-    @State private var blockTouches: Bool = false
     @EnvironmentObject var authViewModel: AuthenticationViewModel
     @EnvironmentObject var foodAndMoodViewModel: FoodAndMoodViewModel
     @EnvironmentObject var myMealsViewModel: MyMealsViewModel
@@ -29,7 +28,7 @@ struct ContentView: View {
     }
 
     var body: some View {
-        JGProgressHUDPresenter(userInteractionOnHUD: blockTouches) {
+        JGProgressHUDPresenter(userInteractionOnHUD: false) {
             NavigationView {
                 if hasLaunchedBefore == false {
                     Onboarding()
@@ -75,7 +74,6 @@ class AppDelegate: NSObject, UIApplicationDelegate, ObservableObject {
 var isFromNotification: Bool = false
 var docRef: String = ""
 
-// MARK: - UNUserNotificationCenterDelegate
 extension AppDelegate: UNUserNotificationCenterDelegate {
   func userNotificationCenter(
     _ center: UNUserNotificationCenter,

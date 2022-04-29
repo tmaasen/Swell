@@ -10,9 +10,9 @@ import UserNotifications
 
 // Notification Manager
 class NotificationManager: ObservableObject {
-    @Published var settings: UNNotificationSettings?
     var docRef: String = ""
     static let instance = NotificationManager()
+    @Published var settings: UNNotificationSettings?
     
     func requestAuthorization(completion: @escaping  (Bool) -> Void) {
         UNUserNotificationCenter.current()

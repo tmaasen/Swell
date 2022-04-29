@@ -49,7 +49,7 @@ class FoodAndMoodViewModel: FoodDataCentralViewModel {
             ]) { err in
                 if let err = err {
                     print("Error updating document: \(err)")
-                    return
+                    completion()
                 } else {
                     completion()
                 }

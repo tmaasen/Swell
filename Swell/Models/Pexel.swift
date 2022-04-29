@@ -5,7 +5,6 @@
 
 import Foundation
 
-// MARK: - Pexel
 class Pexel: Codable {
     var totalResults, page, perPage: Int?
     var photos: [Photo]?
@@ -20,7 +19,6 @@ class Pexel: Codable {
     }
 }
 
-// MARK: - Photo
 struct Photo: Codable {
     var id, width, height: Int?
     var url: String?
@@ -40,8 +38,6 @@ struct Photo: Codable {
         case src, liked, alt
     }
 }
-
-// MARK: Photo convenience initializers and mutators
 
 extension Photo {
     init(data: Data) throws {
@@ -96,7 +92,6 @@ extension Photo {
     }
 }
 
-// MARK: - Src
 struct Src: Codable {
     var original, large2X, large, medium: String?
     var small, portrait, landscape, tiny: String?
@@ -107,8 +102,6 @@ struct Src: Codable {
         case large, medium, small, portrait, landscape, tiny
     }
 }
-
-// MARK: Src convenience initializers and mutators
 
 extension Src {
     init(data: Data) throws {

@@ -8,10 +8,10 @@
 import SwiftUI
 
 struct LoadingShimmer: View {
-    @State private var isLoading: Bool = false
-    var center = (UIScreen.main.bounds.width / 2) + 100
     var width: Int
     var height: Int
+    var center = (UIScreen.main.bounds.width / 2) + 100
+    @State private var isLoading: Bool = false
     
     var body: some View {
         ZStack {

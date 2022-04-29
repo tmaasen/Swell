@@ -7,6 +7,7 @@
 
 import Foundation
 
+// NOT YET IMPLEMENTED
 class KeychainHelper {
     
     static let standard = KeychainHelper()

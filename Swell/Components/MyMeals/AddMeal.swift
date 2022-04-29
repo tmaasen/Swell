@@ -27,7 +27,6 @@ struct AddMeal: View {
         return false
     }
     
-    // do something to sanitize input before sending it off to firestore
     var body: some View {
         Form {
             Text("Please enter the meal name and at least 1 ingredient to save your new meal.")
@@ -101,9 +100,7 @@ struct AddMeal: View {
             .listRowBackground(Color.swellOrange)
         }
         .navigationTitle("New Meal")
-        .onAppear() {
-            print("Nutrient names: \(nutrientNames)")
-        }
+        
         if mealCreated {
             LottieAnimation(filename: "checkmark", loopMode: .playOnce, width: 400, height: 400)
         }

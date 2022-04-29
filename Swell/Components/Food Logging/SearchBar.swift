@@ -11,8 +11,8 @@ struct SearchBar: View {
     @Binding var searchText: String
     @Binding var searching: Bool
     @Binding var isLoading: Bool
-    @EnvironmentObject var foodAndMoodViewModel: FoodAndMoodViewModel
     @State var focused: [Bool] = [false, true]
+    @EnvironmentObject var foodAndMoodViewModel: FoodAndMoodViewModel
     
     var body: some View {
         ZStack {
@@ -21,7 +21,7 @@ struct SearchBar: View {
             HStack {
                 Image(systemName: "magnifyingglass")
                     .foregroundColor(Color("iosKeyboardFontColor"))
-                CustomTextField(keyboardType: .default, returnVal: .search, tag: 0, text: $searchText, isfocusAble: $focused, isLoading: $isLoading, searchText: $searchText, searching: $searching).foregroundColor(Color("iosKeyboardFontColor"))
+                CustomTextField(tag: 0, keyboardType: .default, returnVal: .search, text: $searchText, isfocusAble: $focused, isLoading: $isLoading, searchText: $searchText, searching: $searching).foregroundColor(Color("iosKeyboardFontColor"))
             }
             .padding(.leading, 13)
         }

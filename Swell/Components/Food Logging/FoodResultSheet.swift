@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// Dynamic for both types of data types coming from FoodData Central: Food if searching for food, FoodRetriever if looking at food from History or MyMeals
 struct FoodResultSheet: View { 
     var food: Food
     var foodRetriever: FoodRetriever
@@ -14,8 +15,8 @@ struct FoodResultSheet: View {
     @State private var liked: Bool = false
     @State private var toast: Bool = false
     @State private var quantity: Int = 1
-    @Binding var meal: String
     @State private var selectedMeal: String = "Breakfast"
+    @Binding var meal: String
     @Binding var showFoodInfoSheet: Bool
     @Binding var contains: [String]
     @EnvironmentObject var myMealsViewModel: MyMealsViewModel
@@ -25,7 +26,6 @@ struct FoodResultSheet: View {
     
     var body: some View {
         VStack(alignment: .leading) {
-            // Top back button and like buttons
             ZStack(alignment: .top) {
                 HStack {
                     Image(systemName: "arrow.backward")
@@ -42,7 +42,7 @@ struct FoodResultSheet: View {
                         .animation(.spring(response: 0.4, dampingFraction: 0.6))
                         .padding(.trailing, 20)
                         .onTapGesture {
-                            // triggers a small haptic vibration
+                            // triggers a small haptic vibration :)
                             UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                             liked.toggle()
                             toast = liked
@@ -64,7 +64,7 @@ struct FoodResultSheet: View {
                 .padding(.top, 70)
                 .zIndex(1.0)
                 if food.foodDescription == "" {
-                    LottieAnimation(filename: FoodCategories.categoryDict.first(where: {$0.value.contains(foodRetriever.brandedFoodCategory ?? "")})!.key, loopMode: .loop, width: .infinity, height: .infinity)
+                    LottieAnimation(filename: FoodCategories.categoryDict.first(where: {$0.value.contains(foodRetriever.brandedFoodCategory ?? "")})?.key ?? "food", loopMode: .loop, width: .infinity, height: .infinity)
                 } else {
                     LottieAnimation(filename: FoodCategories.categoryDict.first(where: {$0.value.contains(food.foodCategory ?? "")})!.key, loopMode: .loop, width: .infinity, height: .infinity)
                 }
@@ -72,9 +72,7 @@ struct FoodResultSheet: View {
             .background(Rectangle().foregroundColor(Color("FoodSheet_Purple")))
             .clipShape(CustomShape(corner: .bottomLeft, radii: 55))
             .edgesIgnoringSafeArea(.top)
-            .toast(message: "Added \(foodRetriever.foodDescription ?? food.foodDescription.capitalizingFirstLetter()) to MyMeals",
-                         isShowing: $toast,
-                         duration: Toast.short)
+            .toast(message: "Added \(foodRetriever.foodDescription ?? food.foodDescription.capitalizingFirstLetter()) to MyMeals", isShowing: $toast, duration: Toast.short)
             ScrollView {
                 VStack(alignment: .leading, spacing: 15) {
                     HStack {

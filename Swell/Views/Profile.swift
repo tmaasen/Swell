@@ -9,27 +9,28 @@ import SwiftUI
 import FirebaseAuth
 import JGProgressHUD_SwiftUI
 
+/// View that handles updating user information and deleting the authenticated user.
 struct Profile: View {
-    @Environment(\.presentationMode) var presentationMode
-    @EnvironmentObject var authViewModel: AuthenticationViewModel
-    @EnvironmentObject var hudCoordinator: JGProgressHUDCoordinator
+    var genderOptions = ["Male", "Female"]
     @State private var showDeleteAccountAlert: Bool = false
     @State private var showPhotoPickerSheet: Bool = false
     @State private var isFormDisabled: Bool = true
     @State private var firstName: String = ""
     @State private var lastName: String = ""
     @State private var selectedGenderIndex: Int = 0
-    var genderOptions = ["Male", "Female"]
     @State private var age: String = ""
     @State private var height: String = ""
     @State private var weight: String = ""
     @State private var activeAlert: ActiveAlert = .deleteUser
+    @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject var authViewModel: AuthenticationViewModel
+    @EnvironmentObject var hudCoordinator: JGProgressHUDCoordinator
     
     var body: some View {
         ScrollView {
             Section {
                 ZStack(alignment: .bottomTrailing) {
-                    AvatarIcon(isShowingSidebar: .constant(true), showPhotoPickerSheet: $showPhotoPickerSheet, width: 120, height: 120)
+                    AvatarIcon(width: 120, height: 120, isShowingSidebar: .constant(true), showPhotoPickerSheet: $showPhotoPickerSheet)
                         .foregroundColor(.black)
                     Image(systemName: "plus")
                         .foregroundColor(.white)

@@ -17,7 +17,6 @@ struct FoodHistorySheet: View {
     
     var body: some View {
         VStack(alignment: .leading) {
-            // Top back button and like buttons
             ZStack(alignment: .top) {
                 HStack {
                     Image(systemName: "arrow.backward")
@@ -45,7 +44,7 @@ struct FoodHistorySheet: View {
                 }
                 .padding(.top, 70)
                 .zIndex(1.0)
-                LottieAnimation(filename: FoodCategories.categoryDict.first(where: {$0.value.contains(foodRetriever.brandedFoodCategory ?? "")})!.key, loopMode: .loop, width: .infinity, height: .infinity)
+                LottieAnimation(filename: FoodCategories.categoryDict.first(where: {$0.value.contains(foodRetriever.brandedFoodCategory ?? "")})?.key ?? "food", loopMode: .loop, width: .infinity, height: .infinity)
             }
             .background(Rectangle().foregroundColor(Color.yellow))
             .clipShape(CustomShape(corner: .bottomLeft, radii: 55))

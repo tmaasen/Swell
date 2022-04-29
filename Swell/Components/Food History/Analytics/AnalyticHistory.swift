@@ -6,8 +6,6 @@
 //
 
 import SwiftUI
-import SwiftUICharts
-import Firebase
 
 struct AnalyticHistory: View {
     @StateObject var analyticsViewModel = HistoryAnalyticsViewModel()

@@ -11,20 +11,9 @@ struct WaterLog: View {
     @State private var label: String = "8 fl oz"
     @State private var ounces: Double = 8
     @State private var watersLogged: Int = 0
+    @State private var waterLogDict = [1: false, 2: false, 3: false, 4: false, 5: false, 6: false, 7: false, 8: false, 9: false, 10: false]
     @StateObject var waterViewModel = WaterViewModel()
     @Environment(\.colorScheme) var colorScheme
-    @State private var waterLogDict = [
-        1: false,
-        2: false,
-        3: false,
-        4: false,
-        5: false,
-        6: false,
-        7: false,
-        8: false,
-        9: false,
-        10: false
-    ]
     
     var body: some View {
         HStack {
@@ -81,8 +70,8 @@ struct WaterLog: View {
                         watersLogged = 0
                         waterLogDict.keys.forEach { waterLogDict[$0] = false }
                     } else {
-                        let waters = waterViewModel.waters.waterLoggedToday ?? 0
-                        for i in 0...waters {
+                        watersLogged = waterViewModel.waterLoggedToday
+                        for i in 0...watersLogged  {
                             waterLogDict[i] = true
                         }
                     }

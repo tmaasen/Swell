@@ -7,19 +7,17 @@
 
 import SwiftUI
 import SwiftUICharts
-import Firebase
 
 struct Analytics_Graph3: View {
     var analyticsViewModel: HistoryAnalyticsViewModel
-    @Environment(\.colorScheme) var colorScheme
     @State private var isLoading: Bool = false
-    // Graph 3
-    @State var g3Label = "whole grain"
-    @State var g3HappyMoods: Double = 0
-    @State var g3NeutralMoods: Double = 0
-    @State var g3SickMoods: Double = 0
-    @State var g3OverateMoods: Double = 0
-    @State var g3TotalDataPoints: Int = 0
+    @State private var g3Label = "whole grain"
+    @State private var g3HappyMoods: Double = 0
+    @State private var g3NeutralMoods: Double = 0
+    @State private var g3SickMoods: Double = 0
+    @State private var g3OverateMoods: Double = 0
+    @State private var g3TotalDataPoints: Int = 0
+    @Environment(\.colorScheme) var colorScheme
     
     let blueStyle = ChartStyle(backgroundColor: .white,
                                foregroundColor: [ColorGradient(.purple, .blue)])
@@ -68,8 +66,6 @@ struct Analytics_Graph3: View {
                 .padding(.horizontal)
             
             ZStack(alignment: .center) {
-                //filterTag==0 ? "By Week" : "All Time",
-                //title: "All Moods", legend: "All Time", form: ChartForm.extraLarge, valueSpecifier: "%.0f")
                 CardView {
                     BarChart()
                 }

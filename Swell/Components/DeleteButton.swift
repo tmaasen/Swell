@@ -8,12 +8,12 @@
 import SwiftUI
 
 struct DeleteButton: View {
-    @State private var showDeleteActionSheet = false
-    @StateObject var historyLogViewModel = HistoryLogViewModel()
-    @Environment(\.presentationMode) var presentationMode
     var docId: String
     var collection: String
     var popUpText: String
+    @State private var showDeleteActionSheet = false
+    @StateObject var historyLogViewModel = HistoryLogViewModel()
+    @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
         HStack {

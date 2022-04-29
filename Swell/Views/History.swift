@@ -4,15 +4,14 @@
 //
 //  Created by Tanner Maasen on 2/14/22.
 //
-//  History is the main view for both food and mood history, as well as graphical data that attempts to show the relationship between one's nutrition and their mood.
 
 import SwiftUI
-import Firebase
 
-struct History: View { 
-    @EnvironmentObject var foodAndMoodViewModel: FoodAndMoodViewModel
-    @State private var selectedPickerIndex: Int = 0
+/// History is the main view for both food and mood history, as well as graphical data that attempts to show the relationship between one's nutrition and their mood.
+struct History: View {
     var pickerOptions = ["Food", "Mood"]
+    @State private var selectedPickerIndex: Int = 0
+    @EnvironmentObject var foodAndMoodViewModel: FoodAndMoodViewModel
     
     var body: some View {
         VStack {

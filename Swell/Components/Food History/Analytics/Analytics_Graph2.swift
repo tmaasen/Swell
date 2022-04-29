@@ -7,19 +7,17 @@
 
 import SwiftUI
 import SwiftUICharts
-import Firebase
 
 struct Analytics_Graph2: View {
     var analyticsViewModel: HistoryAnalyticsViewModel
-    @Environment(\.colorScheme) var colorScheme
     @State private var isLoading: Bool = false
-    // Graph 2
-    @State var g2Label = "protein"
-    @State var g2HappyMoods: Double = 0
-    @State var g2NeutralMoods: Double = 0
-    @State var g2SickMoods: Double = 0
-    @State var g2OverateMoods: Double = 0
-    @State var g2TotalDataPoints: Int = 0
+    @State private var g2Label = "protein"
+    @State private var g2HappyMoods: Double = 0
+    @State private var g2NeutralMoods: Double = 0
+    @State private var g2SickMoods: Double = 0
+    @State private var g2OverateMoods: Double = 0
+    @State private var g2TotalDataPoints: Int = 0
+    @Environment(\.colorScheme) var colorScheme
 
     let mixedColorStyle = ChartStyle(backgroundColor: .white, foregroundColor: [
         ColorGradient(ChartColors.orangeBright, ChartColors.orangeDark),
@@ -64,8 +62,6 @@ struct Analytics_Graph2: View {
                 .padding(.bottom)
             
             ZStack(alignment: .center) {
-                //filterTag==0 ? "By Week" : "All Time",
-                //title: "All Moods", legend: "All Time", form: ChartForm.extraLarge, valueSpecifier: "%.0f")
                 CardView {
                     BarChart()
                 }

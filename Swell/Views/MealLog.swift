@@ -4,11 +4,13 @@
 //
 //  Created by Tanner Maasen on 2/15/22.
 //
-//  MealLog is the main view for the food logging process.
 
 import SwiftUI
 
+///  MealLog is the main view for the food logging process.
 struct MealLog: View {
+    var pickerOptions = ["Search", "MyMeals"]
+    @State private var selectedPickerIndex: Int = 0
     @State var mealType: String
     @State private var searchText = ""
     @State private var searching = false
@@ -17,8 +19,6 @@ struct MealLog: View {
     @EnvironmentObject var myMealsViewModel: MyMealsViewModel
     @Environment(\.presentationMode) var presentationMode
     @Environment(\.colorScheme) var colorScheme
-    @State private var selectedPickerIndex: Int = 0
-    var pickerOptions = ["Search", "MyMeals"]
     
     var body: some View {
         VStack {

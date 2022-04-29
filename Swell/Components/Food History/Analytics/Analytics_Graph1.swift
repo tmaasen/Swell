@@ -7,18 +7,16 @@
 
 import SwiftUI
 import SwiftUICharts
-import Firebase
 
 struct Analytics_Graph1: View {
     var analyticsViewModel: HistoryAnalyticsViewModel
-    @Environment(\.colorScheme) var colorScheme
     @State private var isLoading: Bool = false
-    // Graph 1
-    @State var g1HappyMoods: Double = 0
-    @State var g1NeutralMoods: Double = 0
-    @State var g1SickMoods: Double = 0
-    @State var g1OverateMoods: Double = 0
-    @State var g1TotalDataPoints: Int = 0
+    @State private var g1HappyMoods: Double = 0
+    @State private var g1NeutralMoods: Double = 0
+    @State private var g1SickMoods: Double = 0
+    @State private var g1OverateMoods: Double = 0
+    @State private var g1TotalDataPoints: Int = 0
+    @Environment(\.colorScheme) var colorScheme
 
     let multiStyle = ChartStyle(backgroundColor: Color.green.opacity(0.2),
                                 foregroundColor:
@@ -57,7 +55,9 @@ struct Analytics_Graph1: View {
                 .chartStyle(multiStyle)
                 .frame(height: 200)
                 .padding(.horizontal)
-                .onAppear() { getData() }
+                .onAppear() {
+                    getData()
+                }
                 
                 if isLoading {
                     LottieAnimation(filename: "loading", loopMode: .loop, width: 50, height: 50)

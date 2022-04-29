@@ -9,12 +9,12 @@ import SwiftUI
 import GoogleSignIn
 
 struct AvatarIcon: View {
-    private let googleUser = GIDSignIn.sharedInstance.currentUser
-    @EnvironmentObject var user: AuthenticationViewModel
-    @Binding var isShowingSidebar: Bool
-    @Binding var showPhotoPickerSheet: Bool
     var width: CGFloat
     var height: CGFloat
+    private let googleUser = GIDSignIn.sharedInstance.currentUser
+    @Binding var isShowingSidebar: Bool
+    @Binding var showPhotoPickerSheet: Bool
+    @EnvironmentObject var user: AuthenticationViewModel
     
     var body: some View {
         HStack {
@@ -43,7 +43,7 @@ struct AvatarIcon: View {
     }
 }
 
-/// A generic view that shows images from the network.
+/// A generic view that shows images from the internet.
 struct NetworkImage: View {
     let url: URL?
     var body: some View {
@@ -59,9 +59,9 @@ struct NetworkImage: View {
 
 struct AvatarIcon_Previews: PreviewProvider {
     static var previews: some View {
-        AvatarIcon(isShowingSidebar: .constant(true),
-                   showPhotoPickerSheet: .constant(false),
-                   width: 40,
-                   height: 40)
+        AvatarIcon(width: 40,
+                   height: 40,
+                   isShowingSidebar: .constant(true),
+                   showPhotoPickerSheet: .constant(false))
     }
 }

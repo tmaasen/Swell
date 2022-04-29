@@ -14,7 +14,6 @@ class HistoryLogViewModel: ObservableObject {
     let db = Firestore.firestore()
     let formatter = DateFormatter()
     let apiKey = Bundle.main.infoDictionary?["USDA_API_KEY"] as? String ?? "food key not found"
-    
     @Published var waters = FoodRetriever()
     @Published var isNewDay: Bool = false
     var loggedOunces = [Double]()
@@ -64,7 +63,6 @@ class HistoryLogViewModel: ObservableObject {
             if foodIds.isEmpty {
                 completion([FoodRetriever]())
             } else {
-                print("getting foods by id for todays log")
                 self.getFoodsById(foodIds, mealTypes, servingSizes, moods, comments, docIds, foodNames, completion: { foodArray in
                     completion(foodArray)
                 })
