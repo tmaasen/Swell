@@ -40,7 +40,7 @@ struct TodaysLog: View {
                     }
                 }
             }
-        } 
+        }
         .onAppear() {
 //            if !todaysLog.containsSameElements(as: tempTodaysLog) {
             isLoading = true

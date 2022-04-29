@@ -22,12 +22,24 @@ class HistoryLogViewModel: ObservableObject {
         self.getAllHistoryByDate(completion: {a,b in})
     }
     
+    func getAllHistoryByDate(date: Date = Timestamp(date: Date()).dateValue(), completion: @escaping ([FoodRetriever], [MyMeal]) -> ()) {
+        self.getAllFdcFoodHistoryByDate(date: date, completion: { fdcFoods in
+            self.getAllCustomFoodHistoryByDate(date: date, completion: { myCustomMeals in
+                self.getWater(date: date, completion: { didCompleteSuccessfully in
+                    if didCompleteSuccessfully {
+                        completion(fdcFoods, myCustomMeals)
+                    }
+                })
+            })
+        })
+    }
+    
     func getAllFdcFoodHistoryByDate(date: Date = Timestamp(date: Date()).dateValue(), completion: @escaping ([FoodRetriever]) -> ()) {
         formatter.dateFormat = "EEEE MMM dd, yyyy"
         let pDate = formatter.string(from: date)
         let docRef = db.collection("users").document(Auth.auth().currentUser?.uid ?? "user").collection("food").whereField("date", isEqualTo: pDate)
         
-        docRef.addSnapshotListener { (querySnapshot, error) in
+        docRef.getDocuments { (querySnapshot, error) in
             guard error == nil else {
                 print("Error in getFoodIds method:", error?.localizedDescription ?? "")
                 completion([FoodRetriever]())
@@ -78,7 +90,7 @@ class HistoryLogViewModel: ObservableObject {
         var foodToPutInCompletion = [MyMeal]()
         var myMeal = MyMeal()
         
-        docRef.addSnapshotListener { (querySnapshot, error) in
+        docRef.getDocuments { (querySnapshot, error) in
             guard error == nil else {
                 print("Error in getAllCustomFoodHistoryByDate method:", error?.localizedDescription ?? "")
                 completion(foodToPutInCompletion)
@@ -112,18 +124,6 @@ class HistoryLogViewModel: ObservableObject {
         }
     }
     
-    func getAllHistoryByDate(date: Date = Timestamp(date: Date()).dateValue(), completion: @escaping ([FoodRetriever], [MyMeal]) -> ()) {
-        self.getAllFdcFoodHistoryByDate(date: date, completion: { fdcFoods in
-            self.getAllCustomFoodHistoryByDate(date: date, completion: { myCustomMeals in
-                self.getWater(date: date, completion: { didCompleteSuccessfully in
-                    if didCompleteSuccessfully {
-                        completion(fdcFoods, myCustomMeals)
-                    }
-                })
-            })
-        })
-    }
-    
     func deleteFromHistory(doc: String, collection: String, completion: @escaping () -> () = {}) {
         db.collection("users").document(Auth.auth().currentUser?.uid ?? "user").collection(collection).document(doc).delete(completion: { error in
             if let error = error {
@@ -150,7 +150,7 @@ class HistoryLogViewModel: ObservableObject {
             .document(Auth.auth().currentUser?.uid ?? "test")
             .collection("water")
             .document(pDate)
-            .addSnapshotListener { (documentSnapshot, error) in
+            .getDocument { (documentSnapshot, error) in
                 guard error == nil else {
                     print("Error in getWater method:", error?.localizedDescription ?? "")
                     completion(false)
@@ -176,7 +176,7 @@ class HistoryLogViewModel: ObservableObject {
      - Parameter fdcIDs: An array of the food IDs whose data you'd like to retrieve.
      - Returns: An array of the food data for the given food IDs.
      */
-    public func getFoodsById(_ fdcIDs: [String], _ mealTypes: [String], _ servingSizes: [Int], _ moods: [String], _ comments: [String], _ docIds: [String], _ foodNames: [String], completion: @escaping ([FoodRetriever]) -> ()) {
+    func getFoodsById(_ fdcIDs: [String], _ mealTypes: [String], _ servingSizes: [Int], _ moods: [String], _ comments: [String], _ docIds: [String], _ foodNames: [String], completion: @escaping ([FoodRetriever]) -> ()) {
         
         var queryItems: [URLQueryItem] = []
         queryItems.append(URLQueryItem(name: "nutrients", value: "328,418,601,401,203,209,212,213,268,287,291,303,307,318,573,406,415,204,205,211,262,269,301,306"))
@@ -211,7 +211,7 @@ class HistoryLogViewModel: ObservableObject {
     }
     
     /// Generates a new URL with the given queryItems.
-    private func generateURL(path: String, queryItems: [URLQueryItem]) -> URL? {
+    func generateURL(path: String, queryItems: [URLQueryItem]) -> URL? {
         var url = URLComponents()
         url.scheme = "https"
         url.host = "api.nal.usda.gov"

@@ -50,7 +50,7 @@ class WaterViewModel: ObservableObject {
     }
     
     /// Logs a water of specific size into Cloud Firestore
-    func logWater(pSize: String, watersLoggedToday: Int = 1, ounces: Double) {
+    func logWater(pSize: String, watersLoggedToday: Int = 1, ounces: Double, completion: @escaping () -> () = {}) {
         formatter.dateFormat = "EEEE MMM dd, yyyy"
         
         var docRef: DocumentReference
@@ -67,8 +67,10 @@ class WaterViewModel: ObservableObject {
             db.collection("users").document(Auth.auth().currentUser?.uid ?? "test").collection("water").document(formatter.string(from: Timestamp(date: Date()).dateValue())).setData(docData, completion: { error in
                 if let error = error {
                     print("Error in logWater method: \(error.localizedDescription)")
+                    completion()
                 } else {
                     self.loggedOunces += ounces
+                    completion()
                 }
             })
         } else {
@@ -85,6 +87,9 @@ class WaterViewModel: ObservableObject {
             ]) { err in
                 if let err = err {
                     print("Error updating document: \(err)")
+                    completion()
+                } else {
+                    completion()
                 }
             }
         }
