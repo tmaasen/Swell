@@ -25,9 +25,7 @@ struct WaterLog: View {
                                 .onTapGesture {
                                     watersLogged+=1
                                     waterLogDict[watersLogged] = true
-                                    waterViewModel.logWater(pSize: label, watersLoggedToday: watersLogged, ounces: ounces, completion: {
-                                        print("*** water logged")
-                                    })
+                                    waterViewModel.logWater(pSize: label, watersLoggedToday: watersLogged, ounces: ounces, completion: {})
                                 }
                         } else {
                             LottieAnimation(filename: "water", loopMode: .playOnce, width: 60, height: 70, animationSpeed: 2.5, play: true)

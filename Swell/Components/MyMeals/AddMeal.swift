@@ -21,7 +21,7 @@ struct AddMeal: View {
     @Environment(\.presentationMode) var presentationMode
     
     var disableForm: Bool {
-        if name.isEmpty || ingredientNames.isEmpty || ingredientValues.isEmpty {
+        if name.isEmpty || ingredientNames[0] == "" || ingredientValues[0] == "" {
             return true
         }
         return false
@@ -94,6 +94,7 @@ struct AddMeal: View {
                         Text("Save")
                             .withButtonStyles()
                             .disabled(disableForm)
+                            .opacity(disableForm ? 0.5 : 1.0)
                     }
                 }
             }
